@@ -254,37 +254,33 @@ class ruleSet
     }
   }
   
-  private function check_for_pregnancy( $patient_id, $end_measurement ) {
-      global $pregnancy_codes;
-      
-      foreach( $pregnancy_codes as $pregnancy_code ) {
-          if ( exist_lists_item( $patient_id,'medical_problem','ICD9::'.$pregnancy_code,$end_measurement ) ) {
+  private function check_codes( array $codes, $patient_id, $end_measurement ) {
+      foreach( $codes['codes'] as $code ) {
+          if ( exist_lists_item( $patient_id, $codes['category'], $codes['type'].'::'.$code,$end_measurement ) ) {
               return true;
           }
       }
       return false;
+  }
+  
+  private function check_for_pregnancy( $patient_id, $end_measurement ) {
+      global $pregnancy_codes;
+      return $this->check_codes( $pregnancy_codes, $patient_id, $end_measurement );
   }
   
   private function check_for_obgyn( $patient_id, $end_measurement ) {
       global $obgyn_codes;
-      
-      foreach( $obgyn_codes as $obgyn_code ) {
-          if ( exist_lists_item( $patient_id,'medical_problem','ICD9::'.$obgyn_code,$end_measurement ) ) {
-              return true;
-          }
-      }
-      return false;
+      return $this->check_codes( $obgyn_codes, $patient_id, $end_measurement );
   }
   
   private function check_for_dtap_allergy( $patient_id, $end_measurement ) {
       global $dtap_allergy_codes;
-      
-      foreach ( $dtap_allergy_codes as $dtap_allergy_code ) {
-      if ( exist_lists_item( $patient_id,'allergy','RXNORM::'.$dtap_allergy_code,$end_measurement ) ) {
-              return true;
-          }
-      }
-      return false;
+      return $this->check_codes( $dtap_allergy_codes, $patient_id, $end_measurement );
+  }
+  
+  private function check_for_progressive_neurological_disorder( $patient_id, $end_measurement ) {
+      global $progressive_neurological_disorder_codes;
+      return $this->check_codes( $progressive_neurological_disorder_codes, $patient_id, $end_measurement );
   }
 
   // Function to get patient dob
@@ -952,12 +948,14 @@ class ruleSet
     
       $result = sqlStatement( $query, array( $patient_id ) );
       if ( count( $result ) >= 4 && 
-          !( $this->check_for_dtap_allergy( $patient_id, $end_measurement ) ) ) {
+          !( $this->check_for_dtap_allergy( $patient_id, $end_measurement ) ) &&
+          !( exist_lists_item( $patient_id, 'medical_problem', 'ICD9::323.51', $end_measurement ) ) &&
+          !( $this->check_for_progressive_neurological_disorder( $patient_id, $end_measurement ) ) ) {
          $pass_targ[1]++;
       }
       
       // Numerator 2
-
+        
       
       
     }
