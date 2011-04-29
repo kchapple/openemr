@@ -13,8 +13,6 @@ require_once( 'codes.php' );
 
 class ruleSet
 {
-  const CODE_TYPE_ICD9 ='ICD9';
-  const CODE_TYPE_ICD9 ='ICD9';
   // Main input variables:
   // $rule        -  array containing rule information
   // $dateTarget  - target date
@@ -276,6 +274,26 @@ class ruleSet
   private function check_for_dtap_allergy( $patient_id, $end_measurement ) {
       global $dtap_allergy_codes;
       return $this->check_codes( $dtap_allergy_codes, $patient_id, $end_measurement );
+  }
+  
+  private function check_for_ipv_allergy( $patient_id, $end_measurement ) {
+      global $ipv_allergy_codes;
+      return $this->check_codes( $ipv_allergy_codes, $patient_id, $end_measurement );
+  }
+  
+  private function check_for_neomycin_allergy( $patient_id, $end_measurement ) {
+      global $neomycin_allergy_codes;
+      return $this->check_codes( $neomycin_allergy_codes, $patient_id, $end_measurement );
+  }
+  
+  private function check_for_streptomycin_allergy( $patient_id, $end_measurement ) {
+      global $streptomycin_allergy_codes;
+      return $this->check_codes( $streptomycin_allergy_codes, $patient_id, $end_measurement );
+  }
+  
+  private function check_for_polymyxin_allergy( $patient_id, $end_measurement ) {
+      global $polymyxin_allergy_codes;
+      return $this->check_codes( $polymyxin_allergy_codes, $patient_id, $end_measurement );
   }
   
   private function check_for_progressive_neurological_disorder( $patient_id, $end_measurement ) {
@@ -955,9 +973,35 @@ class ruleSet
       }
       
       // Numerator 2
-        
-      
-      
+    $query = "SELECT immunizations.administered_date, immunizations.patient_id, immunizations.immunization_id, list_options.title, patient_data.pid, patient_data.DOB " .
+    	"FROM immunizations " .
+    	"LEFT JOIN list_options " .
+        "ON immunizations.immunization_id = list_options.option_id AND list_id = immunizations" .
+        "LEFT JOIN patient_data " .
+        "ON immunizations.patient_id = patient_data.pid " .
+    	"WHERE immunizations.patient_id = ? " .
+        "AND ( list_options.option_id = 13 ". // Check for IPV list option ids (11-14)
+        	"OR list_options.option_id = 11 ".
+        	"OR list_options.option_id = 12 ".
+        	"OR list_options.option_id = 14 ".
+        "AND DATE( immunizations.administered_date ) >= DATE_ADD( patient_data.DOB, INTERVAL 42 DAY ) " .
+        "AND DATE( immunizations.administered_date ) < DATE_ADD( patient_data.DOB, INTERVAL 2 YEAR ) ";
+    
+      $result = sqlStatement( $query, array( $patient_id ) );
+      if ( count( $result ) >= 3 && 
+          !( $this->check_for_ipv_allergy( $patient_id, $end_measurement ) ) &&
+          !( $this->check_for_neomycin_allergy( $patient_id, $end_measurement ) ) &&
+          !( $this->check_for_streptomycin_allergy( $patient_id, $end_measurement ) ) &&
+          !( $this->check_for_polymyxin_allergy( $patient_id, $end_measurement ) ) ) {
+         $pass_targ[2]++;
+      }  
+    }
+    
+    foreach ( $pass_targ as $pass_targ_count ) {
+        // Calculate Percentage (use calculate_percentage() function from library/clinical_rules.php
+        $perc = calculate_percentage($pass_filt,$exclude_filt,$pass_targ_count);
+        // Set results
+        $this->set_result($rule_id,$total_pat,$pass_filt,$exclude_filt,$pass_targ_count,$perc);
     }
   }
 

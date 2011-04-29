@@ -22,6 +22,34 @@ $dtap_allergy_codes = array(
 '204525','205257','205259','260122','359454','562372','795926','795930','795938','795939','795942','798309','798347','802049','805375','805379','806587','806593','807277','807415','824542','829894','829971','829987','830518','830549','830555','830893','835879'
 ) );
 
+$ipv_allergy_codes = array(
+'type' => 'RXNORM',
+'category' => 'allergy',
+'codes' => array(
+'763103', '866820'
+) );
+
+$neomycin_allergy_codes = array(
+'type' => 'RXNORM',
+'category' => 'allergy',
+'codes' => array(
+'C0988018','C1123055','C1123343','C1123363','C1124224','C1127589','C1134215','C1140030','C1140542','C1186980','C1704126','C272305'
+) );
+
+$polymyxin_allergy_codes = array(
+'type' => 'RXNORM',
+'category' => 'allergy',
+'codes' => array(
+'C0988924','C1123393','C1125567','C1133048','C2729553'
+) );
+
+$streptomycin_allergy_codes = array(
+'type' => 'RXNORM',
+'category' => 'allergy',
+'codes' => array(
+'C1134151'
+) );
+
 // *** SNOMED codes
 $progressive_neurological_disorder_codes = array(
 'type' => 'SNOMED',
