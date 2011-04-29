@@ -699,7 +699,7 @@ class ruleSet
     $total_pat = 0;
     $pass_filt = 0;
     $exclude_filt = 0;
-    $pass_targ = array( 1, 2, 3 );
+    $pass_targ = array( 1 => 0, 2 => 0, 3 => 0 );
     $perc = 0;
     foreach ( $patientData as $rowPatient ) {
       $patient_id = $this->get_patient_id( $rowPatient ); 
@@ -754,7 +754,7 @@ class ruleSet
     $total_pat = 0;
     $pass_filt = 0;
     $exclude_filt = 0;
-    $pass_targ = array( 1, 2, 3 );
+    $pass_targ = array( 1 => 0, 2 => 0, 3 => 0 );
     $perc = 0;
     foreach ( $patientData as $rowPatient ) {
       $patient_id = $this->get_patient_id( $rowPatient ); 
@@ -809,7 +809,7 @@ class ruleSet
     $total_pat = 0;
     $pass_filt = 0;
     $exclude_filt = 0;
-    $pass_targ = array( 1, 2, 3 );
+    $pass_targ = array( 1 => 0, 2 => 0, 3 => 0 );
     $perc = 0;
     foreach ( $patientData as $rowPatient ) {
       $patient_id = $this->get_patient_id( $rowPatient ); 
@@ -884,7 +884,7 @@ class ruleSet
     $total_pat = 0;
     $pass_filt = 0;
     $exclude_filt = 0;
-    $pass_targ = array( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 );
+    $pass_targ = array( 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0, 7 => 0, 8 => 0, 9 => 0, 10 => 0, 11 => 0, 12 => 0 );
     $perc = 0;
     foreach ( $patientData as $rowPatient ) {
       $patient_id = $this->get_patient_id( $rowPatient ); 
