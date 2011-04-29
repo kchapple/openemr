@@ -276,8 +276,15 @@ class ruleSet
       return false;
   }
   
-  private function check_for_allergy( $patient_id, $end_measurement ) {
-          
+  private function check_for_dtap_allergy( $patient_id, $end_measurement ) {
+      global $dtap_allergy_codes;
+      
+      foreach ( $dtap_allergy_codes as $dtap_allergy_code ) {
+      if ( exist_lists_item( $patient_id,'allergy','RXNORM::'.$dtap_allergy_code,$end_measurement ) ) {
+              return true;
+          }
+      }
+      return false;
   }
 
   // Function to get patient dob
@@ -944,31 +951,13 @@ class ruleSet
         "AND DATE( immunizations.administered_date ) < DATE_ADD( patient_data.DOB, INTERVAL 2 YEAR ) ";
     
       $result = sqlStatement( $query, array( $patient_id ) );
-      if ( count( $result ) >= 4 ) {
+      if ( count( $result ) >= 4 && 
+          !( $this->check_for_dtap_allergy( $patient_id, $end_measurement ) ) ) {
          $pass_targ[1]++;
       }
       
       // Numerator 2
-      $query = "SELECT immunizations.administered_date, immunizations.patient_id, immunizations.immunization_id, list_options.title, patient_data.pid, patient_data.DOB " .
-    	"FROM immunizations " .
-    	"LEFT JOIN list_options " .
-        "ON immunizations.immunization_id = list_options.option_id AND list_id = immunizations" .
-        "LEFT JOIN patient_data " .
-        "ON immunizations.patient_id = patient_data.pid " .
-    	"WHERE immunizations.patient_id = ? " .
-        "AND ( list_options.option_id = 1 ". // Check for DTap list option ids (1-5)
-        	"OR list_options.option_id = 2 ".
-        	"OR list_options.option_id = 3 ".
-        	"OR list_options.option_id = 4 ".
-        	"OR list_options.option_id = 5 ) " . 
-        "AND DATE( immunizations.administered_date ) >= DATE_ADD( patient_data.DOB, INTERVAL 42 DAY ) " .
-        "AND DATE( immunizations.administered_date ) < DATE_ADD( patient_data.DOB, INTERVAL 2 YEAR ) ";
-    
-      $result = sqlStatement( $query, array( $patient_id ) );
-      if ( count( $result ) >= 4 && 
-          !(exist_lists_item( $patient_id,'allergy','RxNorm::204525',$end_measurement )) ) {
-         $pass_targ[1]++;
-      }
+
       
       
     }
