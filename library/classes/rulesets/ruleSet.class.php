@@ -29,10 +29,12 @@ class ruleSet
 
   // Main processed results variable:
   // $results - holds the result array used in reports
-
+  
+  private $codes; // code lookup class
 
   // Construction function
   public function __construct( $rule, $dateTarget, $patientData ) {
+    $this->codes = new Code_Lookup();  
     $this->rule = $rule;
     $this->dateTarget = $dateTarget;
     $this->patientData = $patientData;
@@ -252,55 +254,7 @@ class ruleSet
     }
   }
   
-  private function check_codes( array $codes, $patient_id, $end_measurement ) {
-      foreach( $codes['codes'] as $code ) {
-          if ( exist_lists_item( $patient_id, $codes['category'], $codes['type'].'::'.$code,$end_measurement ) ) {
-              return true;
-          }
-      }
-      return false;
-  }
   
-  private function check_for_pregnancy( $patient_id, $end_measurement ) {
-      global $pregnancy_codes;
-      return $this->check_codes( $pregnancy_codes, $patient_id, $end_measurement );
-  }
-  
-  private function check_for_obgyn( $patient_id, $end_measurement ) {
-      global $obgyn_codes;
-      return $this->check_codes( $obgyn_codes, $patient_id, $end_measurement );
-  }
-  
-  private function check_for_dtap_allergy( $patient_id, $end_measurement ) {
-      global $dtap_allergy_codes;
-      return $this->check_codes( $dtap_allergy_codes, $patient_id, $end_measurement );
-  }
-  
-  private function check_for_ipv_allergy( $patient_id, $end_measurement ) {
-      global $ipv_allergy_codes;
-      return $this->check_codes( $ipv_allergy_codes, $patient_id, $end_measurement );
-  }
-  
-  private function check_for_neomycin_allergy( $patient_id, $end_measurement ) {
-      global $neomycin_allergy_codes;
-      return $this->check_codes( $neomycin_allergy_codes, $patient_id, $end_measurement );
-  }
-  
-  private function check_for_streptomycin_allergy( $patient_id, $end_measurement ) {
-      global $streptomycin_allergy_codes;
-      return $this->check_codes( $streptomycin_allergy_codes, $patient_id, $end_measurement );
-  }
-  
-  private function check_for_polymyxin_allergy( $patient_id, $end_measurement ) {
-      global $polymyxin_allergy_codes;
-      return $this->check_codes( $polymyxin_allergy_codes, $patient_id, $end_measurement );
-  }
-  
-  private function check_for_progressive_neurological_disorder( $patient_id, $end_measurement ) {
-      global $progressive_neurological_disorder_codes;
-      return $this->check_codes( $progressive_neurological_disorder_codes, $patient_id, $end_measurement );
-  }
-
   // Function to get patient dob
   // Parameter:
   //   $patient_id - patient id
@@ -578,7 +532,7 @@ class ruleSet
                      "WHERE form_vitals.BMI IS NOT NULL " .
                      "AND form_vitals.BMI IS NOT NULL " .
                      "AND form_vitals.pid = ? AND form_vitals.BMI >= 30 " .
-                     "ANS ( DATE( form_vitals.date ) >= DATE_ADD( form_encounter.date, INTERVAL -6 MONTH ) ) " .
+                     "AND ( DATE( form_vitals.date ) >= DATE_ADD( form_encounter.date, INTERVAL -6 MONTH ) ) " .
                      "AND ( DATE( form_vitals.date ) <= DATE( form_encounter.date ) ) " .
                      "AND ( enc_category_map.rule_enc_id = 'enc_outpatient' )";
           $res = sqlStatement( $query, array( $patient_id ) );
@@ -599,7 +553,7 @@ class ruleSet
                      "WHERE form_vitals.BMI IS NOT NULL " .
                      "AND form_vitals.BMI IS NOT NULL " .
                      "AND form_vitals.pid = ? AND form_vitals.BMI < 22 " .
-                     "ANS ( DATE( form_vitals.date ) >= DATE_ADD( form_encounter.date, INTERVAL -6 MONTH ) ) " .
+                     "AND ( DATE( form_vitals.date ) >= DATE_ADD( form_encounter.date, INTERVAL -6 MONTH ) ) " .
                      "AND ( DATE( form_vitals.date ) <= DATE( form_encounter.date ) ) " .
                      "AND ( enc_category_map.rule_enc_id = 'enc_outpatient' )";
           $res = sqlStatement( $query, array( $patient_id ) );
@@ -619,7 +573,7 @@ class ruleSet
       // OR:ÒPhysical exam not done: patient reasonÓ; 
       // OR:ÒPhysical exam not done: medical reasonÓ; 
       // OR:ÒPhysical rationale physical exam not done: system reasonÓ;      
-      if ( $this->check_for_pregnancy( $patient_id, $end_measurement ) ) {
+      if ( $this->codes->check_for_pregnancy( $patient_id, $end_measurement ) ) {
           $exclude_filt++;
       }
 
@@ -692,7 +646,7 @@ class ruleSet
                      "WHERE form_vitals.BMI IS NOT NULL " .
                      "AND form_vitals.BMI IS NOT NULL " .
                      "AND form_vitals.pid = ? AND form_vitals.BMI >= 25 " .
-                     "ANS ( DATE( form_vitals.date ) >= DATE_ADD( form_encounter.date, INTERVAL -6 MONTH ) ) " .
+                     "AND ( DATE( form_vitals.date ) >= DATE_ADD( form_encounter.date, INTERVAL -6 MONTH ) ) " .
                      "AND ( DATE( form_vitals.date ) <= DATE( form_encounter.date ) ) " .
                      "AND ( enc_category_map.rule_enc_id = 'enc_outpatient' )";
           $res = sqlStatement( $query, array( $patient_id ) );
@@ -713,7 +667,7 @@ class ruleSet
       // OR:ÒPhysical exam not done: patient reasonÓ; 
       // OR:ÒPhysical exam not done: medical reasonÓ; 
       // OR:ÒPhysical rationale physical exam not done: system reasonÓ;
-      if ( $this->check_for_pregnancy( $patient_id, $end_measurement ) ) {
+      if ( $this->codes->check_for_pregnancy( $patient_id, $end_measurement ) ) {
           $exclude_filt++;
       }
       
@@ -760,7 +714,7 @@ class ruleSet
       // filter for 1 specified encounters
       // make a function for this and wrap in the encounter titles
       if (  ( !( $this->exist_encounter($patient_id,'enc_out_pcp_obgyn',$begin_measurement,$end_measurement,1) ) ) ||
-               ( $this->check_for_pregnancy( $patient_id, $end_measurement ) ||
+               ( $this->codes->check_for_pregnancy( $patient_id, $end_measurement ) ||
                ( $this->exist_encounter($patient_id,'enc_pregnancy',$begin_measurement,$end_measurement,1) ) ) ) {
           continue;
       }
@@ -815,7 +769,7 @@ class ruleSet
       // filter for 1 specified encounters
       // make a function for this and wrap in the encounter titles
       if (  ( !( $this->exist_encounter($patient_id,'enc_out_pcp_obgyn',$begin_measurement,$end_measurement,1) ) ) ||
-               ( $this->check_for_pregnancy( $patient_id, $end_measurement ) ||
+               ( $this->codes->check_for_pregnancy( $patient_id, $end_measurement ) ||
                ( $this->exist_encounter($patient_id,'enc_pregnancy',$begin_measurement,$end_measurement,1) ) ) ) {
           continue;
       }
@@ -870,7 +824,7 @@ class ruleSet
       // filter for 1 specified encounters
       // make a function for this and wrap in the encounter titles
       if (  ( !( $this->exist_encounter($patient_id,'enc_out_pcp_obgyn',$begin_measurement,$end_measurement,1) ) ) ||
-               ( $this->check_for_pregnancy( $patient_id, $end_measurement ) ||
+               ( $this->codes->check_for_pregnancy( $patient_id, $end_measurement ) ||
                ( $this->exist_encounter($patient_id,'enc_pregnancy',$begin_measurement,$end_measurement,1) ) ) ) {
           continue;
       }
@@ -966,9 +920,9 @@ class ruleSet
     
       $result = sqlStatement( $query, array( $patient_id ) );
       if ( count( $result ) >= 4 && 
-          !( $this->check_for_dtap_allergy( $patient_id, $end_measurement ) ) &&
+          !( $this->codes->check_for_dtap_allergy( $patient_id, $end_measurement ) ) &&
           !( exist_lists_item( $patient_id, 'medical_problem', 'ICD9::323.51', $end_measurement ) ) &&
-          !( $this->check_for_progressive_neurological_disorder( $patient_id, $end_measurement ) ) ) {
+          !( $this->codes->check_for_progressive_neurological_disorder( $patient_id, $end_measurement ) ) ) {
          $pass_targ[1]++;
       }
       
@@ -989,10 +943,10 @@ class ruleSet
     
       $result = sqlStatement( $query, array( $patient_id ) );
       if ( count( $result ) >= 3 && 
-          !( $this->check_for_ipv_allergy( $patient_id, $end_measurement ) ) &&
-          !( $this->check_for_neomycin_allergy( $patient_id, $end_measurement ) ) &&
-          !( $this->check_for_streptomycin_allergy( $patient_id, $end_measurement ) ) &&
-          !( $this->check_for_polymyxin_allergy( $patient_id, $end_measurement ) ) ) {
+          !( $this->codes->check_for_ipv_allergy( $patient_id, $end_measurement ) ) &&
+          !( $this->codes->check_for_neomycin_allergy( $patient_id, $end_measurement ) ) &&
+          !( $this->codes->check_for_streptomycin_allergy( $patient_id, $end_measurement ) ) &&
+          !( $this->codes->check_for_polymyxin_allergy( $patient_id, $end_measurement ) ) ) {
          $pass_targ[2]++;
       }  
     }
