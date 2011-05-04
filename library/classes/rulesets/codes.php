@@ -1,7 +1,5 @@
 <?php
-require_once(dirname(__FILE__) . "/../../clinical_rules.php");
-
-class Code_Lookup {
+class Codes {
     
     public function check_for_pregnancy( $patient_id, $end_measurement ) {
         return $this->check_codes( $this->pregnancy_codes, $patient_id, $end_measurement );
@@ -35,6 +33,10 @@ class Code_Lookup {
         return $this->check_codes( $this->progressive_neurological_disorder_codes, $patient_id, $end_measurement );
     }
     
+    public function check_for_hib_allergy( $patient_id, $end_measurement ) {
+        return $this->check_codes( $this->hib_allergy_codes, $patient_id, $end_measurement );
+    }
+    
     private function check_codes( array $codes, $patient_id, $end_measurement ) {
         foreach( $codes['codes'] as $code ) {
             if ( exist_lists_item( $patient_id, $codes['category'], $codes['type'].'::'.$code,$end_measurement ) ) {
@@ -43,6 +45,7 @@ class Code_Lookup {
         }
         return false;
     }
+   
 
 
     // *** ICD9 codes
@@ -59,8 +62,20 @@ class Code_Lookup {
     'codes' => array(
     'V24','V25','V26','V27','V28','V45.5','V61.5','V61.6','V61.7','V69.2','V72.3','V72.4'
     ) );
+    
+    public $diag_htn = array(
+    'CUSTOM' => array( 'HTN' ),
+    'ICD9' => array( '401.0','401.1','401.9','402.00','402.01','402.10','402.11','402.90','402.91','403.00','403.01','403.10','403.11','403.90','403.91','404.00','404.01','404.02','404.03','404.10','404.11','404.12','404.13','404.90','404.91','404.92','404.93')
+    );
 
     // *** RXNORM codes
+    private $hib_allergy_codes = array(
+    'type' => 'RXNORM',
+    'category' => 'allergy',
+    'codes' => array(
+    '260123','798282','798348','798440','798447','860904'
+    ) );
+    
     private $dtap_allergy_codes = array(
     'type' => 'RXNORM',
     'category' => 'allergy',
@@ -104,3 +119,8 @@ class Code_Lookup {
     '230363006', '292925004', '292927007', '292992006'
     ) );
 }
+
+$codes = new Codes();
+$json = json_encode( $codes->diag_htn );
+$array = json_decode( $json );
+echo $json;
