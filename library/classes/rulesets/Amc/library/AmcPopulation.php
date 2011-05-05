@@ -1,16 +1,16 @@
 <?php
-require_once( "CqmPatient.php" );
+require_once( "AmcPatient.php" );
 /*	Defines a population of patients
  * 
  */
-class CqmPopulation extends RsPopulation
+class AmcPopulation extends RsPopulation
 {
     /*
      * initialize the patient population
      */
     public function __construct( array $patientIdArray ) {
         foreach ( $patientIdArray as $patientId ) {
-            $this->_patients[]= new CqmPatient( $patientId );
+            $this->_patients[]= new AmcPatient( $patientId );
         }
     }
 
@@ -18,14 +18,14 @@ class CqmPopulation extends RsPopulation
      * ArrayAccess Interface
      */
     public function offsetSet($offset,$value) {
-        if ($value instanceof CqmPatient ) {
+        if ($value instanceof AmcPatient ) {
             if ( $offset == "" ) {
                 $this->_patients[] = $value;
             }else {
                 $this->_patients[$offset] = $value;
             }
         } else {
-            throw new Exception( "Value must be an instance of CqmPatient" );
+            throw new Exception( "Value must be an instance of AmcPatient" );
         }
     }
 

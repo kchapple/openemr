@@ -1,9 +1,9 @@
 <?php
-class CqmResult implements RsResultIF
+class AmcResult implements RsResultIF
 {
     public $rule;
-    public $numeratorLabel;
-    public $populationLabel;
+//    public $numeratorLabel;
+//    public $populationLabel;
      
     public $totalPatients; // Total number of patients considered
     public $patientsInPopulation; // Number of patients that pass filter
@@ -11,11 +11,11 @@ class CqmResult implements RsResultIF
     public $patientsIncluded; // Number of patients that pass target
     public $percentage; // Calculated percentage
 
-    public function __construct( $rowRule, $numeratorLabel, $populationLabel, $totalPatients, $patientsInPopulation, $patientsExcluded, $patientsIncluded, $percentage )
+    public function __construct( $rowRule, $totalPatients, $patientsInPopulation, $patientsExcluded, $patientsIncluded, $percentage )
     {
         $this->rule = $rowRule;
-        $this->numeratorLabel = $numeratorLabel;
-        $this->populationLabel = $populationLabel;
+//        $this->numeratorLabel = $numeratorLabel;
+//        $this->populationLabel = $populationLabel;
         $this->totalPatients = $totalPatients;
         $this->patientsInPopulation = $patientsInPopulation;
         $this->patientsExcluded = $patientsExcluded;
@@ -27,8 +27,8 @@ class CqmResult implements RsResultIF
     {
         $rowFormat = array( 
         	'is_main'=>TRUE, // TO DO: figure out way to do this when multiple groups.
-            'population_label' => $this->populationLabel,
-            'numerator_label' => $this->numeratorLabel,
+//            'population_label' => $this->populationLabel,
+//            'numerator_label' => $this->numeratorLabel,
             'total_patients' => $this->totalPatients,
             'excluded' => $this->patientsExcluded,
             'pass_filter' => $this->patientsInPopulation,

@@ -3,8 +3,19 @@ require_once(dirname(__FILE__) . "/../../clinical_rules.php");
 require_once(dirname(__FILE__) . "/../../forms.inc");
 require_once(dirname(__FILE__) . "/../../patient.inc");
 require_once(dirname(__FILE__) . "/../../lists.inc");
+require_once(dirname(__FILE__) . "/../rulesets/library/RsPatient.php");
+require_once( 'codes.php' );
 
-abstract class AbstractClinicalType {
+abstract class ClinicalType 
+{
+    const ALLERGY = 'Allergy';
+    const CARE_GOAL = 'CareGoal';
+    const DIAGNOSIS = 'Diagnosis';
+    const ENCOUNTER = 'Encounter';
+    const MEDICATION = 'Medication';
+    const COMMUNICATION = 'Communication';
+    const CHARACTERISTIC = 'Characteristic';
+    const PHYSICAL_EXAM = 'PhysicalExam';
     
     private $_optionId;
     private $_title;
@@ -12,28 +23,29 @@ abstract class AbstractClinicalType {
     
     public function __construct( $optionId ) {
         $this->_optionId = $optionId;
-        $result = getListById( $optionId );
+        $result = $this->getListOptionById( $optionId );
         $this->_title = $result['title'];
         $this->_notes = $result['notes'];
     }
-    
+        
     /*
      * Check if this clinical type applies to this patient.   
      * 
-     * @param (CqmPatient) $patient
+     * @param (RsPatient) $patient
      * @param (date) $beginMeasurement
      * @param (date) $endMeasurement
      * 
      * @return true if type applies, false ow
      */
-    public abstract function doPatientCheck( CqmPatient $patient, $beginMeasurement = null, $endMeasurement = null ); 
-
+    public abstract function doPatientCheck( RsPatient $patient, $beginDate = null, $endDate = null, $options = null ); 
+    public abstract function getListId();
+    
     public function getOptionId() {
         return $this->_optionId;
     }
     
     public function getNotes() {
-        return json_decode( $this->_notes );
+        return $this->_notes;
     }
     
     public function getListOptions() {
@@ -44,9 +56,10 @@ abstract class AbstractClinicalType {
     {
         $query = "SELECT * " .
                  "FROM `list_options` " .
-                 "WHERE list_id = ?" .
+                 "WHERE list_id = ? " .
                  "AND option_id = ?";
         $results = sqlStatement( $query, array( $this->getListId(), $id ) );
-        return $results[0];    
+        $arr = sqlFetchArray( $results );
+        return $arr;    
     }
 }
