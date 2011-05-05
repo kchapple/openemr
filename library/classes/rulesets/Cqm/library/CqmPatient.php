@@ -1,5 +1,5 @@
 <?php
-require_once(dirname(__FILE__) . "/../../../../patient.inc");
+require_once( dirname(__FILE__)."/../../../../patient.inc" );
 
 class CqmPatient
 {

@@ -8,21 +8,21 @@ class NFQ_0421_PopulationCriteria1 implements CqmPopulationCrtiteriaFactory
     
     public function createInitialPatientPopulation()
     {
-        return new InitialPatientPopulation();
+        return new NFQ_0421_InitialPatientPopulation();
     }
     
     public function createNumerators()
     {
-        return new Numerator1();
+        return new NFQ_0421_Numerator1();
     }
     
     public function createDenominator()
     {
-        
+        return new NFQ_0421_Denominator();
     }
     
     public function createExclusion()
     {
-        
+        return new NFQ_0421_Exclusion();
     }
 }

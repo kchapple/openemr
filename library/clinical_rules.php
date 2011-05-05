@@ -239,21 +239,28 @@ function test_rules_clinic($provider='',$type='',$dateTarget='',$mode='',$patien
     // Note these rules are only used in report mode.
     if ($rowRule['cqm_flag'] || $rowRule['amc_flag']) {
 
-      // Ensure the ruleSet class file has been included
-      // (will only require if needed, since it's gonna be large)
-      require_once(dirname(__FILE__) . "/classes/rulesets/ruleSet.class.php");
-
-      // Run the class rule set
-      // $patientData contains pid's only
-      $rule_results = new ruleSet($rowRule,$dateTarget,$patientData);
+      require_once( dirname(__FILE__)."/classes/rulesets/Cqm/CqmReportFactory.php");
+      $factory = new CqmReportFactory();
+      $nfq = $factory->createReport( "rule_adult_wt_screen_fu_cqm", $patientData, $dateTarget );
+      $results = $nfq->execute();
       
-      // Collect/add the results to the results array
-      $tempResults = $rule_results->return_results();
-      if (!empty($tempResults)) {
-        foreach ($tempResults as $tempResult) {
-          array_push($results,$tempResult);
-        }
-      }
+//      // Ensure the ruleSet class file has been included
+//      // (will only require if needed, since it's gonna be large)
+//      require_once(dirname(__FILE__) . "/classes/rulesets/ruleSet.class.php");
+//
+//      // Run the class rule set
+//      // $patientData contains pid's only
+//      $rule_results = new ruleSet($rowRule,$dateTarget,$patientData);
+//      
+//      
+//      
+//      // Collect/add the results to the results array
+//      $tempResults = $rule_results->return_results();
+//      if (!empty($tempResults)) {
+//        foreach ($tempResults as $tempResult) {
+//          array_push($results,$tempResult);
+//        }
+//      }
 
       // Go on to the next rule
       continue;

@@ -3,7 +3,11 @@ class CqmReportFactory
 {
     public function __construct() 
     {
-        foreach ( glob( "library/*.php" ) as $filename ) {
+        foreach ( glob( dirname(__FILE__)."/library/*.php" ) as $filename ) {
+            require_once( $filename );
+        }
+        
+        foreach ( glob( dirname(__FILE__)."/reports/*.php" ) as $filename ) {
             require_once( $filename );
         }
     }
@@ -32,7 +36,3 @@ class CqmReportFactory
         }
     }
 }
-
-$patientData = array( 5, 1, 4, 8, 41, 17, 18, 22, 30, 25, 26, 40, 34, 35 );
-$factory = new CqmReportFactory();
-$nfq = $factory->createReport( "rule_adult_wt_screen_fu_cqm", $patientData, date() );

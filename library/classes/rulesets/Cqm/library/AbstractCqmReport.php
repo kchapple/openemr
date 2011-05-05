@@ -1,5 +1,5 @@
 <?php
-//require_once( dirname(__FILE__) . "/../../../clinical_rules.php" );
+require_once( dirname(__FILE__)."/../../../../clinical_rules.php" );
 
 abstract class AbstractCqmReport
 {
@@ -13,9 +13,9 @@ abstract class AbstractCqmReport
 
     public function __construct( $ruleId, array $patientIdArray, $dateTarget )
     {
-        // require all .php files in the base library folder
+        // require all .php files in the report's sub-folder
         $className = get_class( $this );
-        foreach ( glob( $className."/*.php" ) as $filename ) {
+        foreach ( glob( dirname(__FILE__)."/../reports/".$className."/*.php" ) as $filename ) {
             require_once( $filename );
         }
         
@@ -63,14 +63,18 @@ abstract class AbstractCqmReport
                     }
                 
                 $numerators = $populationCriteria->createNumerators();
-                foreach ( $numerators as $numerator ) 
-                {
-                    $numeratorPatientPopulations = array();
-                    if ( $numerator instanceof CqmComponentIF ) {
-                        $numeratorPatientPopulations[$numerator->getTitle()] = $numerator->executeFilter( $denominatorPatientPopulation );
-                    } else {
-                        throw new Exception( "Numerator must be an instance of CqmComponentIF" );
+                $numeratorPatientPopulations = array();
+                if ( is_array( $numerators ) ) {
+                    foreach ( $numerators as $numerator ) 
+                    {
+                        if ( $numerator instanceof CqmComponentIF ) {
+                            $numeratorPatientPopulations[$numerator->getTitle()] = $numerator->executeFilter( $denominatorPatientPopulation );
+                        } else {
+                            throw new Exception( "Numerator must be an instance of CqmComponentIF" );
+                        }
                     }
+                } else if ( $numerators instanceof CqmComponentIF ) {
+                    $numeratorPatientPopulations[$numerators->getTitle()] = $numerators->executeFilter( $denominatorPatientPopulation ); 
                 }
                
                 // tally results
