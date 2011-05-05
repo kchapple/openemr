@@ -12,8 +12,8 @@ class CqmReportFactory
         }
     }
     
-    public function createReport( $ruleId, $patientData, $dateTarget ) {
-        $cqmReport = null;
+    public function createReport( $rowRule, $patientData, $dateTarget ) {
+        $ruleId = $rowRule['id'];
         switch ( $ruleId ) {
             case "rule_htn_bp_measure_cqm":
                 // Hypertension: Blood Pressure Measurement
@@ -32,7 +32,7 @@ class CqmReportFactory
                 // Adult Weight Screening and Follow-Up
                 // NQF 0421
                 // PQRI 128
-                return new NFQ_0421( $ruleId, $patientData, $dateTarget );
+                return new NFQ_0421( $rowRule, $patientData, $dateTarget );
         }
     }
 }

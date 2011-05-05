@@ -1,14 +1,14 @@
 <?php
-class NFQ_0421_InitialPatientPopulation implements CqmComponentIF
+class NFQ_0421_InitialPatientPopulation implements CqmFilterIF
 {
     public function getTitle() 
     {
         return "Numerator 1";
     }
     
-    public function executeFilter( CqmPopulation $population )
+    public function test( CqmPatient $patient )
     {
 
-        return $population;
+        return true;
     }
 }

@@ -1,6 +1,6 @@
 <?php
-interface CqmComponentIF
+interface CqmFilterIF
 {
-    public function executeFilter( CqmPopulation $population );
+    public function test( CqmPatient $patient );
     public function getTitle();
 }

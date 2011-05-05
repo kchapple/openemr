@@ -241,8 +241,10 @@ function test_rules_clinic($provider='',$type='',$dateTarget='',$mode='',$patien
 
       require_once( dirname(__FILE__)."/classes/rulesets/Cqm/CqmReportFactory.php");
       $factory = new CqmReportFactory();
-      $nfq = $factory->createReport( "rule_adult_wt_screen_fu_cqm", $patientData, $dateTarget );
-      $results = $nfq->execute();
+      $rowRule['id'] = "rule_adult_wt_screen_fu_cqm";
+      $nfq = $factory->createReport( $rowRule, $patientData, $dateTarget );
+      $nfqResults = $nfq->execute();
+      // need translation routine to put results in correct format for this engine
       
 //      // Ensure the ruleSet class file has been included
 //      // (will only require if needed, since it's gonna be large)
@@ -255,12 +257,12 @@ function test_rules_clinic($provider='',$type='',$dateTarget='',$mode='',$patien
 //      
 //      
 //      // Collect/add the results to the results array
-//      $tempResults = $rule_results->return_results();
-//      if (!empty($tempResults)) {
-//        foreach ($tempResults as $tempResult) {
-//          array_push($results,$tempResult);
-//        }
-//      }
+      $tempResults = CqmResult::formatClinicalRules( $nfqResults );
+      if (!empty($tempResults)) {
+        foreach ($tempResults as $tempResult) {
+          array_push($results,$tempResult);
+        }
+      }
 
       // Go on to the next rule
       continue;

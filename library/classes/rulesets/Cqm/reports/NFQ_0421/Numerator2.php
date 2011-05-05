@@ -1,18 +1,14 @@
 <?php
-class NFQ_0421_Numerator2 implements CqmComponentIF
+class NFQ_0421_Numerator2 implements CqmFilterIF
 {  
     public function getTitle() 
     {
         return "Numerator 2";
     }
       
-    public function executeFilter( CqmPopulation $population )
+    public function test( CqmPatient $patient )
     {
-        $filteredPopulation = new CqmPopulation();
-        foreach ( $population as $patient ) {
-            
-        }
         
-        return $filteredPopulation;
+        return true;
     }   
 }

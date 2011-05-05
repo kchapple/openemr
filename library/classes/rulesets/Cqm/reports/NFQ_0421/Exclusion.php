@@ -1,13 +1,13 @@
 <?php
-class NFQ_0421_Exclusion implements CqmComponentIF
+class NFQ_0421_Exclusion implements CqmFilterIF
 {
     public function getTitle() 
     {
         return "Exclusion";
     }
     
-    public function executeFilter( CqmPopulation $population )
+    public function test( CqmPatient $patient )
     {
-        return $population;
+        return true;
     }
 }

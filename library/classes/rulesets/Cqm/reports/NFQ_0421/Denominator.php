@@ -1,13 +1,13 @@
 <?php
-class NFQ_0421_Denominator implements CqmComponentIF
+class NFQ_0421_Denominator implements CqmFilterIF
 {
     public function getTitle() 
     {
         return "Denominator";
     }
     
-    public function executeFilter( CqmPopulation $population )
+    public function test( CqmPatient $patient )
     {
-        return $population;
+        return true;
     }
 }

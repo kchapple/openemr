@@ -4,36 +4,38 @@ require_once( dirname(__FILE__)."/../../../../clinical_rules.php" );
 abstract class AbstractCqmReport
 {
     protected $_cqmPopulation;
-    
+
     protected $_resultsArray = array();
 
+    protected $_rowRule;
     protected $_ruleId;
     protected $_beginMeasurement;
     protected $_endMeasurement;
 
-    public function __construct( $ruleId, array $patientIdArray, $dateTarget )
+    public function __construct( array $rowRule, array $patientIdArray, $dateTarget )
     {
         // require all .php files in the report's sub-folder
         $className = get_class( $this );
         foreach ( glob( dirname(__FILE__)."/../reports/".$className."/*.php" ) as $filename ) {
             require_once( $filename );
         }
-        
+
         $this->_cqmPopulation = new CqmPopulation( $patientIdArray );
-        $this->_ruleId = $ruleId;
+        $this->_rowRule = $rowRule;
+        $this->_ruleId = $rowRule['id'];
         // Calculate measurement period
         $tempDateArray = explode( "-",$dateTarget );
         $tempYear = $tempDateArray[0];
         $this->_beginMeasurement = $tempDateArray[0] . "-01-01 00:00:00";
         $this->_endMeasurement = $tempDateArray[0] . "-12-31 23:59:59";
     }
-    
+
     public abstract function createPopulationCriteria();
-    
+
     public function getBeginMeasurement() {
         return $this->_beginMeasurement;
     }
-    
+
     public function getEndMeasurement() {
         return $this->_endMeasurement;
     }
@@ -41,58 +43,82 @@ abstract class AbstractCqmReport
     public function execute()
     {
         $populationCriterias = $this->createPopulationCriteria();
-        foreach ( $populationCriterias as $populationCriteria ) 
+        foreach ( $populationCriterias as $populationCriteria )
         {
-            if ( $populationCriteria instanceof CqmPopulationCrtiteriaFactory ) 
+            if ( $populationCriteria instanceof CqmPopulationCrtiteriaFactory )
             {
-                $totalPatients = count( $this->_cqmPopulation );
                 $initialPatientPopulationFilter = $populationCriteria->createInitialPatientPopulation();
-                $initialPatientPopulation = null;
-                if ( $initialPatientPopulationFilter instanceof CqmComponentIF ) {
-                    $initialPatientPopulation = $initialPatientPopulationFilter->executeFilter( $this->_cqmPopulation );
-                } else {
-                    throw new Exception( "InitialPatientPopulation must be an instance of CqmComponentIF" );
-                }
-                
                 $denominator = $populationCriteria->createDenominator();
-                $denominatorPatientPopulation = null;
-                if ( $denominator instanceof CqmComponentIF ) {
-                    $denominatorPatientPopulation = $denominator->executeFilter( $initialPatientPopulation );
-                } else {
-                        throw new Exception( "Denominator must be an instance of CqmComponentIF" );
-                    }
-                
                 $numerators = $populationCriteria->createNumerators();
-                $numeratorPatientPopulations = array();
-                if ( is_array( $numerators ) ) {
-                    foreach ( $numerators as $numerator ) 
-                    {
-                        if ( $numerator instanceof CqmComponentIF ) {
-                            $numeratorPatientPopulations[$numerator->getTitle()] = $numerator->executeFilter( $denominatorPatientPopulation );
-                        } else {
-                            throw new Exception( "Numerator must be an instance of CqmComponentIF" );
-                        }
-                    }
-                } else if ( $numerators instanceof CqmComponentIF ) {
-                    $numeratorPatientPopulations[$numerators->getTitle()] = $numerators->executeFilter( $denominatorPatientPopulation ); 
-                }
-               
-                // tally results
-                $pass_filt = count( $denominatorPatientPopulation );
                 $exclusion = $populationCriteria->createExclusion();
-                if ( !$exclusion instanceof CqmComponentIF ) throw new Exception( "Exclusion must be an instance of CqmComponentIF" );
-                $excludedPatientPopulation = null;    
-                foreach ( $numeratorPatientPopulations as $numeratorTitle => $passTargetPopulation ) {
-                    $pass_targ = count( $passTargetPopulation );
-                    $excludedPatientPopulation = $exclusion->executeFilter( $passTargetPopulation );
-                    $exclude_filt = count( $excludedPatientPopulation );
-                    $percentage = calculate_percentage( $pass_filt, $exlude_filt, $pass_targ );
-                    $this->_resultsArray[]= new CqmResult( $this->_ruleId, $numeratorTitle, $populationCriteria->getTitle(),
-                        $totalPatients, $pass_filt, $exclude_filt, $pass_targ, $percentage );
+                
+                $totalPatients = count( $this->_cqmPopulation );
+                $initialPatientPopulation = 0;
+                $denominatorPatientPopulation = 0;
+                $numeratorPatientPopulations = array();
+                $exclusionsPatientPopulations = array();
+                foreach ( $this->_cqmPopulation as $patient ) {
+
+                    if ( $initialPatientPopulationFilter instanceof CqmFilterIF ) {
+                        if ( $initialPatientPopulationFilter->test( $patient ) ) {
+                            $initialPatientPopulation++;
+                        }
+                    } else {
+                        throw new Exception( "InitialPatientPopulation must be an instance of CqmFilterIF" );
+                    }
+
+                    if ( $denominator instanceof CqmFilterIF ) {
+                        if ( $denominator->test( $patient ) ) {
+                            $denominatorPatientPopulation++;
+                        }
+                    } else {
+                        throw new Exception( "Denominator must be an instance of CqmFilterIF" );
+                    }
+
+                    if ( is_array( $numerators ) ) {
+                        foreach ( $numerators as $numerator ) {
+                            $this->testNumerator( $patient, $numerator, $numeratorPatientPopulations, $exclusion, $exclusionsPatientPopulations );
+                        }
+                    } else {
+                        $this->testNumerator( $patient, $numerators, $numeratorPatientPopulations, $exclusion, $exclusionsPatientPopulations );
+                    }               
                 }
-            }  
+                
+                // tally results, run exclusion filter on each numerator
+                $pass_filt = $denominatorPatientPopulation;
+                $titles = array_keys( $numeratorPatientPopulations );
+                foreach ( $titles as $title ) {
+                    $pass_targ = $numeratorPatientPopulations[$title];
+                    $exclude_filt = $exclusionsPatientPopulations[$title];
+                    $percentage = calculate_percentage( $pass_filt, $exclude_filt, $pass_targ );
+                    $this->_resultsArray[]= new CqmResult( $this->_rowRule, $title, $populationCriteria->getTitle(),
+                    $totalPatients, $pass_filt, $exclude_filt, $pass_targ, $percentage );
+                }
+            }
         }
-        
+
         return $this->_resultsArray;
+    }
+    
+    private function testNumerator( $patient, $numerator, &$numeratorPatientPopulations, $exclusion, &$exclusionsPatientPopulations )
+    {
+        if ( $numerator instanceof CqmFilterIF && $exclusion instanceof CqmFilterIF ) {
+            if ( $numerator->test( $patient ) ) {
+                if ( !isset( $numeratorPatientPopulations[$numerator->getTitle()] ) ) {
+                    $numeratorPatientPopulations[$numerator->getTitle()] = 0;
+                }
+                $numeratorPatientPopulations[$numerator->getTitle()]++;
+            }
+            
+            if ( $exclusion->test( $patient ) ) {
+                if ( !isset( $exclusionsPatientPopulations[$numerator->getTitle()] ) ) {
+                    $exclusionsPatientPopulations[$numerator->getTitle()] = 0;
+                }
+                $exclusionsPatientPopulations[$numerator->getTitle()]++;
+            }
+            
+        } else {
+            throw new Exception( "Numerator must be an instance of CqmFilterIF" );
+        }
     }
 }

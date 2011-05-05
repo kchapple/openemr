@@ -3,7 +3,7 @@ class NFQ_0421_PopulationCriteria2 implements CqmPopulationCrtiteriaFactory
 {
     public function getTitle()
     {
-        return "population criteria 2";
+        return "Population Criteria 2";
     }
     
     public function createInitialPatientPopulation()
