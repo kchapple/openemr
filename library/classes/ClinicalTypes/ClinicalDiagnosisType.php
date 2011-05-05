@@ -1,6 +1,8 @@
 <?php
 class ClinicalDiagnosisType extends AbstractClinicalType
 {
+    const DIAG_HYPERTENSION = 'diag_hypertension';
+    
     public function getListType() {
         return 'medical_problem';
     }
@@ -23,12 +25,12 @@ class ClinicalDiagnosisType extends AbstractClinicalType
      * @return true if patient meets criteria, false ow
      */
     public function doPatientCheck( CqmPatient $patient, $beginMeasurement = null, $endMeasurement = null ) {
-        $notes = $type->getNotes();
+        $notes = $this->getNotes();
         $data = json_decode( $notes );
         $type = $this->getListType();
         foreach( $data as $codeType => $codes ) {
             foreach ( $codes as $code ) {
-                if ( exist_lists_item( $patient->id, $type, $codeType.':'.$code, $endMeasurement ) ) {
+                if ( exist_lists_item( $patient->id, $type, $codeType.'::'.$code, $endMeasurement ) ) {
                     return true;
                 }
             }

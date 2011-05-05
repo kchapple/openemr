@@ -6,7 +6,7 @@ class NFQ_0421_Denominator implements CqmFilterIF
         return "Denominator";
     }
     
-    public function test( CqmPatient $patient )
+    public function test( CqmPatient $patient, $dateBegin, $dateEnd )
     {
         return true;
     }

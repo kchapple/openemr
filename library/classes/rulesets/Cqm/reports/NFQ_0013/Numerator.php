@@ -1,9 +1,9 @@
 <?php
-class NFQ_0421_Exclusion implements CqmFilterIF
+class NFQ_0013_Numerator implements CqmFilterIF
 {
     public function getTitle() 
     {
-        return "Exclusion";
+        return "Numerator";
     }
     
     public function test( CqmPatient $patient, $dateBegin, $dateEnd )

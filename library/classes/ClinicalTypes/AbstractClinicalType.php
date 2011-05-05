@@ -12,7 +12,7 @@ abstract class AbstractClinicalType {
     
     public function __construct( $optionId ) {
         $this->_optionId = $optionId;
-        $result = getListById( $optionId );
+        $result = $this->getListOptionById( $optionId );
         $this->_title = $result['title'];
         $this->_notes = $result['notes'];
     }
@@ -27,13 +27,14 @@ abstract class AbstractClinicalType {
      * @return true if type applies, false ow
      */
     public abstract function doPatientCheck( CqmPatient $patient, $beginMeasurement = null, $endMeasurement = null ); 
-
+    public abstract function getListId();
+    
     public function getOptionId() {
         return $this->_optionId;
     }
     
     public function getNotes() {
-        return json_decode( $this->_notes );
+        return $this->_notes;
     }
     
     public function getListOptions() {
@@ -44,9 +45,10 @@ abstract class AbstractClinicalType {
     {
         $query = "SELECT * " .
                  "FROM `list_options` " .
-                 "WHERE list_id = ?" .
+                 "WHERE list_id = ? " .
                  "AND option_id = ?";
         $results = sqlStatement( $query, array( $this->getListId(), $id ) );
-        return $results[0];    
+        $arr = sqlFetchArray( $results );
+        return $arr;    
     }
 }

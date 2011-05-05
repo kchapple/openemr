@@ -1,9 +1,9 @@
 <?php
-class NFQ_0421_Exclusion implements CqmFilterIF
+class DenominatorAllPatients implements CqmFilterIF
 {
     public function getTitle() 
     {
-        return "Exclusion";
+        return "Denominator: All patients in the initial patient population";
     }
     
     public function test( CqmPatient $patient, $dateBegin, $dateEnd )

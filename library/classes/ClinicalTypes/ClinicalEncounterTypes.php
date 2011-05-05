@@ -1,6 +1,11 @@
 <?php
 class ClinicalEncounterTypes extends AbstractClinicalType
 {
+    public function getListId() 
+    {
+        return "rule_enc_types";
+    }
+    
     public function doPatientCheck( CqmPatient $patient, $beginMeasurement = null, $endMeasurement = null )
     {
         $encounters = getEncounters( $patient->id, $beginMeasurement, $endMeasurement, $this->getOptionId() );
