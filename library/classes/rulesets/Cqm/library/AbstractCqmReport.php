@@ -79,15 +79,20 @@ abstract class AbstractCqmReport
                             if ( $denominator instanceof CqmFilterIF ) {
                                 if ( $denominator->test( $patient, $this->_beginMeasurement, $this->_endMeasurement ) ) {
                                     $denominatorPatientPopulation++;
+                                } else {
+                                    continue;
                                 }
                             } else {
                                 throw new Exception( "Denominator must be an instance of CqmFilterIF" );
                             }
+                        } else {
+                            continue;
                         }
                     } else {
                         throw new Exception( "InitialPatientPopulation must be an instance of CqmFilterIF" );
                     }
                     
+                    // TODO check numerator in loop here and record results along with matching exclusions
                     if ( is_array( $numerators ) ) {
                         foreach ( $numerators as $numerator ) {
                             $this->testNumerator( $patient, $numerator, $numeratorPatientPopulations, $exclusion, $exclusionsPatientPopulations );
@@ -95,17 +100,17 @@ abstract class AbstractCqmReport
                     } else {
                         $this->testNumerator( $patient, $numerators, $numeratorPatientPopulations, $exclusion, $exclusionsPatientPopulations );
                     }
-                }
-
-                // tally results, run exclusion filter on each numerator
-                $pass_filt = $denominatorPatientPopulation;
-                $titles = array_keys( $numeratorPatientPopulations );
-                foreach ( $titles as $title ) {
-                    $pass_targ = $numeratorPatientPopulations[$title];
-                    $exclude_filt = $exclusionsPatientPopulations[$title];
-                    $percentage = calculate_percentage( $pass_filt, $exclude_filt, $pass_targ );
-                    $this->_resultsArray[]= new CqmResult( $this->_rowRule, $title, $populationCriteria->getTitle(),
-                    $totalPatients, $pass_filt, $exclude_filt, $pass_targ, $percentage );
+                    
+                    // tally results, run exclusion filter on each numerator
+                    $pass_filt = $denominatorPatientPopulation;
+                    $titles = array_keys( $numeratorPatientPopulations );
+                    foreach ( $titles as $title ) {
+                        $pass_targ = $numeratorPatientPopulations[$title];
+                        $exclude_filt = $exclusionsPatientPopulations[$title];
+                        $percentage = calculate_percentage( $pass_filt, $exclude_filt, $pass_targ );
+                        $this->_resultsArray[]= new CqmResult( $this->_rowRule, $title, $populationCriteria->getTitle(),
+                            $totalPatients, $pass_filt, $exclude_filt, $pass_targ, $percentage );
+                    }
                 }
             }
         }
