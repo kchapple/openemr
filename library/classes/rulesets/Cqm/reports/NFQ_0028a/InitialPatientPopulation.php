@@ -1,6 +1,6 @@
 <?php
 class NFQ_0028a_InitialPatientPopulation implements CqmFilterIF
-{
+{ 
     public function getTitle() 
     {
         return "Initial Patient Population";

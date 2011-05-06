@@ -7,9 +7,7 @@ class NFQ_0421_Numerator1 implements CqmFilterIF
     }
 
     public function test( CqmPatient $patient, $dateBegin, $dateEnd )
-    {
-        Helper::fetchEncounterDates( Encounter::ENC_OUTPATIENT, $patient, $dateBegin, $dateEnd );
-        
+    {        
         // Flow of control loop
         $return = false;
         do {

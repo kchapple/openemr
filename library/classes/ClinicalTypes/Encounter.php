@@ -34,7 +34,8 @@ class Encounter extends ClinicalType
         $dates = array();
         foreach ( $encounters as $encounter ) 
         {
-            $dates []= getEncounterDateByEncounter( $encounter );
+            $dateRow = getEncounterDateByEncounter( $encounter['encounter'] );
+            $dates []= $dateRow['date'];
         }
         return $dates;
     }
