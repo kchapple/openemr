@@ -62,51 +62,57 @@ abstract class AbstractCqmReport
             if ( $populationCriteria instanceof CqmPopulationCrtiteriaFactory )
             {
                 $initialPatientPopulationFilter = $populationCriteria->createInitialPatientPopulation();
+                if ( !$initialPatientPopulationFilter instanceof CqmFilterIF ) {
+                    throw new Exception( "InitialPatientPopulation must be an instance of CqmFilterIF" );
+                }
                 $denominator = $populationCriteria->createDenominator();
+                if ( !$denominator instanceof CqmFilterIF ) {
+                    throw new Exception( "Denominator must be an instance of CqmFilterIF" );
+                }
                 $numerators = $populationCriteria->createNumerators();
                 $exclusion = $populationCriteria->createExclusion();
+                if ( !$exclusion instanceof CqmFilterIF ) {
+                    throw new Exception( "Exclusion must be an instance of CqmFilterIF" );
+                }
 
                 $totalPatients = count( $this->_cqmPopulation );
                 $initialPatientPopulation = 0;
                 $denominatorPatientPopulation = 0;
+                $exclusionsPatientPopulation = 0;
                 $numeratorPatientPopulations = array();
-                $exclusionsPatientPopulations = array();
-                foreach ( $this->_cqmPopulation as $patient ) {
-
-                    if ( $initialPatientPopulationFilter instanceof CqmFilterIF ) {
-                        if ( $initialPatientPopulationFilter->test( $patient, $this->_beginMeasurement, $this->_endMeasurement ) ) {
-                            $initialPatientPopulation++;
-                            if ( $denominator instanceof CqmFilterIF ) {
-                                if ( $denominator->test( $patient, $this->_beginMeasurement, $this->_endMeasurement ) ) {
-                                    $denominatorPatientPopulation++;
-                                } else {
-                                    continue;
-                                }
-                            } else {
-                                throw new Exception( "Denominator must be an instance of CqmFilterIF" );
-                            }
-                        } else {
-                            continue;
-                        }
-                    } else {
-                        throw new Exception( "InitialPatientPopulation must be an instance of CqmFilterIF" );
+                foreach ( $this->_cqmPopulation as $patient ) 
+                { 
+                    if ( !$initialPatientPopulationFilter->test( $patient, $this->_beginMeasurement, $this->_endMeasurement ) ) 
+                    {
+                        continue;
                     }
+                        
+                    $initialPatientPopulation++;
                     
-                    // TODO check numerator in loop here and record results along with matching exclusions
+                    if ( !$denominator->test( $patient, $this->_beginMeasurement, $this->_endMeasurement ) ) 
+                    { 
+                        continue;
+                    }
+                            
+                    $denominatorPatientPopulation++;
+
+                    if ( $exclusion->test( $patient, $this->_beginMeasurement, $this->_endMeasurement ) )
+                    {
+                        $exclusionsPatientPopulation++;
+                    }
+                       
                     if ( is_array( $numerators ) ) {
                         foreach ( $numerators as $numerator ) {
-                            $this->testNumerator( $patient, $numerator, $numeratorPatientPopulations, $exclusion, $exclusionsPatientPopulations );
+                            $this->testNumerator( $patient, $numerator, $numeratorPatientPopulations );
                         }
                     } else {
-                        $this->testNumerator( $patient, $numerators, $numeratorPatientPopulations, $exclusion, $exclusionsPatientPopulations );
+                        $this->testNumerator( $patient, $numerators, $numeratorPatientPopulations );
                     }
                     
-                    // tally results, run exclusion filter on each numerator
+                    // tally results, run exclusion on each numerator
                     $pass_filt = $denominatorPatientPopulation;
-                    $titles = array_keys( $numeratorPatientPopulations );
-                    foreach ( $titles as $title ) {
-                        $pass_targ = $numeratorPatientPopulations[$title];
-                        $exclude_filt = $exclusionsPatientPopulations[$title];
+                    $exclude_filt = $exclusionsPatientPopulation;
+                    foreach ( $numeratorPatientPopulations as $title => $pass_targ ) {
                         $percentage = calculate_percentage( $pass_filt, $exclude_filt, $pass_targ );
                         $this->_resultsArray[]= new CqmResult( $this->_rowRule, $title, $populationCriteria->getTitle(),
                             $totalPatients, $pass_filt, $exclude_filt, $pass_targ, $percentage );
@@ -118,23 +124,15 @@ abstract class AbstractCqmReport
         return $this->_resultsArray;
     }
 
-    private function testNumerator( $patient, $numerator, &$numeratorPatientPopulations, $exclusion, &$exclusionsPatientPopulations )
+    private function testNumerator( $patient, $numerator, &$numeratorPatientPopulations )
     {
-        if ( $numerator instanceof CqmFilterIF && $exclusion instanceof CqmFilterIF ) {
+        if ( $numerator instanceof CqmFilterIF  ) {
             if ( $numerator->test( $patient, $this->_beginMeasurement, $this->_endMeasurement ) ) {
                 if ( !isset( $numeratorPatientPopulations[$numerator->getTitle()] ) ) {
                     $numeratorPatientPopulations[$numerator->getTitle()] = 0;
                 }
                 $numeratorPatientPopulations[$numerator->getTitle()]++;
             }
-
-            if ( $exclusion->test( $patient, $this->_beginMeasurement, $this->_endMeasurement ) ) {
-                if ( !isset( $exclusionsPatientPopulations[$numerator->getTitle()] ) ) {
-                    $exclusionsPatientPopulations[$numerator->getTitle()] = 0;
-                }
-                $exclusionsPatientPopulations[$numerator->getTitle()]++;
-            }
-
         } else {
             throw new Exception( "Numerator must be an instance of CqmFilterIF" );
         }

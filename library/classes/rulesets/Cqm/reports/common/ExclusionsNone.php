@@ -8,6 +8,6 @@ class ExclusionsNone implements CqmFilterIF
     
     public function test( CqmPatient $patient, $dateBegin, $dateEnd )
     {
-        return true;
+        return false;
     }
 }
