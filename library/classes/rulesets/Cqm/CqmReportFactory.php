@@ -27,7 +27,7 @@ class CqmReportFactory
             case "rule_tob_use_assess_cqm":
                 // Tobacco Use Assessment
                 // NQF 0028a
-                return new NFQ_Unimplemented();
+                return new NFQ_0028a( $rowRule, $patientData, $dateTarget );
             case "rule_tob_cess_inter_cqm":
                 // Tobacco Cessation Intervention
                 // NQF 0028b

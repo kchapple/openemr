@@ -8,17 +8,12 @@ class NFQ_0013_InitialPatientPopulation implements CqmFilterIF
     
     public function test( CqmPatient $patient, $dateBegin, $dateEnd )
     {
-        if ( convertDobtoAgeYearDecimal( $patient->dob, $dateBegin ) >= 18 ) {
-            $diagnosisHypertension = new ClinicalDiagnosisType( ClinicalDiagnosisType::DIAG_HYPERTENSION );
-            if ( $diagnosisHypertension->doPatientCheck( $patient, $dateBegin, $dateEnd ) ) {
-                $encounterOupatient = new ClinicalEncounterType( ClinicalEncounterType::ENC_OUTPATIENT );
-                if ( $encounterOupatient->doPatientCheck( $patient, $dateBegin, $dateEnd ) ) {
-                    $encounterNursing = new ClinicalEncounterType( ClinicalEncounterType::ENC_NURS_FAC );
-                   if ( $encounterNursing->doPatientCheck( $patient, $dateBegin, $dateEnd ) ) {
-                       return true;
-                   } 
-                }
-            }
+        $twoEncounters = array( Encounter::OPTION_ENCOUNTER_COUNT => 2 );
+        if ( convertDobtoAgeYearDecimal( $patient->dob, $dateBegin ) >= 18 &&
+            Helper::check( ClinicalType::DIAGNOSIS, Diagnosis::DIAG_HYPERTENSION, $patient, $dateBegin, $dateEnd ) ||
+            Helper::check( ClinicalType::ENCOUNTER, Encounter::ENC_OUTPATIENT, $patient, $dateBegin, $dateEnd, $twoEncounters ) ||
+            Helper::check( ClinicalType::ENCOUNTER, Encounter::ENC_NURS_FAC, $patient, $dateBegin, $dateEnd, $twoEncounters ) ) {
+            return true;
         } 
         
         return false;

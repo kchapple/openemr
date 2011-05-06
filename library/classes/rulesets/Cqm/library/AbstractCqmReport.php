@@ -107,16 +107,16 @@ abstract class AbstractCqmReport
                         }
                     } else {
                         $this->testNumerator( $patient, $numerators, $numeratorPatientPopulations );
-                    }
-                    
-                    // tally results, run exclusion on each numerator
-                    $pass_filt = $denominatorPatientPopulation;
-                    $exclude_filt = $exclusionsPatientPopulation;
-                    foreach ( $numeratorPatientPopulations as $title => $pass_targ ) {
-                        $percentage = calculate_percentage( $pass_filt, $exclude_filt, $pass_targ );
-                        $this->_resultsArray[]= new CqmResult( $this->_rowRule, $title, $populationCriteria->getTitle(),
-                            $totalPatients, $pass_filt, $exclude_filt, $pass_targ, $percentage );
-                    }
+                    } 
+                }
+                
+                // tally results, run exclusion on each numerator
+                $pass_filt = $denominatorPatientPopulation;
+                $exclude_filt = $exclusionsPatientPopulation;
+                foreach ( $numeratorPatientPopulations as $title => $pass_targ ) {
+                    $percentage = calculate_percentage( $pass_filt, $exclude_filt, $pass_targ );
+                    $this->_resultsArray[]= new CqmResult( $this->_rowRule, $title, $populationCriteria->getTitle(),
+                        $totalPatients, $pass_filt, $exclude_filt, $pass_targ, $percentage );
                 }
             }
         }
@@ -126,11 +126,13 @@ abstract class AbstractCqmReport
 
     private function testNumerator( $patient, $numerator, &$numeratorPatientPopulations )
     {
-        if ( $numerator instanceof CqmFilterIF  ) {
+        if ( $numerator instanceof CqmFilterIF  ) 
+        {
+            if ( !isset( $numeratorPatientPopulations[$numerator->getTitle()] ) ) {
+                $numeratorPatientPopulations[$numerator->getTitle()] = 0;
+            }
+                
             if ( $numerator->test( $patient, $this->_beginMeasurement, $this->_endMeasurement ) ) {
-                if ( !isset( $numeratorPatientPopulations[$numerator->getTitle()] ) ) {
-                    $numeratorPatientPopulations[$numerator->getTitle()] = 0;
-                }
                 $numeratorPatientPopulations[$numerator->getTitle()]++;
             }
         } else {
