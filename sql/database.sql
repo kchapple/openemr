@@ -1735,6 +1735,7 @@ CREATE TABLE `immunizations` (
   `patient_id` int(11) default NULL,
   `administered_date` date default NULL,
   `immunization_id` int(11) default NULL,
+  `cvx_code` int(11) default NULL,
   `manufacturer` varchar(100) default NULL,
   `lot_number` varchar(50) default NULL,
   `administered_by_id` bigint(20) default NULL,

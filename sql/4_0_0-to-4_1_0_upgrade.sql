@@ -971,3 +971,7 @@ CREATE TABLE `lists_touch` (
 ) ENGINE=MyISAM ;
 #EndIf
 
+#IfMissingColumn immunizations cvx_code
+ALTER TABLE immunizations ADD COLUMN `cvx_code` int(11) default NULL;
+#EndIf
+
