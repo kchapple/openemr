@@ -14,27 +14,15 @@ class NFQ_0028a_Numerator implements CqmFilterIF
             $dates = Helper::fetchEncounterDates( $encType, $patient, $dateBegin, $dateEnd );
             foreach ( $dates as $date ) 
             {
-                $begin_24_months_before_time = strtotime( '-24 month' , strtotime ( $date ) );
-                $begin_24_months_before = date( 'Y-m-d 00:00:00' , $begin_24_months_before_time );
-                $tobaccoHistory = getHistoryData( $patient->id, "tobacco", $begin_24_months_before, $dateEnd );
-                if ( isset( $tobaccoHistory['tobacco'] ) ) 
-                {
-                    // If this patient was a current tobacco smoker at the time of this encounter, 
-                    // or if they didn't quit more than 2 years before the encounter
-                    $tmp = explode( '|', $tobaccoHistory['tobacco'] );
-                    $tobaccoStatus = $tmp[1];
-                    if ( $tobaccoStatus == 'currenttobacco' ) {
-                        return true;
-                    } else if ( $tobaccoStatus == 'quittobacco' ) {
-                        $quitDate = $tmp[2];
-                        if ( stringtotime( $quitDate ) > $begin_24_months_before_time ) {
-                            return true;
-                        }     
-                    }        
+                $beginMinus24Months = strtotime( '-24 month' , strtotime ( $date ) );
+                $beginMinus24Months = date( 'Y-m-d 00:00:00' , $beginMinus24Months );
+                // this is basically a check to see if the patient's tobacco status has been evaluated in the past two years.
+                if ( Helper::check( ClinicalType::CHARACTERISTIC, Characteristic::TOBACCO_USER, $patient, $beginMinus24Months, $dateEnd ) ||
+                    Helper::check( ClinicalType::CHARACTERISTIC, Characteristic::TOBACCO_NON_USER, $patient, $beginMinus24Months, $dateEnd ) ) {
+                    return true;
                 }
             }
         }
-        
 
         return false;
     }

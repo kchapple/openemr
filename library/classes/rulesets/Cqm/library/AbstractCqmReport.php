@@ -135,7 +135,9 @@ abstract class AbstractCqmReport
             if ( $numerator->test( $patient, $this->_beginMeasurement, $this->_endMeasurement ) ) {
                 $numeratorPatientPopulations[$numerator->getTitle()]++;
             }
-        } else {
+        } 
+        else 
+        {
             throw new Exception( "Numerator must be an instance of CqmFilterIF" );
         }
     }

@@ -4,7 +4,8 @@ require_once( 'ClinicalType.php' );
 class Diagnosis extends ClinicalType
 {
     const DIAG_HYPERTENSION = 'diag_hypertension';
-    
+    const DIAG_PREGNANCY = 'diag_pregnancy';
+        
     public function getListType() {
         return 'medical_problem';
     }
@@ -27,8 +28,7 @@ class Diagnosis extends ClinicalType
      * @return true if patient meets criteria, false ow
      */
     public function doPatientCheck( CqmPatient $patient, $beginMeasurement = null, $endMeasurement = null, $options = null ) {
-        $notes = $this->getNotes();
-        $data = json_decode( $notes );
+        $data = Codes::lookup( $this->getOptionId() );
         $type = $this->getListType();
         foreach( $data as $codeType => $codes ) {
             foreach ( $codes as $code ) {

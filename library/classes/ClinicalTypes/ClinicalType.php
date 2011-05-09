@@ -4,6 +4,7 @@ require_once(dirname(__FILE__) . "/../../forms.inc");
 require_once(dirname(__FILE__) . "/../../patient.inc");
 require_once(dirname(__FILE__) . "/../../lists.inc");
 require_once(dirname(__FILE__) . "/../rulesets/Cqm/library/CqmPatient.php");
+require_once( 'codes.php' );
 
 abstract class ClinicalType 
 {

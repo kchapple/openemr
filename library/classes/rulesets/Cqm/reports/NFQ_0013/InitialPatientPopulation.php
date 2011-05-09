@@ -10,9 +10,9 @@ class NFQ_0013_InitialPatientPopulation implements CqmFilterIF
     {
         $twoEncounters = array( Encounter::OPTION_ENCOUNTER_COUNT => 2 );
         if ( convertDobtoAgeYearDecimal( $patient->dob, $dateBegin ) >= 18 &&
-            Helper::check( ClinicalType::DIAGNOSIS, Diagnosis::DIAG_HYPERTENSION, $patient, $dateBegin, $dateEnd ) ||
-            Helper::check( ClinicalType::ENCOUNTER, Encounter::ENC_OUTPATIENT, $patient, $dateBegin, $dateEnd, $twoEncounters ) ||
-            Helper::check( ClinicalType::ENCOUNTER, Encounter::ENC_NURS_FAC, $patient, $dateBegin, $dateEnd, $twoEncounters ) ) {
+            Helper::check( ClinicalType::DIAGNOSIS, Diagnosis::DIAG_HYPERTENSION, $patient, $dateBegin, $dateEnd ) &&
+            ( Helper::check( ClinicalType::ENCOUNTER, Encounter::ENC_OUTPATIENT, $patient, $dateBegin, $dateEnd, $twoEncounters ) ||
+              Helper::check( ClinicalType::ENCOUNTER, Encounter::ENC_NURS_FAC, $patient, $dateBegin, $dateEnd, $twoEncounters ) ) ) {
             return true;
         } 
         
