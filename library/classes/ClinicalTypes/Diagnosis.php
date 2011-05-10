@@ -5,6 +5,8 @@ class Diagnosis extends ClinicalType
 {
     const HYPERTENSION = 'diag_hypertension';
     const PREGNANCY = 'diag_pregnancy';
+    const ENCEPHALOPATHY = 'diag_encephalopathy';
+    const PROG_NEURO_DISORDER = 'diag_prog_neuro_disorder';
         
     public function getListType() {
         return 'medical_problem';
