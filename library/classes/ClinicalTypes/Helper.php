@@ -3,11 +3,11 @@ require_once( 'ClinicalType.php' );
 
 class Helper
 {
-    public static function check( $type, $subType, CqmPatient $patient, $beginMeasurement = null, $endMeasurement = null, $options = null )
+    public static function check( $type, $subType, CqmPatient $patient, $beginDate = null, $endDate = null, $options = null )
     {
         $typeObj = new $type( $subType );
         if ( $typeObj instanceof ClinicalType ) {
-            return $typeObj->doPatientCheck( $patient, $beginMeasurement, $endMeasurement, $options );
+            return $typeObj->doPatientCheck( $patient, $beginDate, $endDate, $options );
         } else {
             throw new Exception( "Type must be a subclass of AbstractClinicalType" );
         }

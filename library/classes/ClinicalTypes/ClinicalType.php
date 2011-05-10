@@ -15,6 +15,7 @@ abstract class ClinicalType
     const MEDICATION = 'Medication';
     const COMMUNICATION = 'Communication';
     const CHARACTERISTIC = 'Characteristic';
+    const PHYSICAL_EXAM = 'PhysicalExam';
     
     private $_optionId;
     private $_title;
@@ -36,7 +37,7 @@ abstract class ClinicalType
      * 
      * @return true if type applies, false ow
      */
-    public abstract function doPatientCheck( CqmPatient $patient, $beginMeasurement = null, $endMeasurement = null, $options = null ); 
+    public abstract function doPatientCheck( CqmPatient $patient, $beginDate = null, $endDate = null, $options = null ); 
     public abstract function getListId();
     
     public function getOptionId() {

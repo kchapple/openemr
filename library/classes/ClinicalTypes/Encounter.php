@@ -15,6 +15,8 @@ class Encounter extends ClinicalType
     const ENC_PRE_IND_COUNSEL = 'enc_pre_ind_counsel';
     const ENC_PRE_MED_GROUP_COUNSEL = 'enc_pre_med_group_counsel';
     const ENC_PRE_MED_OTHER_SERV = 'enc_pre_med_other_serv';
+    const ENC_OUT_PCP_OBGYN = 'enc_out_pcp_obgyn';
+    const ENC_PREGNANCY = 'enc_pregnancy';
     
     public function getListId() 
     {
@@ -46,8 +48,7 @@ class Encounter extends ClinicalType
         ( empty($encounters) ) ? $totalNumberAppt = 0 : $totalNumberAppt = count( $encounters );
         if ( $totalNumberAppt < $options[self::OPTION_ENCOUNTER_COUNT] ) {
             return false;
-        }
-        else {
+        } else {
             return true;
         }
     }

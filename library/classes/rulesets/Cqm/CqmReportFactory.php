@@ -40,7 +40,7 @@ class CqmReportFactory
             case "rule_wt_assess_couns_child_cqm":
                 // Weight Assessment and Counseling for Children and Adolescents
                 // NQF 0024
-                return new NFQ_Unimplemented();
+                return new NFQ_0024( $rowRule, $patientData, $dateTarget );
             case "rule_influenza_ge_50_cqm":
                 // Influenza Immunization for Patients >= 50 Years Old
                 // NQF 0041
