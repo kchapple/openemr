@@ -1,6 +1,5 @@
 <?php
-interface CqmFilterIF
+interface CqmFilterIF extends RsFilterIF
 {
     public function test( CqmPatient $patient, $dateBegin, $dateEnd );
-    public function getTitle();
 }

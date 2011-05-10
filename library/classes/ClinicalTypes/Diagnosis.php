@@ -29,7 +29,7 @@ class Diagnosis extends ClinicalType
      * 
      * @return true if patient meets criteria, false ow
      */
-    public function doPatientCheck( CqmPatient $patient, $beginDate = null, $endDate = null, $options = null ) {
+    public function doPatientCheck( RsPatient $patient, $beginDate = null, $endDate = null, $options = null ) {
         $data = Codes::lookup( $this->getOptionId() );
         $type = $this->getListType();
         foreach( $data as $codeType => $codes ) {

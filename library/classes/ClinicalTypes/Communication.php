@@ -11,7 +11,7 @@ class Communication extends ClinicalType
         return 'Clinical_Rules_Comm_Types';
     }
     
-    public function doPatientCheck( CqmPatient $patient, $beginDate = null, $endDate = null, $options = null ) 
+    public function doPatientCheck( RsPatient $patient, $beginDate = null, $endDate = null, $options = null ) 
     {
         // TODO read from referrals to check for ditary consult
         return true;

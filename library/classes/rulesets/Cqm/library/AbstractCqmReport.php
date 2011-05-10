@@ -1,7 +1,7 @@
 <?php
 require_once( dirname(__FILE__)."/../../../../clinical_rules.php" );
 
-abstract class AbstractCqmReport
+abstract class AbstractCqmReport implements RsReportIF
 {
     protected $_cqmPopulation;
 
@@ -46,6 +46,10 @@ abstract class AbstractCqmReport
 
     public function getEndMeasurement() {
         return $this->_endMeasurement;
+    }
+    
+    public function getResults() {
+        return $this->_resultsArray;
     }
 
     public function execute()

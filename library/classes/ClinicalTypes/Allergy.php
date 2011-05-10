@@ -13,7 +13,7 @@ class Allergy extends ClinicalType
         return 'Clinical_Rules_Allergy_Types';
     }
     
-    public function doPatientCheck( CqmPatient $patient, $beginMeasurement = null, $endMeasurement = null, $options = null ) {
+    public function doPatientCheck( RsPatient $patient, $beginMeasurement = null, $endMeasurement = null, $options = null ) {
         return true;
     }
     

@@ -1,9 +1,9 @@
 <?php
-class NFQ_0024_InitialPatientPopulation1 implements CqmFilterIF
+class NFQ_0024_InitialPatientPopulation3 implements CqmFilterIF
 {
     public function getTitle()
     {
-        return "Initial Patient Population 1";
+        return "Initial Patient Population 3";
     }
 
     public function test( CqmPatient $patient, $dateBegin, $dateEnd )

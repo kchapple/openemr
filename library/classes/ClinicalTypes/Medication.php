@@ -24,7 +24,7 @@ class Medication extends ClinicalType
         return "Clinical_Rules_Med_Types";
     }   
     
-    public function doPatientCheck( CqmPatient $patient, $beginMeasurement = null, $endMeasurement = null, $options = null ) {
+    public function doPatientCheck( RsPatient $patient, $beginMeasurement = null, $endMeasurement = null, $options = null ) {
         return true;
     }
 }

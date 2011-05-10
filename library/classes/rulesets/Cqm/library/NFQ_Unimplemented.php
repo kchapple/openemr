@@ -1,5 +1,7 @@
 <?php
-class NFQ_Unimplemented extends AbstractCqmReport
+require_once( 'AbstractCqmReport.php' );
+
+class NFQ_Unimplemented extends AbstractCqmReport implements RsUnimplementedIF
 {   
     public function __construct() {
         parent::__construct( array(), array(), null );    

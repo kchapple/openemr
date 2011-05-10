@@ -1,7 +1,6 @@
 <?php
-interface CqmPopulationCrtiteriaFactory
+interface CqmPopulationCrtiteriaFactory extends RsFilterIF
 {
-    public function getTitle();
     public function createInitialPatientPopulation();
     public function createDenominator();
     public function createNumerators();

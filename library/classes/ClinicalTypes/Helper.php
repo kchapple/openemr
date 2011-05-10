@@ -3,7 +3,7 @@ require_once( 'ClinicalType.php' );
 
 class Helper
 {
-    public static function check( $type, $subType, CqmPatient $patient, $beginDate = null, $endDate = null, $options = null )
+    public static function check( $type, $subType, RsPatient $patient, $beginDate = null, $endDate = null, $options = null )
     {
         $typeObj = new $type( $subType );
         if ( $typeObj instanceof ClinicalType ) {
@@ -13,7 +13,7 @@ class Helper
         }
     }
     
-    public static function fetchEncounterDates( $encounterType, CqmPatient $patient, $beginDate = null, $endDate = null )
+    public static function fetchEncounterDates( $encounterType, RsPatient $patient, $beginDate = null, $endDate = null )
     {
         $encounter = new Encounter( $encounterType );
         return $encounter->fetchDates( $patient, $beginDate, $endDate );

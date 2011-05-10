@@ -239,19 +239,15 @@ function test_rules_clinic($provider='',$type='',$dateTarget='',$mode='',$patien
     // Note these rules are only used in report mode.
     if ($rowRule['cqm_flag'] || $rowRule['amc_flag']) {
 
-      require_once( dirname(__FILE__)."/classes/rulesets/Cqm/CqmReportFactory.php");
-      $factory = new CqmReportFactory();
-      $nfq = $factory->createReport( $rowRule, $patientData, $dateTarget );
-      if ( !$nfq instanceof NFQ_Unimplemented ) {
-        $nfqResults = $nfq->execute();
-        // Collect/add the results to the results array
-        $tempResults = CqmResult::formatClinicalRules( $nfqResults );
-        if (!empty($tempResults)) {
-          foreach ($tempResults as $tempResult) {
-            array_push($results,$tempResult);
-          }
+      require_once( dirname(__FILE__)."/classes/rulesets/ReportManager.php");
+      $manager = new ReportManager();
+      $tempResults = $manager->runReport( $rowRule, $patientData, $dateTarget );
+      if (!empty($tempResults)) {
+        foreach ($tempResults as $tempResult) {
+          array_push($results,$tempResult);
         }
       }
+      
       
 //          // Ensure the ruleSet class file has been included
 //      // (will only require if needed, since it's gonna be large)

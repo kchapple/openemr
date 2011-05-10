@@ -1,5 +1,5 @@
 <?php
-class CqmReportFactory extends RsReportFactoryAbstract
+class AmcReportFactory extends RsReportFactoryAbstract
 {
     public function __construct()
     {
@@ -18,7 +18,7 @@ class CqmReportFactory extends RsReportFactoryAbstract
         if ( class_exists( $className ) ) {
             $reportObject = new $className( $rowRule, $patientData, $dateTarget );
         } else {
-            $reportObject = new NFQ_Unimplemented();
+            $reportObject = new AMC_Unimplemented();
         }
         
         return $reportObject;

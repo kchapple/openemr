@@ -22,7 +22,7 @@ class Codes
         Communication::COUNS_PHYS_ACTIVITY => array(
             'ICD9' => array( 'V65.41'
         ) ),
-        Encounter::ENC_OBGYN => array(
+        Encounter::ENC_OUT_PCP_OBGYN => array(
             'ICD9' => array( 'V24','V25','V26','V27','V28','V45.5','V61.5','V61.6','V61.7','V69.2','V72.3','V72.4'
         ) ),
         Encounter::ENC_OUTPATIENT => array(
