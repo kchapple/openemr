@@ -1,7 +1,8 @@
 <?php
 require_once( 'AmcFilterIF.php' );
 
-abstract class AbstractAmcReport implements RsReportIF, AmcFilterIF
+
+abstract class AbstractAmcReport implements RsReportIF
 {
     protected $_amcPopulation;
 
@@ -37,6 +38,9 @@ abstract class AbstractAmcReport implements RsReportIF, AmcFilterIF
         $this->_beginMeasurement = $tempDateArray[0] . "-01-01 00:00:00";
         $this->_endMeasurement = $tempDateArray[0] . "-12-31 23:59:59";
     }
+
+    public abstract function createNumerator();
+    public abstract function createDenominator();
         
     public function getResults() {
         return $this->_resultsArray;
@@ -44,18 +48,37 @@ abstract class AbstractAmcReport implements RsReportIF, AmcFilterIF
 
     public function execute()
     {
+        $numerator = $this->createNumerator();
+        if ( !$numerator instanceof AmcFilterIF ) {
+            throw new Exception( "Numerator must be an instance of AmcFilterIF" );
+        }
+        
+        $denominator = $this->createDenominator();
+        if ( !$denominator instanceof AmcFilterIF ) {
+            throw new Exception( "Denominator must be an instance of AmcFilterIF" );
+        }
+        
         $totalPatients = count( $this->_amcPopulation );
-        $passPatients = 0;
+        $numeratorPatients = 0;
+        $denominatorPatients = 0;
         foreach ( $this->_amcPopulation as $patient ) 
         {
-            if ( $this->test( $patient, $this->_beginMeasurement, $this->_endMeasurement ) ) {
-                $passPatients++;
+            if ( !$denominator->test( $patient, $this->_beginMeasurement, $this->_endMeasurement ) ) {
+                continue;
             }
+            
+            $denominatorPatients++;
+            
+            if ( !$numerator->test( $patient, $this->_beginMeasurement, $this->_endMeasurement ) ) {
+                continue;
+            }
+            
+            $numeratorPatients++;
         }
         
         // TODO calculate results
-        $percentage = calculate_percentage( $totalPatients, 0, $passPatients );
-        $result = new AmcResult( $this->_rowRule, $totalPatients, $totalPatients, 0, $passPatients, $percentage );
+        $percentage = calculate_percentage( $denominatorPatients, 0, $numeratorPatients );
+        $result = new AmcResult( $this->_rowRule, $totalPatients, $denominatorPatients, 0, $numeratorPatients, $percentage );
         $this->_resultsArray[]= $result;
     }
 }
