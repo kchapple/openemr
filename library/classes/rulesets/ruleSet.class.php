@@ -262,6 +262,20 @@ class ruleSet
   }
   
   
+<<<<<<< HEAD
+=======
+  private function check_for_dtap_allergy( $patient_id, $end_measurement ) {
+      global $dtap_allergy_codes;
+      
+      foreach ( $dtap_allergy_codes as $dtap_allergy_code ) {
+      if ( exist_lists_item( $patient_id,'allergy','RXNORM::'.$dtap_allergy_code,$end_measurement ) ) {
+              return true;
+          }
+      }
+      return false;
+  }
+
+>>>>>>> d39eabf... merged and cleanup
   // Function to get patient dob
   // Parameter:
   //   $patient_id - patient id
@@ -927,13 +941,18 @@ class ruleSet
     
       $result = sqlStatement( $query, array( $patient_id ) );
       if ( count( $result ) >= 4 && 
+<<<<<<< HEAD
           !( $this->codes->check_for_dtap_allergy( $patient_id, $end_measurement ) ) &&
           !( exist_lists_item( $patient_id, 'medical_problem', 'ICD9::323.51', $end_measurement ) ) &&
           !( $this->codes->check_for_progressive_neurological_disorder( $patient_id, $end_measurement ) ) ) {
+=======
+          !( $this->check_for_dtap_allergy( $patient_id, $end_measurement ) ) ) {
+>>>>>>> d39eabf... merged and cleanup
          $pass_targ[1]++;
       }
       
       // Numerator 2
+<<<<<<< HEAD
     $query = "SELECT immunizations.administered_date, immunizations.patient_id, immunizations.immunization_id, list_options.title, patient_data.pid, patient_data.DOB " .
     	"FROM immunizations " .
     	"LEFT JOIN list_options " .
@@ -985,6 +1004,11 @@ class ruleSet
         $perc = calculate_percentage($pass_filt,$exclude_filt,$pass_targ_count);
         // Set results
         $this->set_result($rule_id,$total_pat,$pass_filt,$exclude_filt,$pass_targ_count,$perc);
+=======
+
+      
+      
+>>>>>>> d39eabf... merged and cleanup
     }
   }
 

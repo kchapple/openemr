@@ -1,9 +1,9 @@
 <?php
-//require_once(dirname(__FILE__) . "/../../clinical_rules.php");
-//require_once(dirname(__FILE__) . "/../../forms.inc");
-//require_once(dirname(__FILE__) . "/../../patient.inc");
-//require_once(dirname(__FILE__) . "/../../lists.inc");
-//require_once(dirname(__FILE__) . "/../rulesets/library/RsPatient.php");
+require_once(dirname(__FILE__) . "/../../clinical_rules.php");
+require_once(dirname(__FILE__) . "/../../forms.inc");
+require_once(dirname(__FILE__) . "/../../patient.inc");
+require_once(dirname(__FILE__) . "/../../lists.inc");
+require_once(dirname(__FILE__) . "/../rulesets/library/RsPatient.php");
 require_once( 'codes.php' );
 
 abstract class ClinicalType 
