@@ -30,10 +30,7 @@ class ReportTypes
         "rule_dm_foot_cqm" => array( ReportTypes::CQM, "NFQ_Unimplemented" ),
         "rule_dm_bp_control_cqm" => array( ReportTypes::CQM, "NFQ_Unimplemented" ),
         "rule_dm_a1c_cqm" => array( ReportTypes::CQM, "NFQ_Unimplemented" ),
-<<<<<<< HEAD
         "rule_dm_ldl_cqm" => array( ReportTypes::CQM, "NFQ_Unimplemented" ),
-=======
->>>>>>> ken_cqm_experimental
     	"problem_list_amc" => array( ReportTypes::AMC, "ProblemList" ),
     	"med_list_amc" => array( ReportTypes::AMC, "AMC_Unimplemented" ),
     	"med_allergy_list_amc" => array( ReportTypes::AMC, "AMC_Unimplemented" ),
@@ -51,8 +48,4 @@ class ReportTypes
     	"provide_sum_pat_amc" => array( ReportTypes::AMC, "AMC_Unimplemented" ),
         "send_sum_amc" => array( ReportTypes::AMC, "AMC_Unimplemented" )
     );
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> ken_cqm_experimental
