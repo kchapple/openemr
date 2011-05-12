@@ -37,7 +37,7 @@ abstract class AbstractAmcReport implements RsReportIF
         $this->_beginMeasurement = $tempDateArray[0] . "-01-01 00:00:00";
         $this->_endMeasurement = $tempDateArray[0] . "-12-31 23:59:59";
     }
-    
+
     public abstract function createNumerator();
     public abstract function createDenominator();
         
