@@ -6,7 +6,7 @@ class DenominatorAllPatients implements CqmFilterIF
         return "Denominator: All patients in the initial patient population";
     }
     
-    public function test( CqmPatient $patient, $dateBegin, $dateEnd )
+    public function test( CqmPatient $patient, $beginDate, $endDate )
     {
         return true;
     }

@@ -23,6 +23,7 @@ class Diagnosis extends ClinicalType
     const HEP_B = 'diag_hep_b';
     const HEP_A = 'diag_hep_a';
     const VZV = 'diag_vzv';
+    const INFLUENZA_IMMUN_CONTRADICT = 'diag_influenza_immun_contradict';
         
     public function getListType() {
         return 'medical_problem';

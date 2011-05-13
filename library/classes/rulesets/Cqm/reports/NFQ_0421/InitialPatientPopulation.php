@@ -6,9 +6,9 @@ class NFQ_0421_InitialPatientPopulation implements CqmFilterIF
         return "Initial Patient Population";
     }
     
-    public function test( CqmPatient $patient, $dateBegin, $dateEnd )
+    public function test( CqmPatient $patient, $beginDate, $endDate )
     {
-        if ( convertDobtoAgeYearDecimal( $patient->dob, $dateBegin ) > 65  ) {
+        if ( $patient->calculateAgeOnDate( $beginDate ) > 65  ) {
             return true;
         }
         

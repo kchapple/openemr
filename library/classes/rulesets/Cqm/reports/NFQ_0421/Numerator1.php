@@ -6,7 +6,7 @@ class NFQ_0421_Numerator1 implements CqmFilterIF
         return "Numerator 1";
     }
 
-    public function test( CqmPatient $patient, $dateBegin, $dateEnd )
+    public function test( CqmPatient $patient, $beginDate, $endDate )
     {        
         // Flow of control loop
         $return = false;

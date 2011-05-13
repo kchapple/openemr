@@ -20,6 +20,8 @@ class Allergy extends ClinicalType
     const HEP_B_VAC = 'med_allergy_hep_b_vac';
     const ROTAVIRUS_VAC = 'med_allergy_rotavirus_vac';
     const INFLUENZA_VAC = 'med_allergy_flu_vac';
+    const INFLUENZA_IMMUN = 'med_allergy_flu_immun';
+    const EGGS = 'subst_allergy_eggs';
     
     public function getType() {
         return 'allergy';
@@ -29,6 +31,14 @@ class Allergy extends ClinicalType
         return 'Clinical_Rules_Allergy_Types';
     }
     
+    /*
+     * 	Check to see if a patient had an allergy to THIS thing between $beginDate and $endDate
+     * 	$beginDate and $endDate can be the same, indicating a check for allergy on particular date
+     * 
+     * 	@param	(RsPatient) $patient	Patient to check
+     * 	@param	(date) $beginDate		Lower bound on date to check for allergy
+     * 	@param	(date) $endDate			Upper bound on date to check for allergy
+     */
     public function doPatientCheck( RsPatient $patient, $beginDate = null, $endDate = null, $options = null ) {
         // TODO check for allergy (wherever it exists... lists 'allergy' type probably.)
         return false;

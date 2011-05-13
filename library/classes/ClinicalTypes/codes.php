@@ -48,15 +48,15 @@ class Codes
         Encounter::ENC_PREGNANCY => array(
             'ICD9' => array( 'V24','V24.0','V24.2','V25','V25.01','V25.02','V25.03','V25.09','V26.81','V28','V28.3','V28.81','V28.82','V72.4','V72.40','V72.41','V72.42' ) 
         ),
-        Medication::DTAP => array(
+        Medication::DTAP_VAC => array(
             'OPTION_ID' => array( 1, 2, 3, 4, 5, ),
             'CVX' => array()
         ),
-        Medication::HEP_A => array(
+        Medication::HEP_A_VAC => array(
             'OPTION_ID' => array( 33, 34 ),
             'CVX' => array()
         ),
-        Medication::HEP_B => array(
+        Medication::HEP_B_VAC => array(
             'OPTION_ID' => array( 27, 28, 29 ),
             'CVX' => array()
         ),
@@ -68,7 +68,7 @@ class Codes
             'OPTION_ID' => array( 11, 12, 13, 14 ),
             'CVX' => array()
         ),
-        Medication::MEASLES => array( // TODO
+        Medication::MEASLES_VAC => array( // TODO
             'OPTION_ID' => array(),
             'CVX' => array()
         ),
@@ -76,15 +76,15 @@ class Codes
             'OPTION_ID' => array( 23, 24 ),
             'CVX' => array()
         ),
-        Medication::MUMPS => array( // TODO
+        Medication::MUMPS_VAC => array( // TODO
         	'OPTION_ID' => array(),
             'CVX' => array()
         ),
-        Medication::PNEUMOCOCCAL => array(
+        Medication::PNEUMOCOCCAL_VAC => array(
             'OPTION_ID' => array( 19, 20, 21, 22 ),
             'CVX' => array()
         ),
-        Medication::RUBELLA => array( // TODO
+        Medication::RUBELLA_VAC => array( // TODO
             'OPTION_ID' => array(),
             'CVX' => array()
         ),

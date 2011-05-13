@@ -6,10 +6,10 @@ class NFQ_0421_Exclusion implements CqmFilterIF
         return "Exclusion";
     }
     
-    public function test( CqmPatient $patient, $dateBegin, $dateEnd )
+    public function test( CqmPatient $patient, $beginDate, $endDate )
     {
         // Check for terminal illness within 6 months of encounter
-        $dates = Helper::fetchEncounterDates( Encounter::ENC_OUTPATIENT, $patient, $dateBegin, $dateEnd );
+        $dates = Helper::fetchEncounterDates( Encounter::ENC_OUTPATIENT, $patient, $beginDate, $endDate );
         foreach ( $dates as $date ) 
         {
             $dateMinusSixMonths = strtotime( '-6 month' , strtotime ( $date ) );
@@ -19,10 +19,10 @@ class NFQ_0421_Exclusion implements CqmFilterIF
             }     
         }
         
-        if ( Helper::check( ClinicalType::DIAGNOSIS, Diagnosis::PREGNANCY, $patient, $dateBegin, $dateEnd ) ||
-            Helper::check( ClinicalType::PHYSICAL_EXAM, PhysicalExam::NOT_DONE_PATIENT, $patient, $dateBegin, $dateEnd ) ||
-            Helper::check( ClinicalType::PHYSICAL_EXAM, PhysicalExam::NOT_DONE_MEDICAL, $patient, $dateBegin, $dateEnd ) ||
-            Helper::check( ClinicalType::PHYSICAL_EXAM, PhysicalExam::NOT_DONE_SYSTEM, $patient, $dateBegin, $dateEnd ) ) {
+        if ( Helper::check( ClinicalType::DIAGNOSIS, Diagnosis::PREGNANCY, $patient, $beginDate, $endDate ) ||
+            Helper::check( ClinicalType::PHYSICAL_EXAM, PhysicalExam::NOT_DONE_PATIENT, $patient, $beginDate, $endDate ) ||
+            Helper::check( ClinicalType::PHYSICAL_EXAM, PhysicalExam::NOT_DONE_MEDICAL, $patient, $beginDate, $endDate ) ||
+            Helper::check( ClinicalType::PHYSICAL_EXAM, PhysicalExam::NOT_DONE_SYSTEM, $patient, $beginDate, $endDate ) ) {
             return true;
         }
         

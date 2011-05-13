@@ -6,13 +6,13 @@ class NFQ_0013_InitialPatientPopulation implements CqmFilterIF
         return "Initial Patient Population";
     }
     
-    public function test( CqmPatient $patient, $dateBegin, $dateEnd )
+    public function test( CqmPatient $patient, $beginDate, $endDate )
     {
         $twoEncounters = array( Encounter::OPTION_ENCOUNTER_COUNT => 2 );
-        if ( convertDobtoAgeYearDecimal( $patient->dob, $dateBegin ) >= 18 &&
-            Helper::check( ClinicalType::DIAGNOSIS, Diagnosis::HYPERTENSION, $patient, $dateBegin, $dateEnd ) &&
-            ( Helper::check( ClinicalType::ENCOUNTER, Encounter::ENC_OUTPATIENT, $patient, $dateBegin, $dateEnd, $twoEncounters ) ||
-              Helper::check( ClinicalType::ENCOUNTER, Encounter::ENC_NURS_FAC, $patient, $dateBegin, $dateEnd, $twoEncounters ) ) ) {
+        if ( $patient->calculateAgeOnDate( $beginDate ) >= 18 &&
+            Helper::check( ClinicalType::DIAGNOSIS, Diagnosis::HYPERTENSION, $patient, $beginDate, $endDate ) &&
+            ( Helper::check( ClinicalType::ENCOUNTER, Encounter::ENC_OUTPATIENT, $patient, $beginDate, $endDate, $twoEncounters ) ||
+              Helper::check( ClinicalType::ENCOUNTER, Encounter::ENC_NURS_FAC, $patient, $beginDate, $endDate, $twoEncounters ) ) ) {
             return true;
         } 
         
