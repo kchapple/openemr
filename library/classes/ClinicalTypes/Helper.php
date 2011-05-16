@@ -29,6 +29,11 @@ class Helper
         return self::check( ClinicalType::ENCOUNTER, $subType, $patient, $beginDate, $endDate, $options );
     }
     
+    public static function checkLab( $subType, RsPatient $patient, $beginDate = null, $endDate = null, $options = null )
+    {
+        return self::check( ClinicalType::LAB_RESULT, $subType, $patient, $beginDate, $endDate , $options );
+    }
+    
     public static function checkMed( $subType, RsPatient $patient, $beginDate = null, $endDate = null, $options = null )
     {
         return self::check( ClinicalType::MEDICATION, $subType, $patient, $beginDate, $endDate , $options );

@@ -30,6 +30,10 @@ class Medication extends ClinicalType
     
     const ADVERSE_EVT_FLU_IMMUN = 'med_adverse_evt_flu_immun';
     const INTOLERANCE_FLU_IMMUN = 'med_intolerance_flu_immun';
+    
+    const DISP_DIABETES = 'med_disp_diabetes';
+    const ORDER_DIABETES = 'med_order_diabetes';
+    const ACTIVE_DIABETES = 'med_active_diabetes';
         
     public function getListId() {
         return "Clinical_Rules_Med_Types";

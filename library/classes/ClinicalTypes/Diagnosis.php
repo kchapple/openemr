@@ -24,7 +24,11 @@ class Diagnosis extends ClinicalType
     const HEP_A = 'diag_hep_a';
     const VZV = 'diag_vzv';
     const INFLUENZA_IMMUN_CONTRADICT = 'diag_influenza_immun_contradict';
-        
+    const DIABETES = 'diag_diabetes';
+    const POLYCYSTIC_OVARIES = 'diag_polycystic_ovaries';
+    const GESTATIONAL_DIABETES = 'diag_gestational_diabetes';
+    const STEROID_INDUCED_DIABETES = 'diag_steroid_induced_diabetes';
+    
     public function getListType() {
         return 'medical_problem';
     }

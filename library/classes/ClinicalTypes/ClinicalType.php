@@ -16,6 +16,7 @@ abstract class ClinicalType
     const COMMUNICATION = 'Communication';
     const CHARACTERISTIC = 'Characteristic';
     const PHYSICAL_EXAM = 'PhysicalExam';
+    const LAB_RESULT = 'LabResult';
     
     private $_optionId; 
     private $_title;
