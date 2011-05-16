@@ -6,6 +6,7 @@ class LabResult extends ClinicalType
     const OPTION_RANGE = 'range';
     
     const HB1AC_TEST = 'lab_hb1ac_test';
+    const LDL_TEST = 'lab_ldl_test';
     
     public function getListId() 
     {
@@ -21,6 +22,8 @@ class LabResult extends ClinicalType
                 // search through vitals to find the most recent lab result in the date range
                 // if the result value is within range using Range->test(val), return true
             }
+        } else {
+            // range is not set, check for any lab result of this type within the date range
         }
         
         return false;

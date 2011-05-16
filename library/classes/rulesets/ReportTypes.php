@@ -30,7 +30,7 @@ class ReportTypes
         "rule_dm_foot_cqm" => array( ReportTypes::CQM, "NFQ_Unimplemented" ),
         "rule_dm_bp_control_cqm" => array( ReportTypes::CQM, "NFQ_Unimplemented" ),
         "rule_dm_a1c_cqm" => array( ReportTypes::CQM, "NFQ_0059" ), // Diabetes: HbA1c Poor Control (NQF 0059)
-        "rule_dm_ldl_cqm" => array( ReportTypes::CQM, "NFQ_Unimplemented" ),
+        "rule_dm_ldl_cqm" => array( ReportTypes::CQM, "NFQ_0064" ), // Diabetes: LDL Management & Control (NQF 0064)
     	"problem_list_amc" => array( ReportTypes::AMC, "AMC_302c" ),
     	"med_list_amc" => array( ReportTypes::AMC, "AMC_302d" ),
     	"med_allergy_list_amc" => array( ReportTypes::AMC, "AMC_302e" ),

@@ -1,5 +1,5 @@
 <?php
-class NFQ_0059_InitialPatientPopulation implements CqmFilterIF
+class DiabetesInitialPatientPopulation implements CqmFilterIF
 {
     public function getTitle()
     {

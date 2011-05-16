@@ -1,5 +1,5 @@
 <?php
-class NFQ_0059_Denominator implements CqmFilterIF
+class DiabetesDenominator implements CqmFilterIF
 {
     public function getTitle()
     {

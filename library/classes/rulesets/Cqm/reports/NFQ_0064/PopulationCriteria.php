@@ -1,5 +1,5 @@
 <?php
-class NFQ_0059_PopulationCriteria implements CqmPopulationCrtiteriaFactory
+class NFQ_0064_PopulationCriteria implements CqmPopulationCrtiteriaFactory
 {    
     public function getTitle()
     {
@@ -13,7 +13,10 @@ class NFQ_0059_PopulationCriteria implements CqmPopulationCrtiteriaFactory
     
     public function createNumerators()
     {
-        return new NFQ_0059_Numerator();
+        $numerators = array();
+        $numerators []= new NFQ_0064_Numerator1();
+        $numerators []= new NFQ_0064_Numerator2();
+        return $numerators;
     }
     
     public function createDenominator()

@@ -1,5 +1,5 @@
 <?php
-class NFQ_0059_Exclusions implements CqmFilterIF
+class DiabetesExclusions implements CqmFilterIF
 {
     public function getTitle()
     {
