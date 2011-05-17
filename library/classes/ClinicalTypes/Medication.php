@@ -1,8 +1,13 @@
 <?php
+// Copyright (C) 2011 Ken Chapple <ken@mi-squared.com>
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
 require_once( 'ClinicalType.php' );
-/*
- * This class represents types of medication administered to a patient.
- */
+
 class Medication extends ClinicalType
 {
     const OPTION_COUNT = 'count';

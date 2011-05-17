@@ -1,9 +1,16 @@
 <?php
+// Copyright (C) 2011 Ken Chapple <ken@mi-squared.com>
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
 class Codes 
 {
     const ICD9 = 'ICD9';
     const CUSTOM = 'CUSTOM';
-    const OPTION = 'OPTION'; // This  code maps to an option_id in the list_options table.  The list_id is in the class.
+    const OPTION_ID = 'OPTION_ID'; // This  code maps to an option_id in the list_options table.  The list_id is in the class.
     
     public static function lookup( $clinicalType, $codeType = null )
     {
