@@ -15,10 +15,12 @@ include_once("$srcdir/options.inc.php");
 if (isset($_GET['mode'])) {
     
     if ($_GET['mode'] == "add" ) {
+    	
         $sql = "REPLACE INTO immunizations set 
                       id = ?,
                       administered_date = if(?,?,NULL),  
                       immunization_id = ?,
+                      cvx_code = ?, 
                       manufacturer = ?,
                       lot_number = ?,
                       administered_by_id = if(?,?,NULL),
@@ -34,6 +36,7 @@ if (isset($_GET['mode'])) {
 	             trim($_GET['id']),
 		     trim($_GET['administered_date']), trim($_GET['administered_date']),
 		     trim($_GET['form_immunization_id']),
+		     trim($_GET['cvx_code']),
 		     trim($_GET['manufacturer']),
 		     trim($_GET['lot_number']),
 		     trim($_GET['administered_by_id']), trim($_GET['administered_by_id']),
@@ -47,7 +50,7 @@ if (isset($_GET['mode'])) {
 		     );
         sqlStatement($sql,$sqlBindArray);
         $administered_date=$education_date=date('Y-m-d');
-        $immunization_id=$manufacturer=$lot_number=$administered_by_id=$note=$id="";
+        $immunization_id=$cvx_code=$manufacturer=$lot_number=$administered_by_id=$note=$id="";
         $administered_by=$vis_date="";
     }
     elseif ($_GET['mode'] == "delete" ) {
@@ -63,6 +66,7 @@ if (isset($_GET['mode'])) {
         while ($row = sqlFetchArray($results)) {
             $administered_date = $row['administered_date'];
             $immunization_id = $row['immunization_id'];
+            $cvx_code = $row['cvx_code'];
             $manufacturer = $row['manufacturer'];
             $lot_number = $row['lot_number'];
             $administered_by_id = ($row['administered_by_id'] ? $row['administered_by_id'] : 0);
@@ -88,6 +92,9 @@ if (!$administered_by && !$administered_by_id) {
     $row = sqlQuery($stmt, array($_SESSION['authId']));
     $administered_by = $row['full_name'];
 }
+
+$form_diagnosis = trim($_POST["form_diagnosis"]);
+
 ?>
 <html>
 <head>
@@ -96,6 +103,8 @@ if (!$administered_by && !$administered_by_id) {
 <!-- supporting javascript code -->
 <script type="text/javascript" src="<?php echo $GLOBALS['webroot'] ?>/library/js/jquery.js"></script>
 <script type="text/javascript" src="<?php echo $GLOBALS['webroot'] ?>/library/textformat.js"></script>
+<script type="text/javascript" src="<?php echo $GLOBALS['webroot'] ?>/library/dialog.js"></script>
+
 
 <!-- page styles -->
 <link rel="stylesheet" href="<?php echo $css_header;?>" type="text/css">
@@ -152,6 +161,20 @@ var mypcc = '<?php echo htmlspecialchars( $GLOBALS['phone_country_code'], ENT_QU
               ?>
           </td>
         </tr>
+	    <tr>
+          <td align="right">
+            <span class=text>
+              <?php echo htmlspecialchars( xl('CVX Code'), ENT_NOQUOTES); ?>
+            </span>
+          </td>
+		  <td>
+		   <input type='text' size='10' name='cvx_code'
+		    value='<?php echo htmlspecialchars($cvx_code,ENT_QUOTES); ?>' onclick='sel_cvxcode(this)'
+		    title='<?php xl('Click to select or change CVX code','e'); ?>'
+		    />
+		  </td>
+		</tr>
+        
         <tr>
           <td align="right">
             <span class=text>
@@ -286,6 +309,11 @@ var mypcc = '<?php echo htmlspecialchars( $GLOBALS['phone_country_code'], ENT_QU
         <span class='small' style='font-family:arial'><?php if ($sortby == 'vacc') { echo 'v'; } ?></span>
     </th>
     <th>
+        <a href="javascript:top.restoreSession();location.href='immunizations.php?sortby=cvx';" title='<?php echo htmlspecialchars( xl('Sort by CVX code'), ENT_QUOTES); ?>'>
+          <?php echo htmlspecialchars( xl('CVX Code'), ENT_NOQUOTES); ?></a>
+        <span class='small' style='font-family:arial'><?php if ($sortby == 'cvx') { echo 'v'; } ?></span>
+    </th>
+    <th>
         <a href="javascript:top.restoreSession();location.href='immunizations.php?sortby=date';" title='<?php echo htmlspecialchars( xl('Sort by date'), ENT_QUOTES); ?>'>
           <?php echo htmlspecialchars( xl('Date'), ENT_NOQUOTES); ?></a>
         <span class='small' style='font-family:arial'><?php if ($sortby == 'date') { echo 'v'; } ?></span>
@@ -299,7 +327,7 @@ var mypcc = '<?php echo htmlspecialchars( $GLOBALS['phone_country_code'], ENT_QU
     </tr>
     
 <?php
-        $sql = "select i1.id ,i1.immunization_id ,i1.administered_date ".
+        $sql = "select i1.id ,i1.immunization_id , i1.cvx_code, i1.administered_date ".
                 ",i1.manufacturer ,i1.lot_number ".
                 ",ifnull(concat(u.lname,', ',u.fname),'Other') as administered_by ".
                 ",i1.education_date ,i1.note ".
@@ -308,6 +336,7 @@ var mypcc = '<?php echo htmlspecialchars( $GLOBALS['phone_country_code'], ENT_QU
                 " where patient_id = ? ".
                 " order by ";
         if ($sortby == "vacc") { $sql .= " i1.immunization_id, i1.administered_date DESC"; }
+        else if ($sortby == "cvx") { $sql .= " i1.cvx_code, i1.administered_date DESC"; }
         else { $sql .= " administered_date desc"; }
 
         $result = sqlStatement($sql, array($pid) );
@@ -320,6 +349,7 @@ var mypcc = '<?php echo htmlspecialchars( $GLOBALS['phone_country_code'], ENT_QU
             }
 	    // Modified 7/2009 by BM to utilize immunization items from the pertinent list in list_options
             echo "<td>" . generate_display_field(array('data_type'=>'1','list_id'=>'immunizations'), $row['immunization_id']) . "</td>";
+            echo "<td>" . htmlspecialchars( $row["cvx_code"], ENT_NOQUOTES) . "</td>";
             echo "<td>" . htmlspecialchars( $row["administered_date"], ENT_NOQUOTES) . "</td>";
             echo "<td>" . htmlspecialchars( $row["manufacturer"], ENT_NOQUOTES) . "</td>";
             echo "<td>" . htmlspecialchars( $row["lot_number"], ENT_NOQUOTES) . "</td>";
@@ -385,6 +415,30 @@ var DeleteImm = function(imm) {
         location.href='immunizations.php?mode=delete&id='+imm.id;
     }
 }
+
+//This is for callback by the find-code popup.
+//Appends to or erases the current list of diagnoses.
+function set_related(codetype, code, selector, codedesc) {
+	var f = document.forms[0][current_sel_name];
+	var s = f.value;
+	
+	if (code) {
+		s = code;
+	}
+	else {
+		s = '';
+	}
+	
+	f.value = s;
+}
+
+
+// This invokes the find-code popup.
+function sel_cvxcode(e) {
+ current_sel_name = e.name;
+ dlgopen('../encounter/find_code_popup.php?codetype=CVX', '_blank', 500, 400);
+}
+
 
 </script>
 
