@@ -157,7 +157,7 @@ var mypcc = '<?php echo htmlspecialchars( $GLOBALS['phone_country_code'], ENT_QU
           <td>
               <?php
                	// Modified 7/2009 by BM to incorporate the immunization items into the list_options listings
-		generate_form_field(array('data_type'=>1,'field_id'=>'immunization_id','list_id'=>'immunizations','empty_title'=>'SKIP'), $immunization_id);
+		generate_form_field(array('empty_title'=>'--unassigned--', 'data_type'=>1,'field_id'=>'immunization_id','list_id'=>'immunizations'), $immunization_id);
               ?>
           </td>
         </tr>
@@ -168,10 +168,11 @@ var mypcc = '<?php echo htmlspecialchars( $GLOBALS['phone_country_code'], ENT_QU
             </span>
           </td>
 		  <td>
-		   <input type='text' size='10' name='cvx_code'
+		   <input type='text' size='10' name='cvx_code' id='cvx_code'
 		    value='<?php echo htmlspecialchars($cvx_code,ENT_QUOTES); ?>' onclick='sel_cvxcode(this)'
 		    title='<?php xl('Click to select or change CVX code','e'); ?>'
 		    />
+		    <div id='cvx_description' style='float:right; padding: 3px;'></div>
 		  </td>
 		</tr>
         
@@ -386,6 +387,14 @@ $(document).ready(function(){
     $(".immrow").mouseout(function() { $(this).toggleClass("highlight"); });
 
     $("#administered_by_id").change(function() { $("#administered_by").val($("#administered_by_id :selected").text()); });
+
+	$("#form_immunization_id").change( function() {
+		if ( $(this).val() != "" ) {
+			$("#cvx_code").val( "" );
+			$("#cvx_description").text( "" );
+			$("#cvx_code").change();
+		}
+	});
 });
 
 var PrintForm = function(typ) {
@@ -430,6 +439,9 @@ function set_related(codetype, code, selector, codedesc) {
 	}
 	
 	f.value = s;
+	$("#cvx_description").text( codedesc );
+	$("#form_immunization_id").attr( "value", "" );
+	$("#form_immunization_id").change();
 }
 
 
