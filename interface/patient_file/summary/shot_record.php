@@ -59,7 +59,7 @@ for ($i=0;$i<count($data);$i++) {
   } else if ( $data[$i][xl('cvx_text')] ) {
       $cvx_text_short = shorten_text( $data[$i]['cvx_text'] );
       unset( $data[$i]['cvx_text'] );
-      $data[$i][xl('Vaccine')] = htmlspecialchars( $cvx_text_short, ENT_NOQUOTES );;
+      $data[$i][xl('Vaccine')] = htmlspecialchars( $cvx_text_short, ENT_NOQUOTES );
   }
 }
 
