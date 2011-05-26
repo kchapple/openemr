@@ -372,7 +372,6 @@ onsubmit='return top.restoreSession()'>
   <th> <?php xl('Patient ID','e'); ?> </th>
   <th> <?php xl('Patient Name','e'); ?> </th>
   <th> <?php xl('Immunization Code','e'); ?> </th>
-  <th> <?php xl('Immunization ID','e'); ?> </th>
   <th> <?php xl('Immunization Title','e'); ?> </th>
   <th> <?php xl('Immunization Date','e'); ?> </th>
  </thead>
@@ -394,9 +393,6 @@ onsubmit='return top.restoreSession()'>
   </td>
   <td>
    <?php echo htmlspecialchars($row['cvx_code']) ?>
-  </td>
-  <td>
-   <?php echo htmlspecialchars($row['immunizationid']) ?>
   </td>
   <td>
    <?php echo htmlspecialchars($row['immunizationtitle']) ?>
