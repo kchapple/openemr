@@ -57,7 +57,7 @@ for ($i=0;$i<count($data);$i++) {
   if ( $data[$i][xl('Vaccine')] ) {
       $data[$i][xl('Vaccine')] = generate_display_field(array('data_type'=>'1','list_id'=>'immunizations'), $data[$i][xl('Vaccine')]);
   } else if ( $data[$i][xl('cvx_text')] ) {
-      $cvx_text_short = shorten_text( $data[$i]['cvx_text'] );
+      $cvx_text_short = shorten_text( xl( $data[$i]['cvx_text'] ) );
       unset( $data[$i]['cvx_text'] );
       $data[$i][xl('Vaccine')] = htmlspecialchars( $cvx_text_short, ENT_NOQUOTES );
   }

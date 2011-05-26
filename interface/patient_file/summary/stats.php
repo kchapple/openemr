@@ -223,7 +223,7 @@ else { ?>
     if ( $row['immunization_id'] ) {
         echo generate_display_field(array('data_type'=>'1','list_id'=>'immunizations'), $row['immunization_id']);
     } else if ( $row['cvx_text'] ) {
-        echo htmlspecialchars( shorten_text( $row['cvx_text'] ), ENT_NOQUOTES );
+        echo htmlspecialchars( shorten_text( xl( $row['cvx_text'] ) ), ENT_NOQUOTES );
     }
     echo "</a><br>\n";
   }

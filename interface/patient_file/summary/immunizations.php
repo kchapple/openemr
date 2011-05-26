@@ -371,7 +371,7 @@ var mypcc = '<?php echo htmlspecialchars( $GLOBALS['phone_country_code'], ENT_QU
 	    // Modified 7/2009 by BM to utilize immunization items from the pertinent list in list_options
     	    $vaccine_display = generate_display_field(array('data_type'=>'1','list_id'=>'immunizations'), $row['immunization_id']);
     	    if ( $vaccine_display == '' ) {
-    	        $vaccine_display = shorten_text( $row["code_text"] );
+    	        $vaccine_display = shorten_text( xl( $row["code_text"] ) );
                 $vaccine_display = htmlspecialchars( $vaccine_display, ENT_NOQUOTES );
     	    }
             echo "<td>" . $vaccine_display . "</td>";
