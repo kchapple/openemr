@@ -36,6 +36,16 @@ require_once("user.inc");
 
 $date_init = "";
 
+function shorten_text( $text, $length=30 )
+{
+    $separator = '...';
+    $separatorlength = strlen( $separator ) ;
+    $maxlength = $length - $separatorlength;
+    $start = $maxlength / 2 ;
+    $trunc = strlen( $text ) - $maxlength;
+    return substr_replace( $text, $separator, $start, $trunc );
+}
+
 function get_pharmacies() {
   return sqlStatement("SELECT d.id, d.name, a.line1, a.city, " .
     "p.area_code, p.prefix, p.number FROM pharmacies AS d " .
