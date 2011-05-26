@@ -187,7 +187,9 @@ var mypcc = '<?php echo htmlspecialchars( $GLOBALS['phone_country_code'], ENT_QU
 		    value='<?php echo htmlspecialchars($cvx_code,ENT_QUOTES); ?>' onclick='sel_cvxcode(this)'
 		    title='<?php xl('Click to select or change CVX code','e'); ?>'
 		    />
-		    <div id='cvx_description' style='display:inline; float:right; padding:3px; margin-left:3px; width:400px'><?php echo $code_text; ?></div>
+		    <div id='cvx_description' style='display:inline; float:right; padding:3px; margin-left:3px; width:400px'>
+		        <?php echo htmlspecialchars( xl( $code_text ), ENT_QUOTES); ?>
+		    </div>
 		  </td>
 		</tr>
         
