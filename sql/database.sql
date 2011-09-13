@@ -4695,6 +4695,7 @@ CREATE TABLE ar_activity (
   follow_up char(1) NOT NULL,
   follow_up_note text NOT NULL,
   account_code varchar(15) NOT NULL,
+  reason_code varchar(255) DEFAULT NULL COMMENT 'Use as needed to show the primary payer adjustment reason code',
   PRIMARY KEY (pid, encounter, sequence_no),
   KEY session_id (session_id)
 ) ENGINE=MyISAM;
