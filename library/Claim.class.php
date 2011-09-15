@@ -302,7 +302,7 @@ class Claim {
               $ptresp += $value['chg']; // adjustments are negative charges
           }
           
-          $msr = isset( $value['msr'] ) ? $value['msr'] : null; // record the reason for adjustment
+          $msp = isset( $value['msp'] ) ? $value['msp'] : null; // record the reason for adjustment
         }
         else {
           // Old method: With SQL-Ledger payer level was stored in the memo.
@@ -427,9 +427,9 @@ class Claim {
       $coinsurance = sprintf('%.2f', $coinsurance);
 
       if ($date && $deductible != 0)
-        $aadj[] = array($date, 'PR', '1', $deductible, $msr);
+        $aadj[] = array($date, 'PR', '1', $deductible, $msp);
       if ($date && $coinsurance != 0)
-        $aadj[] = array($date, 'PR', '2', $coinsurance, $msr);
+        $aadj[] = array($date, 'PR', '2', $coinsurance, $msp);
 
     } // end if
 
