@@ -2998,10 +2998,7 @@ INSERT INTO list_options (`list_id`, `option_id`, `title`, `seq`, `is_default`, 
 INSERT INTO list_options (`list_id`, `option_id`, `title`, `seq`, `is_default`, `option_value`, `mapping`, `notes`) VALUES ('newcrop_erx_role','erxsupervisingDoctor','NewCrop Supervising Doctor','30','0','0','','');
 INSERT INTO list_options (`list_id`, `option_id`, `title`, `seq`, `is_default`, `option_value`, `mapping`, `notes`) VALUES ('lists','newcrop_erx_role','NewCrop eRx Role','221','0','0','','');
 
--- MSP remit codesINSERT INTO `list_options` VALUES('msp_remit_codes', '8', '8', 8, 0, 0, '', 'The procedure code is inconsistent with the provider type/specialty (taxonomy). Note: Refer to the 835 Healthcare Policy Identification Segment (loop 2110 Service Payment Information REF), if present.');
-INSERT INTO `list_options` VALUES('msp_remit_codes', '7', '7', 7, 0, 0, '', 'The procedure/revenue code is inconsistent with the patient''s gender. Note: Refer to the 835 Healthcare Policy Identification Segment (loop 2110 Service Payment Information REF), if present.');
-INSERT INTO `list_options` VALUES('msp_remit_codes', '6', '6', 6, 0, 0, '', 'The procedure/revenue code is inconsistent with the patient''s age. Note: Refer to the 835 Healthcare Policy Identification Segment (loop 2110 Service Payment Information REF), if present.');
-INSERT INTO `list_options` VALUES('msp_remit_codes', '5', '5', 5, 0, 0, '', 'The procedure code/bill type is inconsistent with the place of service. Note: Refer to the 835 Healthcare Policy Identification Segment (loop 2110 Service Payment Information REF), if present.');
+-- MSP remit codes
 INSERT INTO `list_options` VALUES('msp_remit_codes', '1', '1', 1, 1, 0, '', 'Deductible Amount');
 INSERT INTO `list_options` VALUES('msp_remit_codes', '2', '2', 2, 0, 0, '', 'Coinsurance Amount');
 INSERT INTO `list_options` VALUES('msp_remit_codes', '3', '3', 3, 0, 0, '', 'Co-payment Amount');
