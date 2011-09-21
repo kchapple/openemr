@@ -59,7 +59,7 @@
 --    all blocks are terminated with and #EndIf statement.
 
 #IfMissingColumn ar_activity reason_code
-ALTER TABLE form_encounter ADD COLUMN reason_code varchar(255) DEFAULT NULL COMMENT 'Use as needed to show the primary payer adjustment reason code';
+ALTER TABLE ar_activity ADD COLUMN reason_code varchar(255) DEFAULT NULL COMMENT 'Use as needed to show the primary payer adjustment reason code';
 #EndIf
 
 -- MSP remit codes
