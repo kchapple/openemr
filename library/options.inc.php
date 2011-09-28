@@ -77,9 +77,12 @@ function generate_select_list($tag_name, $list_id, $currvalue, $title,
   while ($lrow = sqlFetchArray($lres)) {
     $optionValue = htmlspecialchars( $lrow['option_id'], ENT_QUOTES);
     $s .= "<option value='$optionValue'";
-    if ((strlen($currvalue) == 0 && $lrow['is_default']) ||
-        (strlen($currvalue)  > 0 && $lrow['option_id'] == $currvalue))
-    {
+    if ( is_array( $currvalue ) &&
+    	in_array( $lrow['option_id'], $currvalue ) ) {
+    	$s .= " selected";
+      	$got_selected = TRUE;
+    } else if ((strlen($currvalue) == 0 && $lrow['is_default']) ||
+        (strlen($currvalue)  > 0 && $lrow['option_id'] == $currvalue)) {
       $s .= " selected";
       $got_selected = TRUE;
     }
