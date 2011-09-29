@@ -223,7 +223,9 @@ function ar_get_invoice_summary($patient_id, $encounter_id, $with_detail = false
       $paydate = empty($row['deposit_date']) ? substr($row['post_time'], 0, 10) : $row['deposit_date'];
       if ($row['pay_amount'] != 0) $tmp['pmt'] = $row['pay_amount'];
       if ( isset($row['reason_code'] ) ) {
-      	$tmp['msp'] = $row['reason_code'];
+      	// get comma-delimited reason/remit codes out of the db, and make them an array
+      	$tmp_reason_code = explode( ",", $row['reason_code'] );
+      	$tmp['msp'] = $tmp_reason_code;
       }
       if ($row['adj_amount'] != 0 || $row['pay_amount'] == 0) {
         $tmp['chg'] = 0 - $row['adj_amount'];
