@@ -945,7 +945,8 @@ function newInsuranceData(
   $copay = "",
   $subscriber_sex = "",
   $effective_date = "0000-00-00",
-  $accept_assignment = "TRUE")
+  $accept_assignment = "TRUE",
+  $msp_category = null )
 {
   if (strlen($type) <= 0) return FALSE;
 
@@ -1019,6 +1020,7 @@ function newInsuranceData(
     $data['pid'] = $pid;
     $data['date'] = $effective_date;
     $data['accept_assignment'] = $accept_assignment;
+    $data['msp_category'] = $msp_category;
     updateInsuranceData($idrow['id'], $data);
     return $idrow['id'];
   }
@@ -1051,7 +1053,8 @@ function newInsuranceData(
       subscriber_sex = '$subscriber_sex',
       pid = '$pid',
       date = '$effective_date',
-      accept_assignment = '$accept_assignment'
+      accept_assignment = '$accept_assignment',
+      msp_category = '$msp_category'
     ");
   }
 }

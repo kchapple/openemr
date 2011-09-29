@@ -708,7 +708,7 @@ class Claim {
 
   function insuredTypeCode($ins=0) {
     if (strcmp($this->claimType($ins),'MB') == 0 && $this->payerSequence($ins) != 'P')
-      return '12'; // medicare secondary working aged beneficiary or
+      return $this->insuredMSPCategory( $ins ); // medicare secondary working aged beneficiary or
                    // spouse with employer group health plan
     return '';
   }
@@ -810,6 +810,10 @@ class Claim {
 
   function insuredSex($ins=0) {
     return strtoupper(substr($this->payers[$ins]['data']['subscriber_sex'], 0, 1));
+  }
+  
+  function insuredMSPCategory($ins=0) {
+    return x12clean( trim( $this->payers[$ins]['data']['msp_category'] ) );
   }
 
   function payerName($ins=0) {

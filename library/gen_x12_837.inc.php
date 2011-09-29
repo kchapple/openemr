@@ -248,6 +248,19 @@ function gen_x12_837($pid, $encounter, &$log, $encounter_claim=false) {
     "*" .
     "*" . $claim->claimType() . // Zirmed replaces this
     "~\n";
+  
+  ++$edicount;
+  $out .= "SBR05" .       // MSP Category
+    "*" . $claim->payerSequence() .
+    "*" . $claim->insuredRelationship() .
+    "*" . $claim->groupNumber() .
+    "*" . $claim->groupName() .
+    "*" . $claim->insuredTypeCode() . // applies for secondary medicare
+    "*" .
+    "*" .
+    "*" .
+    "*" . $claim->claimType() . // Zirmed replaces this
+    "~\n";
 
   ++$edicount;
   $out .= "NM1" .       // Loop 2010BA Subscriber

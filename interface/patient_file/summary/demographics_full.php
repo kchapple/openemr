@@ -665,6 +665,16 @@ $group_seq=0; // this gives the DIV blocks unique IDs
 				<td colspan=2>
 				</td><td></td>
 			</tr>
+			<tr>
+				<td colspan=0><span class='required'><?php xl('MSP Category','e'); ?></span></td>
+				<td>:</td>
+				<td colspan=2>
+					<?php echo generate_select_list( 'i'.$i.'msp_category', 'MSP_Categories', ( $result3{"msp_category"} > 0 ) ? $result3{"msp_category"} : '', 'MSP Category', '--' ); ?>
+				</td>
+				<td></td><td></td>
+				<td colspan=2>
+				</td><td></td>
+			</tr>
 		</table>
 
 
