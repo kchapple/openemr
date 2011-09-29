@@ -53,12 +53,27 @@ function DistributionInsert($CountRow,$created_time,$user_id)
 		 {
 		  $AccountCode="PP";
 		 }
+		 
+   		$mspRemitCodes = $_POST["ReasonCode$CountRow"];
+		$mspRemitCodeString = '';
+		$count = 0;	
+		if ( is_array( $mspRemitCodes ) ) {
+			foreach ( $mspRemitCodes as $remitCode ) {
+				$mspRemitCodeString .= $remitCode;
+				if ( $count < count( $mspRemitCodes ) - 1 ) {
+					$mspRemitCodeString .= ",";
+				}
+				$count++;
+			}
+		}
+		 
 	  sqlStatement("insert into ar_activity set "    .
 		"pid = '"       . trim(formData('hidden_patient_code' )) .
 		"', encounter = '"     . trim(formData("HiddenEncounter$CountRow"   ))  .
 		"', code = '"      . trim(formData("HiddenCode$CountRow"   ))  .
 		"', modifier = '"      . trim(formData("HiddenModifier$CountRow"   ))  .
 		"', payer_type = '"   . trim(formData("HiddenIns$CountRow"   )) .
+	    "', reason_code = '"   . trim( $mspRemitCodeString ) .
 		"', post_time = '"  . trim($created_time					) .
 		"', post_user = '" . trim($user_id            )  .
 		"', session_id = '"    . trim(formData('payment_id')) .
@@ -89,6 +104,7 @@ function DistributionInsert($CountRow,$created_time,$user_id)
 		"', code = '"      . trim(formData("HiddenCode$CountRow"   ))  .
 		"', modifier = '"      . trim(formData("HiddenModifier$CountRow"   ))  .
 		"', payer_type = '"   . trim(formData("HiddenIns$CountRow"   )) .
+	    "', reason_code = '"   . trim( $mspRemitCodeString ) .
 		"', post_time = '"  . trim($created_time					) .
 		"', post_user = '" . trim($user_id            )  .
 		"', session_id = '"    . trim(formData('payment_id')) .
@@ -108,6 +124,7 @@ function DistributionInsert($CountRow,$created_time,$user_id)
 		"', code = '"      . trim(formData("HiddenCode$CountRow"   ))  .
 		"', modifier = '"      . trim(formData("HiddenModifier$CountRow"   ))  .
 		"', payer_type = '"   . trim(formData("HiddenIns$CountRow"   )) .
+	    "', reason_code = '"   . trim( $mspRemitCodeString ) .
 		"', post_time = '"  . trim($created_time					) .
 		"', post_user = '" . trim($user_id            )  .
 		"', session_id = '"    . trim(formData('payment_id')) .
@@ -127,6 +144,7 @@ function DistributionInsert($CountRow,$created_time,$user_id)
 		"', code = '"      . trim(formData("HiddenCode$CountRow"   ))  .
 		"', modifier = '"      . trim(formData("HiddenModifier$CountRow"   ))  .
 		"', payer_type = '"   . trim(formData("HiddenIns$CountRow"   )) .
+	    "', reason_code = '"   . trim( $mspRemitCodeString ) .
 		"', post_time = '"  . trim($created_time					) .
 		"', post_user = '" . trim($user_id            )  .
 		"', session_id = '"    . trim(formData('payment_id')) .
@@ -145,6 +163,7 @@ function DistributionInsert($CountRow,$created_time,$user_id)
 		"', code = '"      . trim(formData("HiddenCode$CountRow"   ))  .
 		"', modifier = '"      . trim(formData("HiddenModifier$CountRow"   ))  .
 		"', payer_type = '"   . trim(formData("HiddenIns$CountRow"   )) .
+	    "', reason_code = '"   . trim( $mspRemitCodeString ) .
 		"', post_time = '"  . trim($created_time					) .
 		"', post_user = '" . trim($user_id            )  .
 		"', session_id = '"    . trim(formData('payment_id')) .
