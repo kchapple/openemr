@@ -222,6 +222,11 @@ function gen_x12_837($pid, $encounter, &$log, $encounter_claim=false) {
   }
 
   $PatientHL = 0;
+  if ( $claim->insuredRelationship() == "18" ) { 
+  	$PatientHL= 0 ; 
+  } else { 
+  	$PatientHL= 1 ;
+  }
 
   ++$edicount;
   $out .= "HL" .        // Loop 2000B Subscriber HL Loop
