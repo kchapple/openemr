@@ -263,7 +263,6 @@ function sel_related() {
     echo $enrow['fname'] . ' ' . $enrow['mname'] . ' ' . $enrow['lname'];
     echo ' ' . htmlspecialchars(xl('on')) . ' ' . substr($enrow['date'], 0, 10);
     echo "</p>\n";
-  }
 ?>
 
 <!-- This is where a chart might display. -->
