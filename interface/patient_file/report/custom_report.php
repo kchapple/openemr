@@ -239,12 +239,12 @@ $inclookupres = sqlStatement("select distinct formdir from forms where pid = '$p
 while($result = sqlFetchArray($inclookupres)) {
   // include_once("{$GLOBALS['incdir']}/forms/" . $result{"formdir"} . "/report.php");
   $formdir = $result['formdir'];
-  if (substr($formdir,0,3) == 'LBF')
+  if (substr($formdir,0,3) == 'LBF'){
     include_once($GLOBALS['incdir'] . "/forms/LBF/report.php");
-  else
+  }else{
     include_once($GLOBALS['incdir'] . "/forms/$formdir/report.php");
 }
-
+}
 // For each form field from patient_report.php...
 //
 foreach ($ar as $key => $val) {
