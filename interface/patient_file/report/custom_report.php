@@ -220,7 +220,7 @@ if ($printable) {
 <?php echo $facility['street'] ?><br>
 <?php echo $facility['city'] ?>, <?php echo $facility['state'] ?> <?php echo $facility['postal_code'] ?><br clear='all'>
 <?php echo $facility['phone'] ?><br>
-</p>
+
 <a href="javascript:window.close();"><span class='title'><?php echo $titleres['fname'] . " " . $titleres['lname']; ?></span></a><br>
 <span class='text'><?php xl('Generated on','e'); ?>: <?php echo oeFormatShortDate(); ?></span>
 <br><br>
@@ -562,7 +562,9 @@ foreach ($ar as $key => $val) {
                     echo ' '. xl('Provider') . ': ' . $tmp['title'] . ' ' .
                         $tmp['fname'] . ' ' . $tmp['mname'] . ' ' . $tmp['lname'];
                 }
-                echo "<br>\n";
+                if(!$print2pdf){
+                	echo "<br>\n";
+                }
    
                 // call the report function for the form
                 if(substr($res[1],0,3) == 'LBF'){
@@ -593,7 +595,9 @@ foreach ($ar as $key => $val) {
                     }
                 }
 
-                print "</div>";
+                if(!$print2pdf){ 
+                	echo "</div>";
+                }
             
             } // end auth-check for encounter forms
 
@@ -621,6 +625,5 @@ if(!$print2pdf){
 }
 ?>
 
-</div> <!-- end of report_custom DIV -->
-</body>
-</html>
+ 
+
