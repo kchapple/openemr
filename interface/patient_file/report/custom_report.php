@@ -30,6 +30,104 @@ $auth_demo     = acl_check('patients'  , 'demo');
 $printable = empty($_GET['printable']) ? false : true;
 unset($_GET['printable']);
 
+if (sizeof($_GET) > 0){
+	$ar = $_GET; 
+}else{ 
+	$ar = $_POST; 
+}
+
+$print2pdf = true;
+if(!$printable){
+	$print2pdf = false;
+}else{
+	/*$hpiForms = array("Chief Complaint & HPI","Office Note/HPI","Review of Systems/HPI","Office Note","Review of Systems","Physical Exam","HPI","Vitals");
+	$hpiAdded = false;
+	$newArr = array();
+	foreach ($ar as $key => $val) {
+    	preg_match('/^(.*)_(\d+)$/', $key, $res);
+        $frmnm = getFormNameByFormdir($res[1]);
+        
+        if(in_array($frmnm['form_name'],$hpiForms)){
+        	if(!$hpiAdded){
+        		$newArr["hpiprint"] = $val;
+        		$hpiAdded = true;
+        	}
+        }else{
+	        if($frmnm['form_name'] == "Echo Worksheet"){
+	        	$newArr[$key] = $val;
+	        	continue;
+	        }else{
+	        	$print2pdf = false;
+	        }
+        }
+	}
+	if($hpiAdded){
+		$ar = $newArr;
+	}*/
+        /*if($frmnm['form_name'] == "Echo Worksheet"){
+        	continue;
+        }
+	    if($frmnm['form_name'] == "Chief Complaint & HPI"){
+        	continue;
+        }
+	    if($frmnm['form_name'] == "Office Note/HPI"){
+        	continue;
+        }
+	    if($frmnm['form_name'] == "Review of Systems/HPI"){
+        	continue;
+        }
+	    if($frmnm['form_name'] == "Office Note"){
+        	continue;
+        }
+		if($frmnm['form_name'] == "Review of Systems"){
+        	continue;
+        }
+		if($frmnm['form_name'] == "Physical Exam"){
+        	continue;
+        }
+		if($frmnm['form_name'] == "HPI"){
+        	continue;
+        }
+		if($frmnm['form_name'] == "Vitals"){
+        	continue;
+        }            
+        $print2pdf = false;                             
+	}*/
+	$printables = array("HPI","Echo Worksheet","Echo Report","Holter Report","Exercise Stress Echo");
+	foreach ($ar as $key => $val) {
+    	preg_match('/^(.*)_(\d+)$/', $key, $res);
+        $frmnm = getFormNameByFormdir($res[1]);
+        
+        if(!in_array($frmnm['form_name'],$printables)){
+        	$print2pdf = false;
+        }
+	}
+}
+
+/*if(sizeof($ar) > 1){
+	$print2pdf = false;
+}else{
+	foreach ($ar as $key => $val) {
+    	preg_match('/^(.*)_(\d+)$/', $key, $res);
+        $frmnm = getFormNameByFormdir($res[1]);
+        //if($frmnm['form_name'] != "Echo Worksheet"){
+        if($frmnm['form_name'] != "Echo Worksheet"){
+        	$print2pdf = false;
+        }
+	}
+}*/
+/*For printable reports use pdf*/
+if($print2pdf){
+	/*if($hpiAdded){
+		require_once("$srcdir/HpiPdf.php");
+	}else{
+		require_once("$srcdir/reportOptions.inc.php");
+	}*/
+	//require_once("$srcdir/reportOptions.inc.php");
+}else{
+	require_once("$srcdir/options.inc.php");
+}
+//echo "check line 2<br/>";
 $N = 6;
 $first_issue = 1;
 
@@ -46,8 +144,8 @@ function postToGet($arin) {
     }
   }
   return $getstring;
-}
-?>
+}?>
+<?php if(!$print2pdf){?>
 <html>
 <head>
 <?php html_header_show();?>
@@ -63,12 +161,18 @@ function postToGet($arin) {
 
 <body class="body_top">
 <div id="report_custom">  <!-- large outer DIV -->
-
+<?php }?>
 <?php
-if (sizeof($_GET) > 0) { $ar = $_GET; }
-else { $ar = $_POST; }
+/*if (sizeof($_GET) > 0) { $ar = $_GET; }
+else { $ar = $_POST; }*/
 
 if ($printable) {
+	if($print2pdf){
+		/*newly added*/
+		require_once(dirname(__file__) . "/../../../library/pdf/PDF_MC_Table.php");
+		require_once(dirname(__file__) . "/../../../library/pdf/headObject.php");		
+	}
+
   /*******************************************************************
   $titleres = getPatientData($pid, "fname,lname,providerID");
   $sql = "SELECT * FROM facility ORDER BY billing_location DESC LIMIT 1";
@@ -87,6 +191,27 @@ if ($printable) {
     $facility = $results->fields;
   }
   $practice_logo = "../../../custom/practice_logo.gif";
+  if($print2pdf){
+  	  $hObj = new HeadObject();
+	  if (file_exists($practice_logo)) {
+	    $hObj->setLogo($practice_logo);
+	  }
+	  $hObj->setFacName($facility['name']);
+	  $hObj->setFacStreet($facility['street']);
+	  $hObj->setFacCity($facility['city']);
+	  $hObj->setFacState($facility['state']);
+	  $hObj->setFacPC($facility['postal_code']);
+	  $hObj->setFacPhone($facility['phone']);
+	  $hObj->setFname($titleres['fname']);
+	  $hObj->setLname($titleres['lname']);
+	  $hObj->setGenDate(date("Y-m-d"));
+	  $hObj->setChart($pid);
+	  $hObj->setDob($titleres['DOB_TS']);
+	  $pdf = new PDF_MC_Table($hObj);
+	  $pdf->AliasNbPages();
+	  $pdf->SetFontSize(12);
+	  $pdf->AddPage();
+  }else{
   if (file_exists($practice_logo)) {
     echo "<img src='$practice_logo' align='left'>\n";
   }
@@ -99,14 +224,8 @@ if ($printable) {
 <a href="javascript:window.close();"><span class='title'><?php echo $titleres['fname'] . " " . $titleres['lname']; ?></span></a><br>
 <span class='text'><?php xl('Generated on','e'); ?>: <?php echo oeFormatShortDate(); ?></span>
 <br><br>
-
-<?php
-
-} 
-else { // not printable
-
-?>
-
+ <?php }
+ }else {?>
 <a href="patient_report.php">
  <span class='title'><?php xl('Patient Report','e'); ?></span>
  <span class='back'><?php echo $tback;?></span>
@@ -114,11 +233,7 @@ else { // not printable
 <a href="custom_report.php?printable=1&<?php print postToGet($ar); ?>" class='link_submit' target='new'>
  [<?php xl('Printable Version','e'); ?>]
 </a><br>
-
-<?php } // end not printable ?>
-
-<?php
-
+<?php }
 // include ALL form's report.php files
 $inclookupres = sqlStatement("select distinct formdir from forms where pid = '$pid' AND deleted=0");
 while($result = sqlFetchArray($inclookupres)) {
@@ -414,12 +529,28 @@ foreach ($ar as $key => $val) {
                     echo "<h1>" . xl($formres["form_name"]) . "</h1>";
                 }
                 else {
-                    echo "<div class='text encounter_form'>";
+                	if(!$print2pdf){
+	                    echo "<div class='encounter_form'>";
                     echo "<h1>" . xl_form_title($formres["form_name"]) . "</h1>";
+                	}else{
+                		$pdf->SetXY(10, 35);
+                		$pdf->SetFont('arial','B',12);
+                		if($formres["form_name"] == "HPI"){
+                			$pdf->Write(8,"Office Note");                			
+                		}else{
+                			$pdf->Write(8,xl_form_title($formres["form_name"]));	
+                		}
+                	}
                 }
 
                 // show the encounter's date
-                echo "(" . oeFormatSDFT(strtotime($dateres["date"])) . ") ";
+                if(!$print2pdf){
+                        echo "(" . oeFormatSDFT(strtotime($dateres["date"])) . ") ";
+                }else{
+                	$pdf->SetXY(10, 40);
+                	$pdf->SetFont('arial','',10);
+                	$pdf->Write(8, "Date of Service  ".date("m/d/Y",strtotime($dateres["date"])));
+                }
                 if ($res[1] == 'newpatient') {
                     // display the provider info
                     $tmp = sqlQuery("SELECT u.title, u.fname, u.mname, u.lname " .
@@ -434,11 +565,22 @@ foreach ($ar as $key => $val) {
                 echo "<br>\n";
    
                 // call the report function for the form
-                if (substr($res[1],0,3) == 'LBF')
+                if(substr($res[1],0,3) == 'LBF'){
+                	if($print2pdf){
+                		$frmnm = getFormNameByFormdir($res[1]);
+                		call_user_func("lbf_report", $pid, $form_encounter, $N, $form_id, $res[1],$frmnm['form_name'],$pdf);
+                	}else{
                   call_user_func("lbf_report", $pid, $form_encounter, $N, $form_id, $res[1]);
-                else
-                  call_user_func($res[1] . "_report", $pid, $form_encounter, $N, $form_id);
+                	}
 
+                }else{
+                	if(substr($key,0,8) == 'hpiprint' && $print2pdf){
+                		call_user_func("lbf_report", $pid, $form_encounter, $N, $form_id, $res[1],"hpiprint",$pdf);
+                	}else{
+                  call_user_func($res[1] . "_report", $pid, $form_encounter, $N, $form_id);
+                	}
+
+                }
                 if ($res[1] == 'newpatient') {
                     // display billing info
                     $bres = sqlStatement("SELECT date, code, code_text FROM billing WHERE " .
@@ -461,8 +603,22 @@ foreach ($ar as $key => $val) {
 
 } // end $ar loop
 
-if ($printable)
+if ($print2pdf){
+	//ob_end_clean();
+	$pdf->Row(array("Signature,"));
+	$pdf->Image("../../../images/signature.jpg",$pdf->GetX(),$pdf->GetY(),30,15);
+	$pdf->SetY($pdf->GetY() + 25);
+	$pdf->Row(array("Mark East MD"));
+	
+	$pdf->Output();
+}else{
   echo "</br></br>" . xl('Signature') . ": _______________________________</br>";
+}
+if(!$print2pdf){
+	echo "</div>";//end of report_custom DIV
+	echo "</body>";
+	echo "</html>";
+}
 ?>
 
 </div> <!-- end of report_custom DIV -->

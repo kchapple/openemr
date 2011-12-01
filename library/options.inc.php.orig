@@ -456,55 +456,6 @@ function generate_form_field($frow, $currvalue) {
     }
   }
 
-  //Modified by Sherwin to include short cut back to change or add drugs
-  // the list of active drugs for the current patient
-  // this is read-only!
-
-  else if ($data_type == 34) {
-  	$query = "SELECT drug, note FROM prescriptions WHERE " .
-      "patient_id = ".$GLOBALS['pid']." AND refills IS NULL ";
-  	echo '<textarea name="form_$field_id_esc" id="form_$field_id_esc" title="$description" cols="45" rows="5"> $currescaped';
-  	//debugging
-  	$lres = sqlStatement($query);
-  	$count = 0;
-  	while ($lrow = sqlFetchArray($lres)) {
-  		if ($count++) echo " , ";
-  		echo htmlspecialchars( $lrow['drug'], ENT_NOQUOTES);
-  		if ($lrow['note']) echo ' (' . htmlspecialchars( $lrow['note'], ENT_NOQUOTES) . ')';
-  	} echo '</textarea>';
-  	echo '<br> <a href="/east/interface/patient_file/summary/rx_frameset.php"target="RTop">Add new prescriptions</a>&nbsp;&nbsp;';
-
-  }
-
-  // the list of active ICD9's for the current patient
-  // this is read-only!
-  else if ($data_type == 35) {
-  	$query = "SELECT code, code_text FROM billing WHERE " .
-      "pid = ? AND code_type = 'ICD9' AND billed = 0";
-  	echo '<textarea cols="40" rows="5" name="form_$field_id_esc" title="$description" id="form_$field_id_esc" "$currescaped">';
-  	// debugging
-  	$lres = sqlStatement($query, array($GLOBALS['pid']));
-  	$count = 0;
-  	while ($lrow = sqlFetchArray($lres)) {
-  		if ($count++) echo " , ";
-
-  		echo htmlspecialchars( $lrow['code'], ENT_NOQUOTES);
-  		if ($lrow['code_text']) echo ' (' . htmlspecialchars( $lrow['code_text'], ENT_NOQUOTES) . ')';
-  	} echo '</textarea>';
-  	echo '<br> <a href="/east/interface/patient_file/encounter/load_form.php?formname=fee_sheet"target="RTop">Add ICD9 codes</a>&nbsp&nbsp;';
-  }
-
-  else if ($data_type == 36) {
-  	$tags = '<input type="text" name="form_'.$field_id_esc.'" id="form_'.$field_id_esc.'" size="60" value="'.$currvalue.'">';
-  	echo $tags;
-  }
-  else if ($data_type == 37) {
-  	$tags = '<input type="text" name="form_'.$field_id_esc.'" id="form_'.$field_id_esc.'" size="40" readonly="readonly" value="'.$currvalue.'">';
-  	if($currvalue == ""){
-  		$tags .= '<input type="button" value="Click to E-Sign" onclick="getCustTimestamp();"';
-  	}
-  	echo $tags;
-  }
   // a set of labeled checkboxes, each with a text field:
   else if ($data_type == 25) {
     $tmp = explode('|', $currvalue);

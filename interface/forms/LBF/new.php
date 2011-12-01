@@ -67,10 +67,14 @@ function end_group() {
 }
 
 $formname = formData('formname', 'G');
+$subset = formData('subset','G');
 $formid   = 0 + formData('id', 'G');
-
-// Get title and number of history columns for this form.
-$tmp = sqlQuery("SELECT title, option_value FROM list_options WHERE " .
+if(!$formid && $formname == 'LBF006'){
+    $tmp = sqlQuery("SELECT form_id FROM forms WHERE " .
+      "encounter = $encounter AND formdir = 'LBF006' LIMIT 0,1");
+    $formid = $tmp['form_id'];    
+}
+$tmp = sqlQuery("SELECT title FROM list_options WHERE " .
   "list_id = 'lbfnames' AND option_id = '$formname'");
 $formtitle = $tmp['title'];
 $formhistory = 0 + $tmp['option_value'];
@@ -81,10 +85,26 @@ $newid = 0;
 //
 if ($_POST['bn_save']) {
   $sets = "";
-  $fres = sqlStatement("SELECT * FROM layout_options " .
+  $grpSet = " ";
+  if(isset($_REQUEST["subset"])){
+    if($_REQUEST["subset"] == "all"){
+          $grpSet = " and group_name not in ('BIMPRESSION PLAN I','CIMPRESSION PLAN II','DIMPRESSION PLAN III','EIMPRESSION PLAN IV','GE_Sign') ";
+    }    
+    if($_REQUEST["subset"] == "iplan"){
+        $grpSet = " and group_name in ('BIMPRESSION PLAN I','CIMPRESSION PLAN II','DIMPRESSION PLAN III','EIMPRESSION PLAN IV') ";
+    }
+    if($_REQUEST["subset"] == "geSign"){
+        $grpSet = " and group_name = 'GE_Sign' ";
+    }    
+  }
+  $sqlQuery = "SELECT * FROM layout_options WHERE form_id = '$formname' AND uor > 0 AND field_id != '' AND edit_options != 'H' ";
+  $sqlQuery .= $grpSet;
+  $sqlQuery .= " ORDER BY group_name, seq";
+  /*$fres = sqlStatement("SELECT * FROM layout_options " .
     "WHERE form_id = '$formname' AND uor > 0 AND field_id != '' AND " .
     "edit_options != 'H' " .
-    "ORDER BY group_name, seq");
+    "ORDER BY group_name, seq");*/
+    $fres = sqlStatement($sqlQuery);
   while ($frow = sqlFetchArray($fres)) {
     $field_id  = $frow['field_id'];
     $value = get_layout_form_value($frow);
@@ -101,15 +121,18 @@ if ($_POST['bn_save']) {
     }
     else { // new form
       if ($value !== '') {
+        $tquery = "";
         if ($newid) {
           sqlStatement("INSERT INTO lbf_data " .
             "( form_id, field_id, field_value ) " .
             " VALUES ( '$newid', '$field_id', '$value' )");
+            $tquery = "INSERT INTO lbf_data ( form_id, field_id, field_value ) VALUES ( '$newid', '$field_id', '$value' )";
         }
         else {
           $newid = sqlInsert("INSERT INTO lbf_data " .
             "( field_id, field_value ) " .
             " VALUES ( '$field_id', '$value' )");
+            $tquery = "INSERT INTO lbf_data ( field_id, field_value ) VALUES ( '$field_id', '$value' )";
         }
       }
       // Note that a completely empty form will not be created at all!
@@ -130,6 +153,11 @@ if (empty($is_lbf)) {
   $fname = $GLOBALS['OE_SITE_DIR'] . "/LBF/$formname.plugin.php";
   if (file_exists($fname)) include_once($fname);
 }
+$enrow = sqlQuery("SELECT p.fname, p.mname, p.lname, fe.date FROM " .
+  "form_encounter AS fe, forms AS f, patient_data AS p WHERE " .
+  "p.pid = '$pid' AND f.pid = '$pid' AND f.encounter = '$encounter' AND " .
+  "f.formdir = 'newpatient' AND f.deleted = 0 AND " .
+  "fe.id = f.form_id LIMIT 1");
 ?>
 <html>
 <head>
@@ -153,7 +181,201 @@ div.section {
 </style>
 
 <style type="text/css">@import url(../../../library/dynarch_calendar.css);</style>
-
+<link type="text/css" href="../../../library/css/ui-lightness/jquery-ui-1.8.16.custom.css" rel="stylesheet" />	
+<script type="text/javascript" src="../../../library/jsnew/jquery-1.6.2.min.js"></script>
+<script type="text/javascript" src="../../../library/jsnew/jquery-ui-1.8.16.custom.min.js"></script>
+<!-- <script type="text/javascript" src="../../../library/js/jquery.js"></script> -->
+<script>
+$(function() {
+	var cache = {},
+		lastXhr;
+	$( "#form_IPN_B09" ).autocomplete({
+		minLength: 2,
+		source: function( request, response ) {
+			var term = request.term;
+			if ( term in cache ) {
+				response( cache[ term ] );
+				return;
+			}
+			lastXhr = $.getJSON( "<?php echo $GLOBALS['webroot']; ?>/interface/forms/LBF/search.php", request, function( data, status, xhr ) {
+				cache[ term ] = data;
+				if ( xhr === lastXhr ) {
+					response( data );
+				}
+			});
+		}
+	});
+});
+</script>
+<script>
+$(function() {
+	var cache = {},
+		lastXhr;
+	$( "#form_IPN_B15" ).autocomplete({
+		minLength: 2,
+		source: function( request, response ) {
+			var term = request.term;
+			if ( term in cache ) {
+				response( cache[ term ] );
+				return;
+			}
+			lastXhr = $.getJSON( "<?php echo $GLOBALS['webroot']; ?>/interface/forms/LBF/searchmed.php", request, function( data, status, xhr ) {
+				cache[ term ] = data;
+				if ( xhr === lastXhr ) {
+					response( data );
+				}
+			});
+		}
+	});
+});
+</script>
+<script>
+$(function() {
+	var cache = {},
+		lastXhr;
+	$( "#form_PLA_5" ).autocomplete({
+		minLength: 2,
+		source: function( request, response ) {
+			var term = request.term;
+			if ( term in cache ) {
+				response( cache[ term ] );
+				return;
+			}
+			lastXhr = $.getJSON( "<?php echo $GLOBALS['webroot']; ?>/interface/forms/LBF/search.php", request, function( data, status, xhr ) {
+				cache[ term ] = data;
+				if ( xhr === lastXhr ) {
+					response( data );
+				}
+			});
+		}
+	});
+});
+</script>
+<script>
+$(function() {
+	var cache = {},
+		lastXhr;
+	$( "#form_PLA_13" ).autocomplete({
+		minLength: 2,
+		source: function( request, response ) {
+			var term = request.term;
+			if ( term in cache ) {
+				response( cache[ term ] );
+				return;
+			}
+			lastXhr = $.getJSON( "<?php echo $GLOBALS['webroot']; ?>/interface/forms/LBF/searchmed.php", request, function( data, status, xhr ) {
+				cache[ term ] = data;
+				if ( xhr === lastXhr ) {
+					response( data );
+				}
+			});
+		}
+	});
+});
+</script>
+<script>
+$(function() {
+	var cache = {},
+		lastXhr;
+	$( "#form_PLB_5" ).autocomplete({
+		minLength: 2,
+		source: function( request, response ) {
+			var term = request.term;
+			if ( term in cache ) {
+				response( cache[ term ] );
+				return;
+			}
+			lastXhr = $.getJSON( "<?php echo $GLOBALS['webroot']; ?>/interface/forms/LBF/search.php", request, function( data, status, xhr ) {
+				cache[ term ] = data;
+				if ( xhr === lastXhr ) {
+					response( data );
+				}
+			});
+		}
+	});
+});
+</script>
+<script>
+$(function() {
+	var cache = {},
+		lastXhr;
+	$( "#form_PLB_13" ).autocomplete({
+		minLength: 2,
+		source: function( request, response ) {
+			var term = request.term;
+			if ( term in cache ) {
+				response( cache[ term ] );
+				return;
+			}
+			lastXhr = $.getJSON( "<?php echo $GLOBALS['webroot']; ?>/interface/forms/LBF/searchmed.php", request, function( data, status, xhr ) {
+				cache[ term ] = data;
+				if ( xhr === lastXhr ) {
+					response( data );
+				}
+			});
+		}
+	});
+});
+</script>
+<script>
+$(function() {
+	var cache = {},
+		lastXhr;
+	$( "#form_PLC_5" ).autocomplete({
+		minLength: 2,
+		source: function( request, response ) {
+			var term = request.term;
+			if ( term in cache ) {
+				response( cache[ term ] );
+				return;
+			}
+			lastXhr = $.getJSON( "<?php echo $GLOBALS['webroot']; ?>/interface/forms/LBF/search.php", request, function( data, status, xhr ) {
+				cache[ term ] = data;
+				if ( xhr === lastXhr ) {
+					response( data );
+				}
+			});
+		}
+	});
+});
+</script>
+<script>
+$(function() {
+	var cache = {},
+		lastXhr;
+	$( "#form_PLC_13" ).autocomplete({
+		minLength: 2,
+		source: function( request, response ) {
+			var term = request.term;
+			if ( term in cache ) {
+				response( cache[ term ] );
+				return;
+			}
+			lastXhr = $.getJSON( "<?php echo $GLOBALS['webroot']; ?>/interface/forms/LBF/searchmed.php", request, function( data, status, xhr ) {
+				cache[ term ] = data;
+				if ( xhr === lastXhr ) {
+					response( data );
+				}
+			});
+		}
+	});
+});
+</script>
+<script>
+    function getCustTimestamp(){
+        var currentTime = new Date();
+        var month = currentTime.getMonth() + 1;
+        var day = currentTime.getDate();
+        var year = currentTime.getFullYear();
+        var hours = currentTime.getHours();
+        var minutes = currentTime.getMinutes();
+        if (minutes < 10){
+            minutes = "0" + minutes
+        }
+        var ts = month + "/" + day + "/" + year + " at " + hours + ":" + minutes;
+        document.getElementById("form_timestorage").value = ts;
+    }
+</script>
 <script type="text/javascript" src="../../../library/dialog.js"></script>
 <script type="text/javascript" src="../../../library/textformat.js"></script>
 <script type="text/javascript" src="../../../library/dynarch_calendar.js"></script>
@@ -205,13 +427,12 @@ function sel_related() {
  onsubmit="return top.restoreSession()">
 
 <?php
-  if (empty($is_lbf)) {
-    $enrow = sqlQuery("SELECT p.fname, p.mname, p.lname, fe.date FROM " .
-      "form_encounter AS fe, forms AS f, patient_data AS p WHERE " .
-      "p.pid = '$pid' AND f.pid = '$pid' AND f.encounter = '$encounter' AND " .
-      "f.formdir = 'newpatient' AND f.deleted = 0 AND " .
-      "fe.id = f.form_id LIMIT 1");
-    echo "<p class='title' style='margin-top:8px;margin-bottom:8px;text-align:center'>\n";
+    if(isset($_REQUEST["subset"])){
+        echo "<input type='hidden' name='subset' id='subset' value='".$_REQUEST["subset"]."'/>";
+    }
+?>
+<p class='title' style='margin-top:8px;margin-bottom:8px;text-align:center'>
+<?php
     echo "$formtitle " . xl('for') . ' ';
     echo $enrow['fname'] . ' ' . $enrow['mname'] . ' ' . $enrow['lname'];
     echo ' ' . htmlspecialchars(xl('on')) . ' ' . substr($enrow['date'], 0, 10);
@@ -224,10 +445,28 @@ function sel_related() {
 
 <?php
   $shrow = getHistoryData($pid);
-
+      $iplanHeaders = array("BIMPRESSION PLAN I","CIMPRESSION PLAN II","DIMPRESSION PLAN III","EIMPRESSION PLAN IV");
+      $sigHeaders = array("GE_Sign");
+      if(isset($_REQUEST["subset"])){
+        $headInc = "'BIMPRESSION PLAN I','CIMPRESSION PLAN II','DIMPRESSION PLAN III','EIMPRESSION PLAN IV'";
+        if($_REQUEST["subset"] == "iplan"){
+            $fres = sqlStatement("SELECT * FROM layout_options WHERE form_id = '$formname' AND uor > 0 and group_name in (".$headInc.") ORDER BY group_name, seq");
+        }
+        if($_REQUEST["subset"] == "geSign"){
+            $fres = sqlStatement("SELECT * FROM layout_options WHERE form_id = '$formname' AND uor > 0 and group_name = 'GE_Sign' ORDER BY group_name, seq");
+        }
+        if($_REQUEST["subset"] == "all"){
+            $headInc = "'BIMPRESSION PLAN I','CIMPRESSION PLAN II','DIMPRESSION PLAN III','EIMPRESSION PLAN IV','GE_Sign'";
+            $fres = sqlStatement("SELECT * FROM layout_options WHERE form_id = '$formname' AND uor > 0 and group_name not in (".$headInc.") ORDER BY group_name, seq");
+        }            
+    }else{
   $fres = sqlStatement("SELECT * FROM layout_options " .
     "WHERE form_id = '$formname' AND uor > 0 " .
     "ORDER BY group_name, seq");
+    } 
+  
+  //}
+
   $last_group = '';
   $cell_count = 0;
   $item_count = 0;
