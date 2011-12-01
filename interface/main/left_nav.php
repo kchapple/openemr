@@ -1075,13 +1075,13 @@ if ($GLOBALS['athletic_team']) {
       <?php genMiscLink('RTop','prf','0',xl('Preferences'),'super/edit_globals.php?mode=user'); ?>
     </ul>
   </li>
+</ul>
 
 <?php } else { // not athletic team ?>
 
   <?php if (!$GLOBALS['disable_calendar'] && !$GLOBALS['ippf_specific']) genTreeLink('RTop','cal',xl('Calendar')); ?>
   <?php genTreeLink('RBot','msg',xl('Messages')); ?>
   <?php if ($GLOBALS['lab_exchange_enable']) genTreeLink('RTop', 'lab', xl('Check Lab Results'));?>
-  <?php if($GLOBALS['portal_offsite_enable'] && $GLOBALS['portal_offsite_address'] && acl_check('patientportal','portal'))  genTreeLink('RTop','app',xl('Portal Activity')); ?>
   <li class="open"><a class="expanded" id="patimg" ><span><?php xl('Patient/Client','e') ?></span></a>
     <ul>
           <?php genTreeLink('RTop','new',($GLOBALS['full_new_patient_form'] ? xl('New/Search') : xl('New'))); ?>
@@ -1094,21 +1094,64 @@ if ($GLOBALS['athletic_team']) {
           <?php genTreeLink('RBot','ens',xl('Visit History')); ?>
         </ul>
       </li>
-
-      <li><a class="collapsed_lv2"><span><?php xl('Records','e') ?></span></a>
+      
+      <li><a class="collapsed_lv2"><span>Office Note</span></a>
         <ul>
-          <?php genTreeLink('RTop','prq',xl('Patient Record Request')); ?>
-        </ul>
-      </li>
+<?php
+// Generate the items for visit forms, both traditional and LBF.
+//
+$lres = sqlStatement("SELECT * FROM list_options " .
+  "WHERE list_id = 'lbfnames' and seq < 7 ORDER BY seq, title");
+if (sqlNumRows($lres)) {
+  while ($lrow = sqlFetchArray($lres)) {
+    $option_id = $lrow['option_id']; // should start with LBF
+    $title = $lrow['title'];
+    if($title == "Office Note" || $title == "Impression Plan" || $title == "E-Sign Note"){
+        if($title == "Office Note"){
+            genMiscLink('RBot','cod','2',xl_form_title($title),
+          "patient_file/encounter/load_form.php?formname=LBF006&subset=all");            
+        }        
+        if($title == "Impression Plan"){
+            genMiscLink('RBot','cod','2',xl_form_title($title),
+          "patient_file/encounter/load_form.php?formname=LBF006&subset=iplan");            
+        }
+        if($title == "E-Sign Note"){
+            genMiscLink('RBot','cod','2',xl_form_title($title),
+          "patient_file/encounter/load_form.php?formname=LBF006&subset=geSign");            
+        }    
+    }else{
+        genMiscLink('RBot','cod','2',xl_form_title($title),
+          "patient_file/encounter/load_form.php?formname=$option_id");        
+    }
 
-<?php if ($GLOBALS['gbl_nav_visit_forms']) { ?>
+  }
+}
+/*include_once("$srcdir/registry.inc");
+$reg = getRegistered();
+if (!empty($reg)) {
+  foreach ($reg as $entry) {
+    $option_id = $entry['directory'];
+	  $title = trim($entry['nickname']);
+    if ($option_id == 'fee_sheet' ) continue;
+    if ($option_id == 'newpatient') continue;
+	  if (empty($title)) $title = $entry['name'];
+    genMiscLink('RBot','cod','2',xl_form_title($title),
+      "patient_file/encounter/load_form.php?formname=" .
+      urlencode($option_id));
+  }
+}*/
+?>
+        </ul>
+      </li>      
+      
+      
       <li><a class="collapsed_lv2"><span><?php xl('Visit Forms','e') ?></span></a>
         <ul>
 <?php
 // Generate the items for visit forms, both traditional and LBF.
 //
 $lres = sqlStatement("SELECT * FROM list_options " .
-  "WHERE list_id = 'lbfnames' ORDER BY seq, title");
+  "WHERE list_id = 'lbfnames' and seq > 6 ORDER BY seq, title");
 if (sqlNumRows($lres)) {
   while ($lrow = sqlFetchArray($lres)) {
     $option_id = $lrow['option_id']; // should start with LBF
@@ -1136,8 +1179,8 @@ if (!empty($reg)) {
       </li>
 <?php } // end if gbl_nav_visit_forms ?>
 
-    </ul>
-  </li>
+        </ul>
+      </li>
   <li><a class="collapsed" id="feeimg" ><span><?php xl('Fees','e') ?></span></a>
     <ul>
       <?php genMiscLink('RBot','cod','2',xl('Fee Sheet'),'patient_file/encounter/load_form.php?formname=fee_sheet'); ?>
