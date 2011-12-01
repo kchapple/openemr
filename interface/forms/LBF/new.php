@@ -68,10 +68,14 @@ function end_group() {
 }
 
 $formname = formData('formname', 'G');
+$subset = formData('subset','G');
 $formid   = 0 + formData('id', 'G');
-
-// Get title and number of history columns for this form.
-$tmp = sqlQuery("SELECT title, option_value FROM list_options WHERE " .
+if(!$formid && $formname == 'LBF006'){
+    $tmp = sqlQuery("SELECT form_id FROM forms WHERE " .
+      "encounter = $encounter AND formdir = 'LBF006' LIMIT 0,1");
+    $formid = $tmp['form_id'];    
+}
+$tmp = sqlQuery("SELECT title FROM list_options WHERE " .
   "list_id = 'lbfnames' AND option_id = '$formname'");
 $formtitle = $tmp['title'];
 $formhistory = 0 + $tmp['option_value'];
@@ -82,10 +86,26 @@ $newid = 0;
 //
 if ($_POST['bn_save']) {
   $sets = "";
-  $fres = sqlStatement("SELECT * FROM layout_options " .
+  $grpSet = " ";
+  if(isset($_REQUEST["subset"])){
+    if($_REQUEST["subset"] == "all"){
+          $grpSet = " and group_name not in ('BIMPRESSION PLAN I','CIMPRESSION PLAN II','DIMPRESSION PLAN III','EIMPRESSION PLAN IV','GE_Sign') ";
+    }    
+    if($_REQUEST["subset"] == "iplan"){
+        $grpSet = " and group_name in ('BIMPRESSION PLAN I','CIMPRESSION PLAN II','DIMPRESSION PLAN III','EIMPRESSION PLAN IV') ";
+    }
+    if($_REQUEST["subset"] == "geSign"){
+        $grpSet = " and group_name = 'GE_Sign' ";
+    }    
+  }
+  $sqlQuery = "SELECT * FROM layout_options WHERE form_id = '$formname' AND uor > 0 AND field_id != '' AND edit_options != 'H' ";
+  $sqlQuery .= $grpSet;
+  $sqlQuery .= " ORDER BY group_name, seq";
+  /*$fres = sqlStatement("SELECT * FROM layout_options " .
     "WHERE form_id = '$formname' AND uor > 0 AND field_id != '' AND " .
     "edit_options != 'H' " .
-    "ORDER BY group_name, seq");
+    "ORDER BY group_name, seq");*/
+    $fres = sqlStatement($sqlQuery);
   while ($frow = sqlFetchArray($fres)) {
     $field_id  = $frow['field_id'];
     $value = get_layout_form_value($frow);
@@ -102,15 +122,18 @@ if ($_POST['bn_save']) {
     }
     else { // new form
       if ($value !== '') {
+        $tquery = "";
         if ($newid) {
           sqlStatement("INSERT INTO lbf_data " .
             "( form_id, field_id, field_value ) " .
             " VALUES ( '$newid', '$field_id', '$value' )");
+            $tquery = "INSERT INTO lbf_data ( form_id, field_id, field_value ) VALUES ( '$newid', '$field_id', '$value' )";
         }
         else {
           $newid = sqlInsert("INSERT INTO lbf_data " .
             "( field_id, field_value ) " .
             " VALUES ( '$field_id', '$value' )");
+            $tquery = "INSERT INTO lbf_data ( field_id, field_value ) VALUES ( '$field_id', '$value' )";
         }
       }
       // Note that a completely empty form will not be created at all!
@@ -131,6 +154,11 @@ if (empty($is_lbf)) {
   $fname = $GLOBALS['OE_SITE_DIR'] . "/LBF/$formname.plugin.php";
   if (file_exists($fname)) include_once($fname);
 }
+$enrow = sqlQuery("SELECT p.fname, p.mname, p.lname, fe.date FROM " .
+  "form_encounter AS fe, forms AS f, patient_data AS p WHERE " .
+  "p.pid = '$pid' AND f.pid = '$pid' AND f.encounter = '$encounter' AND " .
+  "f.formdir = 'newpatient' AND f.deleted = 0 AND " .
+  "fe.id = f.form_id LIMIT 1");
 ?>
 <html>
 <head>
@@ -155,13 +183,7 @@ div.section {
 
 <style type="text/css">@import url(../../../library/dynarch_calendar.css);</style>
 
-<link rel="stylesheet" type="text/css" href="<?php echo $GLOBALS['webroot'] ?>/library/js/fancybox/jquery.fancybox-1.2.6.css" media="screen" />
-<script type="text/javascript" src="<?php echo $GLOBALS['webroot'] ?>/library/dialog.js"></script>
-<script type="text/javascript" src="<?php echo $GLOBALS['webroot'] ?>/library/js/jquery.1.3.2.js"></script>
-<script type="text/javascript" src="<?php echo $GLOBALS['webroot'] ?>/library/js/common.js"></script>
-<script type="text/javascript" src="<?php echo $GLOBALS['webroot'] ?>/library/js/fancybox/jquery.fancybox-1.2.6.js"></script>
-<script type="text/javascript" src="<?php echo $GLOBALS['webroot'] ?>/library/js/jquery-ui.js"></script>
-<script type="text/javascript" src="<?php echo $GLOBALS['webroot'] ?>/library/js/jquery.easydrag.handler.beta2.js"></script>
+<script type="text/javascript" src="../../../library/dialog.js"></script>
 <script type="text/javascript" src="../../../library/textformat.js"></script>
 <script type="text/javascript" src="../../../library/dynarch_calendar.js"></script>
 <?php include_once("{$GLOBALS['srcdir']}/dynarch_calendar_en.inc.php"); ?>
@@ -183,7 +205,7 @@ $(document).ready(function(){
 		'frameHeight' : 580,
 		'frameWidth' : 900
 	});
-	
+
 	$(function(){
 		// add drag and drop functionality to fancybox
 		$("#fancy_outer").easydrag();
@@ -231,13 +253,12 @@ function sel_related() {
  onsubmit="return top.restoreSession()">
 
 <?php
-  if (empty($is_lbf)) {
-    $enrow = sqlQuery("SELECT p.fname, p.mname, p.lname, fe.date FROM " .
-      "form_encounter AS fe, forms AS f, patient_data AS p WHERE " .
-      "p.pid = '$pid' AND f.pid = '$pid' AND f.encounter = '$encounter' AND " .
-      "f.formdir = 'newpatient' AND f.deleted = 0 AND " .
-      "fe.id = f.form_id LIMIT 1");
-    echo "<p class='title' style='margin-top:8px;margin-bottom:8px;text-align:center'>\n";
+    if(isset($_REQUEST["subset"])){
+        echo "<input type='hidden' name='subset' id='subset' value='".$_REQUEST["subset"]."'/>";
+    }
+?>
+<p class='title' style='margin-top:8px;margin-bottom:8px;text-align:center'>
+<?php
     echo "$formtitle " . xl('for') . ' ';
     echo $enrow['fname'] . ' ' . $enrow['mname'] . ' ' . $enrow['lname'];
     echo ' ' . htmlspecialchars(xl('on')) . ' ' . substr($enrow['date'], 0, 10);
@@ -250,10 +271,28 @@ function sel_related() {
 
 <?php
   $shrow = getHistoryData($pid);
-
+      $iplanHeaders = array("BIMPRESSION PLAN I","CIMPRESSION PLAN II","DIMPRESSION PLAN III","EIMPRESSION PLAN IV");
+      $sigHeaders = array("GE_Sign");
+      if(isset($_REQUEST["subset"])){
+        $headInc = "'BIMPRESSION PLAN I','CIMPRESSION PLAN II','DIMPRESSION PLAN III','EIMPRESSION PLAN IV'";
+        if($_REQUEST["subset"] == "iplan"){
+            $fres = sqlStatement("SELECT * FROM layout_options WHERE form_id = '$formname' AND uor > 0 and group_name in (".$headInc.") ORDER BY group_name, seq");
+        }
+        if($_REQUEST["subset"] == "geSign"){
+            $fres = sqlStatement("SELECT * FROM layout_options WHERE form_id = '$formname' AND uor > 0 and group_name = 'GE_Sign' ORDER BY group_name, seq");
+        }
+        if($_REQUEST["subset"] == "all"){
+            $headInc = "'BIMPRESSION PLAN I','CIMPRESSION PLAN II','DIMPRESSION PLAN III','EIMPRESSION PLAN IV','GE_Sign'";
+            $fres = sqlStatement("SELECT * FROM layout_options WHERE form_id = '$formname' AND uor > 0 and group_name not in (".$headInc.") ORDER BY group_name, seq");
+        }            
+    }else{
   $fres = sqlStatement("SELECT * FROM layout_options " .
     "WHERE form_id = '$formname' AND uor > 0 " .
     "ORDER BY group_name, seq");
+    } 
+  
+  //}
+
   $last_group = '';
   $cell_count = 0;
   $item_count = 0;
