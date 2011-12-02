@@ -1381,11 +1381,7 @@ if (!empty($reg)) {
       <?php genMiscLink('RTop','prf','0',xl('Preferences'),'super/edit_globals.php?mode=user'); ?>
     </ul>
   </li>
-
-<?php } // end not athletic team ?>
-
 </ul>
-
 <?php } else { // end ($GLOBALS['concurrent_layout'] == 2 || $GLOBALS['concurrent_layout'] == 3) ?>
 
 <table cellpadding='0' cellspacing='0' border='0'>

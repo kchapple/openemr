@@ -1,5 +1,5 @@
 <?php
-// Copyright (C) 2009 Rod Roark <rod@sunsetsystems.com>
+// Copyright (C) 2009-2011 Rod Roark <rod@sunsetsystems.com>
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -150,9 +150,10 @@ if ($_POST['bn_save']) {
   exit;
 }
 
-$fname = "../../../custom/LBF/$formname.plugin.php";
+if (empty($is_lbf)) {
+  $fname = $GLOBALS['OE_SITE_DIR'] . "/LBF/$formname.plugin.php";
   if (file_exists($fname)) include_once($fname);
-
+}
 $enrow = sqlQuery("SELECT p.fname, p.mname, p.lname, fe.date FROM " .
   "form_encounter AS fe, forms AS f, patient_data AS p WHERE " .
   "p.pid = '$pid' AND f.pid = '$pid' AND f.encounter = '$encounter' AND " .
@@ -379,7 +380,7 @@ $(function() {
 <script type="text/javascript" src="../../../library/dialog.js"></script>
 <script type="text/javascript" src="../../../library/textformat.js"></script>
 <script type="text/javascript" src="../../../library/dynarch_calendar.js"></script>
-<script type="text/javascript" src="../../../library/dynarch_calendar_en.js"></script>
+<?php include_once("{$GLOBALS['srcdir']}/dynarch_calendar_en.inc.php"); ?>
 <script type="text/javascript" src="../../../library/dynarch_calendar_setup.js"></script>
 
 <script language="JavaScript">
@@ -444,6 +445,7 @@ function sel_related() {
 <body <?php echo $top_bg_line; ?> topmargin="0" rightmargin="0" leftmargin="2" bottommargin="0" marginwidth="2" marginheight="0">
 <form method="post" action="<?php echo $rootdir ?>/forms/LBF/new.php?formname=<?php echo $formname ?>&id=<?php echo $formid ?>"
  onsubmit="return top.restoreSession()">
+
 <?php
     if(isset($_REQUEST["subset"])){
         echo "<input type='hidden' name='subset' id='subset' value='".$_REQUEST["subset"]."'/>";
@@ -453,9 +455,12 @@ function sel_related() {
 <?php
     echo "$formtitle " . xl('for') . ' ';
     echo $enrow['fname'] . ' ' . $enrow['mname'] . ' ' . $enrow['lname'];
-  echo ' ' . xl('on') . ' ' . substr($enrow['date'], 0, 10);
+    echo ' ' . htmlspecialchars(xl('on')) . ' ' . substr($enrow['date'], 0, 10);
+    echo "</p>\n";
 ?>
-</p>
+
+<!-- This is where a chart might display. -->
+<div id="chart"></div>
 
 <?php
   $shrow = getHistoryData($pid);
@@ -486,6 +491,16 @@ function sel_related() {
   $item_count = 0;
   $display_style = 'block';
 
+  // This is an array keyed on forms.form_id for other occurrences of this
+  // form type.  The maximum number of such other occurrences to display is
+  // in list_options.option_value for this form's list item.  Values in this
+  // array are work areas for building the ending HTML for each displayed row.
+  //
+  $historical_ids = array();
+
+  // True if any data items in this form can be graphed.
+  $form_is_graphable = false;
+
   while ($frow = sqlFetchArray($fres)) {
     $this_group = $frow['group_name'];
     $titlecols  = $frow['titlecols'];
@@ -493,6 +508,10 @@ function sel_related() {
     $data_type  = $frow['data_type'];
     $field_id   = $frow['field_id'];
     $list_id    = $frow['list_id'];
+    $edit_options = $frow['edit_options'];
+
+    $graphable  = strpos($edit_options, 'G') !== FALSE;
+    if ($graphable) $form_is_graphable = true;
 
     $currvalue  = '';
 
@@ -522,12 +541,14 @@ function sel_related() {
       $last_group = $this_group;
 
       // If group name is blank, no checkbox or div.
-      if (strlen($this_group > 1)) {
+      if (strlen($this_group) > 1) {
         echo "<br /><span class='bold'><input type='checkbox' name='form_cb_$group_seq' value='1' " .
           "onclick='return divclick(this,\"div_$group_seq\");'";
         if ($display_style == 'block') echo " checked";
-      echo " /><b>" . xl_layout_label($group_name) . "</b></span>\n";
+        echo " /><b>" . htmlspecialchars(xl_layout_label($group_name)) . "</b></span>\n";
         echo "<div id='div_$group_seq' class='section' style='display:$display_style;'>\n";
+      }
+      // echo " <table border='0' cellpadding='0' width='100%'>\n";
       echo " <table border='0' cellpadding='0' width='100%'>\n";
       $display_style = 'none';
 
@@ -538,14 +559,21 @@ function sel_related() {
         echo "<td colspan='$CPR' align='right' class='bold'>";
         if (empty($is_lbf)) echo htmlspecialchars(xl('Current'));
         echo "</td>\n";
-        $hres = sqlStatement("SELECT date, form_id FROM forms WHERE " .
-          "pid = '$pid' AND formdir = '$formname' AND " .
-          "form_id != '$formid' AND deleted = 0 " .
-          "ORDER BY date DESC LIMIT $formhistory");
+        $hres = sqlStatement("SELECT f.form_id, fe.date " .
+          "FROM forms AS f, form_encounter AS fe WHERE " .
+          "f.pid = ? AND f.formdir = ? AND " .
+          "f.form_id != ? AND f.deleted = 0 AND " .
+          "fe.pid = f.pid AND fe.encounter = f.encounter " .
+          "ORDER BY fe.date DESC, f.encounter DESC, f.date DESC " .
+          "LIMIT ?",
+          array($pid, $formname, $formid, $formhistory));
+        // For some readings like vitals there may be multiple forms per encounter.
+        // We sort these sensibly, however only the encounter date is shown here;
+        // at some point we may wish to show also the data entry date/time.
         while ($hrow = sqlFetchArray($hres)) {
           $historical_ids[$hrow['form_id']] = '';
-          echo "<td colspan='$CPR' align='right' class='bold'>&nbsp;" . $hrow['date'] . "</td>\n";
-          // TBD: Format date per globals.
+          echo "<td colspan='$CPR' align='right' class='bold'>&nbsp;" .
+            oeFormatShortDate(substr($hrow['date'], 0, 10)) . "</td>\n";
         }
         echo " </tr>";
       }
@@ -556,6 +584,10 @@ function sel_related() {
     if (($titlecols > 0 && $cell_count >= $CPR) || $cell_count == 0) {
       end_row();
       echo " <tr>";
+      // Clear historical data string.
+      foreach ($historical_ids as $key => $dummy) {
+        $historical_ids[$key] = '';
+      }
     }
 
     if ($item_count == 0 && $titlecols == 0) $titlecols = 1;
@@ -563,20 +595,28 @@ function sel_related() {
     // Handle starting of a new label cell.
     if ($titlecols > 0) {
       end_cell();
-      echo "<td valign='top' colspan='$titlecols' nowrap";
+      echo "<td valign='top' colspan='$titlecols' width='1%' nowrap";
       echo " class='";
       echo ($frow['uor'] == 2) ? "required" : "bold";
       if ($graphable) echo " graph";
       echo "'";
       if ($cell_count == 2) echo " style='padding-left:10pt'";
+      if ($graphable) echo " id='$field_id'";
       echo ">";
+
+      foreach ($historical_ids as $key => $dummy) {
+        $historical_ids[$key] .= "<td valign='top' colspan='$titlecols' class='text' nowrap>";
+      }
+
       $cell_count += $titlecols;
     }
     ++$item_count;
 
     echo "<b>";
-    if ($frow['title']) echo (xl_layout_label($frow['title']) . ":"); else echo "&nbsp;";
+    if ($frow['title']) echo htmlspecialchars(xl_layout_label($frow['title']) . ":"); else echo "&nbsp;";
     echo "</b>";
+
+    // Note the labels are not repeated in the history columns.
 
     // Handle starting of a new data cell.
     if ($datacols > 0) {
@@ -584,25 +624,50 @@ function sel_related() {
       echo "<td valign='top' colspan='$datacols' class='text'";
       if ($cell_count > 0) echo " style='padding-left:5pt'";
       echo ">";
+
+      foreach ($historical_ids as $key => $dummy) {
+        $historical_ids[$key] .= "<td valign='top' align='right' colspan='$datacols' class='text'>";
+      }
+
       $cell_count += $datacols;
     }
 
     ++$item_count;
 
+    // Skip current-value fields for the display-only case.
+    if (empty($is_lbf)) {
       if ($frow['edit_options'] == 'H')
         echo generate_display_field($frow, $currvalue);
       else
         generate_form_field($frow, $currvalue);
     }
 
+    // Append to historical data of other dates for this item.
+    foreach ($historical_ids as $key => $dummy) {
+      $hvrow = sqlQuery("SELECT field_value FROM lbf_data WHERE " .
+        "form_id = '$key' AND field_id = '$field_id'");
+      $value = empty($hvrow) ? '' : $hvrow['field_value'];
+      $historical_ids[$key] .= generate_display_field($frow, $value);
+    }
+
+  }
+
   end_group();
 ?>
 
 <p style='text-align:center'>
-<input type='submit' name='bn_save' value='Save' />
+<?php if (empty($is_lbf)) { ?>
+<input type='submit' name='bn_save' value='<?php echo htmlspecialchars(xl('Save')) ?>' />
 &nbsp;
-<input type='button' value='Cancel' onclick="top.restoreSession();location='<?php echo $GLOBALS['form_exit_url']; ?>'" />
+<input type='button' value='<?php echo htmlspecialchars(xl('Cancel')) ?>' onclick="top.restoreSession();location='<?php echo $GLOBALS['form_exit_url']; ?>'" />
 &nbsp;
+<?php if ($form_is_graphable) { ?>
+<input type='button' value='<?php echo htmlspecialchars(xl('Show Graph')) ?>' onclick="top.restoreSession();location='../../patient_file/encounter/trend_form.php?formname=<?php echo $formname; ?>'" />
+&nbsp;
+<?php } ?>
+<?php } else { ?>
+<input type='button' value='<?php echo htmlspecialchars(xl('Back')) ?>' onclick='window.back();' />
+<?php } ?>
 </p>
 
 </form>
