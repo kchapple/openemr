@@ -645,6 +645,8 @@ if ($print2pdf){
 	$pdf->Image($GLOBALS['OE_SITE_DIR']."/images/".$sigFile.".jpg",$pdf->GetX(),$pdf->GetY(),30,15);
 	$pdf->SetY($pdf->GetY() + 25);
 	$pdf->Row(array($firstName." ".$lastName." MD"));
+	$pdf->SetY($pdf->GetY() + 25);
+	$pdf->Row(array(date( 'm/d/Y H:i')));
 	
 	$pdf->Output();
 }else{
