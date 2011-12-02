@@ -25,7 +25,7 @@
 		}
 		
 		$layoutOptions = array();
-		$fres = sqlStatement("SELECT * FROM layout_options WHERE form_id in ('LBF006','LBF007','LBF012','LBF013','vitals')");
+		$fres = sqlStatement("SELECT * FROM layout_options WHERE form_id = 'LBF006' OR form_id = 'LBF007' OR form_id = 'LBF012' OR form_id = 'LBF013' OR form_id = 'vitals'");
 		while ($frow = sqlFetchArray($fres)){
 			array_push($layoutOptions,$frow);
 		}
@@ -112,12 +112,14 @@
 	}
 	
 	function printCurrentMedications($formid,$fieldVals,$pdf,$pid){
-	   $fres = sqlStatement("SELECT * FROM forms where form_id = ".$formid);
-		while ($frow = sqlFetchArray($fres)){
-            $fdate = $frow['date'];
-            $fdateArr = explode(" ",$fdate);
-        }
-        $dateArr = explode("-",$fdateArr[0]);
+		if ( $formid ) {
+		   $fres = sqlStatement("SELECT * FROM forms where form_id = ".$formid);
+			while ($frow = sqlFetchArray($fres)){
+	            $fdate = $frow['date'];
+	            $fdateArr = explode(" ",$fdate);
+	        }
+	        $dateArr = explode("-",$fdateArr[0]);
+		}
 	   $val = getFieldValueHPI("CM_1",$formid,$fieldVals);
 		$pdf->SetXY(10, $pdf->getY()+ 5);
 		$pdf->SetWidths(array(150));
