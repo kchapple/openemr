@@ -180,11 +180,16 @@ div.section {
 }
 
 </style>
-
-<style type="text/css">@import url(../../../library/dynarch_calendar.css);</style>
-<link type="text/css" href="../../../library/css/ui-lightness/jquery-ui-1.8.16.custom.css" rel="stylesheet" />	
 <script type="text/javascript" src="../../../library/jsnew/jquery-1.6.2.min.js"></script>
 <script type="text/javascript" src="../../../library/jsnew/jquery-ui-1.8.16.custom.min.js"></script>
+<link rel="stylesheet" type="text/css" href="<?php echo $GLOBALS['webroot'] ?>/library/js/fancybox/jquery.fancybox-1.2.6.css" media="screen" />
+<script type="text/javascript" src="<?php echo $GLOBALS['webroot'] ?>/library/dialog.js"></script>
+<script type="text/javascript" src="<?php echo $GLOBALS['webroot'] ?>/library/js/common.js"></script>
+<script type="text/javascript" src="<?php echo $GLOBALS['webroot'] ?>/library/js/fancybox/jquery.fancybox-1.2.6.js"></script>
+<script type="text/javascript" src="<?php echo $GLOBALS['webroot'] ?>/library/js/jquery.easydrag.handler.beta2.js"></script>
+<style type="text/css">@import url(../../../library/dynarch_calendar.css);</style>
+<link type="text/css" href="../../../library/css/ui-lightness/jquery-ui-1.8.16.custom.css" rel="stylesheet" />	
+
 <!-- <script type="text/javascript" src="../../../library/js/jquery.js"></script> -->
 <script>
 $(function() {
