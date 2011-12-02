@@ -629,11 +629,22 @@ foreach ($ar as $key => $val) {
 } // end $ar loop
 
 if ($print2pdf){
+	include_once( "$srcdir/classes/Provider.class.php" );
+	$user_id = $_SESSION['authUserID'];
+	$provider = new Provider( $user_id );
+	$firstName = $provider->fname;
+	$lastName = $provider->lname;
+	$sigFile = $provider->npi."_".$provider->lname;
+	if ( !$firstName || !$lastName || !$sigFile ) {
+		$firstName = "Unknown";
+		$lastName = "Doctor";
+		$sigFile = "signature";
+	}
 	//ob_end_clean();
 	$pdf->Row(array("Signature,"));
-	$pdf->Image("../../../images/signature.jpg",$pdf->GetX(),$pdf->GetY(),30,15);
+	$pdf->Image($GLOBALS['OE_SITE_DIR']."/images/".$sigFile.".jpg",$pdf->GetX(),$pdf->GetY(),30,15);
 	$pdf->SetY($pdf->GetY() + 25);
-	$pdf->Row(array("Mark East MD"));
+	$pdf->Row(array($firstName." ".$lastName." MD"));
 	
 	$pdf->Output();
 }else{
