@@ -65,8 +65,6 @@ INSERT INTO `layout_options` VALUES('LBF005', 'Inferior_vena_cava', 'EInferior V
 INSERT INTO `layout_options` VALUES('LBF005', 'Pericardium1', 'FPericardium', '', 1, 21, 1, 0, 255, 'Pericardium', 1, 2, '', '', 'Pericardium');
 INSERT INTO `layout_options` VALUES('LBF005', 'Extra_Sentences', 'GCheck All That Apply', '', 1, 21, 1, 0, 255, 'Echo_Wksht', 1, 2, '', '', 'Extra Sentences');
 INSERT INTO `layout_options` VALUES('LBF006', 'RFE_1', '2REASON FOR EVALUATION', 'Reason for Evaluation', 1, 3, 2, 85, 3, '', 1, 3, '', '', '');
-INSERT INTO `layout_options` VALUES('HIS', 'Complaint', '1Chief Complaint', 'Complaint', 1, 3, 2, 70, 3, '', 5, 1, '', '', 'Complaint');
-INSERT INTO `layout_options` VALUES('HIS', 'RefereingPH', '1Chief Complaint', 'Referring Physician', 2, 2, 1, 50, 255, '', 5, 5, '', '', 'Referring Physician');
 INSERT INTO `layout_options` VALUES('LBF006', 'IDC9_1', '3PAST MEDICAL HISTORY', 'ARRHTHYMIA CONDUCTION', 1, 1, 1, 0, 255, 'HPI_Active_CPt', 1, 1, '', '', '');
 INSERT INTO `layout_options` VALUES('LBF007', 'ROS_2', '1Constitutional', 'Chills', 2, 27, 1, 2, 255, 'boolean', 1, 5, '', '', '');
 INSERT INTO `layout_options` VALUES('LBF007', 'ROS_3', '1Constitutional', 'Daytime Somnolence', 3, 27, 1, 2, 255, 'boolean', 1, 5, '', '', '');
@@ -74,11 +72,6 @@ INSERT INTO `layout_options` VALUES('LBF007', 'ROS_4', '2Head', 'Headache', 1, 2
 INSERT INTO `layout_options` VALUES('LBF004', 'Blank1', '1Info', 'New Medication Cont.', 3, 3, 1, 50, 3, '', 10, 100, '', '', 'Blank');
 INSERT INTO `layout_options` VALUES('LBF007', 'ROS_7', '3Eyes', 'Blurred Vision', 2, 27, 1, 1, 255, 'boolean', 1, 5, '', '', '');
 INSERT INTO `layout_options` VALUES('LBF004', 'Blank_2', '1Info', 'Discontinued Medication Cont.', 5, 3, 1, 50, 3, '', 10, 100, '', '', 'Blank2');
-INSERT INTO `layout_options` VALUES('DEM', 'ref_hospital', '3Choices', 'Referring Hospital', 2, 11, 1, 0, 255, '', 1, 1, '', '', 'Referring Hospital');
-INSERT INTO `layout_options` VALUES('DEM', 'consultant4', '3Choices', 'Consultant-4', 6, 2, 1, 20, 255, '', 1, 1, '', '', 'Consultant 4');
-INSERT INTO `layout_options` VALUES('DEM', 'consultant3', '3Choices', 'Consultant-3', 5, 2, 1, 20, 255, '', 1, 1, '', '', 'Consultant 3');
-INSERT INTO `layout_options` VALUES('DEM', 'consultant2', '3Choices', 'Consultant-2', 4, 11, 1, 0, 255, '', 1, 1, '', '', 'Consultant 2');
-INSERT INTO `layout_options` VALUES('DEM', 'consultant1', '3Choices', 'Referring Physician Office', 3, 11, 1, 0, 255, '', 1, 1, '', '', 'Referring Physician Office');
 INSERT INTO `layout_options` VALUES('LBF008', 'Indication_Why', '1Indication', 'Indication', 1, 26, 1, 0, 255, 'ICD9_Short_List', 1, 5, '', '', 'Indication for Procedure');
 INSERT INTO `layout_options` VALUES('LBF008', 'PT_Result', '2PT_INR Result', 'PT', 3, 2, 1, 10, 255, '', 1, 5, '', '', 'PT Result');
 INSERT INTO `layout_options` VALUES('LBF008', 'INR_Result', '2PT_INR Result', 'INR', 4, 2, 1, 10, 255, '', 1, 5, '', '', 'INR Result');
