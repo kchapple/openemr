@@ -52,18 +52,6 @@ function postToGet($arin) {
 <head>
 <?php html_header_show();?>
 <link rel="stylesheet" href="<?php echo $css_header;?>" type="text/css">
-
-<?php // do not show stuff from report.php in forms that is encaspulated
-      // by div of navigateLink class. Specifically used for CAMOS, but
-      // can also be used by other forms that require output in the 
-      // encounter listings output, but not in the custom report. ?>
-<style> div.navigateLink {display:none;} </style>
-
-</head>
-
-<body class="body_top">
-<div id="report_custom">  <!-- large outer DIV -->
-
 <?php
 if (sizeof($_GET) > 0) { $ar = $_GET; }
 else { $ar = $_POST; }
@@ -73,7 +61,7 @@ if ($printable) {
   $titleres = getPatientData($pid, "fname,lname,providerID");
   $sql = "SELECT * FROM facility ORDER BY billing_location DESC LIMIT 1";
   *******************************************************************/
-  $titleres = getPatientData($pid, "fname,lname,providerID,DATE_FORMAT(DOB,'%m/%d/%Y') as DOB_TS");
+  $titleres = getPatientData($pid, "fname,lname,pubpid,providerID,DATE_FORMAT(DOB,'%m/%d/%Y') as DOB_TS");
   if ($_SESSION['pc_facility']) {
     $sql = "select * from facility where id=" . $_SESSION['pc_facility'];
   } else {
@@ -91,6 +79,39 @@ if ($printable) {
     echo "<img src='$practice_logo' align='left'>\n";
   }
 ?>
+<?php // do not show stuff from report.php in forms that is encaspulated
+      // by div of navigateLink class. Specifically used for CAMOS, but
+      // can also be used by other forms that require output in the 
+      // encounter listings output, but not in the custom report. ?>
+<style> div.navigateLink {display:none;} 
+@media print
+{
+	#report_custom hr {
+		page-break-after: always;
+	}
+	
+	#report_custom .section:before {
+		content: "<?php echo $titleres['lname'].', '.$titleres['fname'] . ' ' . $titleres['mname'] . ' DOB:'.$titleres['DOB_TS'].' ID:'.$titleres['pubpid']; ?>";
+	}
+	
+	#report_custom .section:after {
+		content: "Electronically Signed by: ";
+	}
+}
+
+@page {
+    @bottom {
+		content: "Page " counter(page) " of " counter(pages)
+    }
+}
+
+</style>
+</head>
+
+<body class="body_top">
+<div id="report_custom">  <!-- large outer DIV -->
+
+
 <h2><?php echo $facility['name'] ?></h2>
 <?php echo $facility['street'] ?><br>
 <?php echo $facility['city'] ?>, <?php echo $facility['state'] ?> <?php echo $facility['postal_code'] ?><br clear='all'>
@@ -141,7 +162,7 @@ foreach ($ar as $key => $val) {
         if ($val == "demographics") {
             
             echo "<hr />";
-            echo "<div class='text demographics' id='DEM'>\n";
+            echo "<div class='text demographics section' id='DEM'>\n";
             print "<h1>".xl('Patient Data').":</h1>";
             // printRecDataOne($patient_data_array, getRecPatientData ($pid), $N);
             $result1 = getPatientData($pid);
@@ -154,7 +175,7 @@ foreach ($ar as $key => $val) {
         } elseif ($val == "history") {
 
             echo "<hr />";
-            echo "<div class='text history' id='HIS'>\n";
+            echo "<div class='text history section' id='HIS'>\n";
             if (acl_check('patients', 'med')) {
                 print "<h1>".xl('History Data').":</h1>";
                 // printRecDataOne($history_data_array, getRecHistoryData ($pid), $N);
@@ -172,7 +193,7 @@ foreach ($ar as $key => $val) {
         } elseif ($val == "insurance") {
 
             echo "<hr />";
-            echo "<div class='text insurance'>";
+            echo "<div class='text insurance section'>";
             echo "<h1>".xl('Insurance Data').":</h1>";
             print "<br><span class=bold>".xl('Primary Insurance Data').":</span><br>";
             printRecDataOne($insurance_data_array, getRecInsuranceData ($pid,"primary"), $N);		
@@ -185,7 +206,7 @@ foreach ($ar as $key => $val) {
         } elseif ($val == "billing") {
 
             echo "<hr />";
-            echo "<div class='text billing'>";
+            echo "<div class='text billing section'>";
             print "<h1>".xl('Billing Information').":</h1>";
             if (count($ar['newpatient']) > 0) {
                 $billings = array();
@@ -248,7 +269,7 @@ foreach ($ar as $key => $val) {
 
             if (acl_check('patients', 'med')) {
                 echo "<hr />";
-                echo "<div class='text immunizations'>\n";
+                echo "<div class='text immunizations section'>\n";
                 print "<h1>".xl('Patient Immunization').":</h1>";
                 $sql = "select i1.immunization_id, i1.administered_date, substring(i1.note,1,20) as immunization_note, c.code_text_short ".
                    " from immunizations i1 ".
@@ -285,7 +306,7 @@ foreach ($ar as $key => $val) {
         } elseif ($val == "batchcom") {
 
             echo "<hr />";
-            echo "<div class='text transactions'>\n";
+            echo "<div class='text transactions section'>\n";
             print "<h1>".xl('Patient Communication sent').":</h1>";
             $sql="SELECT concat( 'Messsage Type: ', batchcom.msg_type, ', Message Subject: ', batchcom.msg_subject, ', Sent on:', batchcom.msg_date_sent ) AS batchcom_data, batchcom.msg_text, concat( users.fname, users.lname ) AS user_name FROM `batchcom` JOIN `users` ON users.id = batchcom.sent_by WHERE batchcom.patient_id='$pid'";
             // echo $sql;
@@ -298,7 +319,7 @@ foreach ($ar as $key => $val) {
         } elseif ($val == "notes") {
 
             echo "<hr />";
-            echo "<div class='text notes'>\n";
+            echo "<div class='text notes section'>\n";
             print "<h1>".xl('Patient Notes').":</h1>";
             printPatientNotes($pid);
             echo "</div>";
@@ -306,7 +327,7 @@ foreach ($ar as $key => $val) {
         } elseif ($val == "transactions") {
 
             echo "<hr />";
-            echo "<div class='text transactions'>\n";
+            echo "<div class='text transactions section'>\n";
             print "<h1>".xl('Patient Transactions').":</h1>";
             printPatientTransactions($pid);
             echo "</div>";
@@ -320,7 +341,7 @@ foreach ($ar as $key => $val) {
         if ($key == "documents") {
 
             echo "<hr />";
-            echo "<div class='text documents'>";
+            echo "<div class='text documents section'>";
             foreach($val as $valkey => $valvalue) {
                 $document_id = $valvalue;
                 if (!is_numeric($document_id)) continue;
@@ -386,7 +407,7 @@ foreach ($ar as $key => $val) {
                 echo "<div class='issue_type'>" . $disptype . ":</div>\n";
                 $prevIssueType = $irow['type'];
             }
-            echo "<div class='text issue'>";
+            echo "<div class='text issue section'>";
             echo "<span class='issue_title'>" . $irow['title'] . ":</span>";
             echo "<span class='issue_comments'> " . $irow['comments'] . "</span>\n";
             // Show issue's chief diagnosis and its description:
@@ -431,11 +452,11 @@ foreach ($ar as $key => $val) {
                 $dateres = getEncounterDateByEncounter($form_encounter);
 
                 if ($res[1] == 'newpatient') {
-                    echo "<div class='text encounter'>\n";
+                    echo "<div class='text encounter section'>\n";
                     echo "<h1>" . xl($formres["form_name"]) . "</h1>";
                 }
                 else {
-                    echo "<div class='text encounter_form'>";
+                    echo "<div class='text encounter_form section'>";
                     echo "<h1>" . xl_form_title($formres["form_name"]) . "</h1>";
                 }
 
