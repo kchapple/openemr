@@ -78,6 +78,29 @@ if ($printable) {
   if (file_exists($practice_logo)) {
     echo "<img src='$practice_logo' align='left'>\n";
   }
+  
+  // get the provider from the billing table from the last encounter
+  $provider_fname = '';
+  $proider_lname = '';
+  $provider_mname = '';
+  $provider_npi = '';
+  $provider_title = '';
+
+  $sql = "SELECT e.pid, u.id, u.fname, u.lname, u.mname, u.title, u.npi, b.code_type, b.bill_date ".
+  	"FROM users as u " . 
+  	"JOIN billing AS b ON b.provider_id = u.id " .
+  	"JOIN form_encounter AS e ON b.provider_id = e.provider_id " . 
+  	"WHERE e.pid = '".$pid."' AND b.code_type = 'CPT4' ORDER BY e.date";
+  $stmt = sqlStatement( $sql );
+  $res = sqlFetchArray( $stmt );
+  if ( $res ) {
+	  $provider_fname = $res['fname'];
+	  $proider_lname = $res['lname'];
+	  $provider_mname = $res['mname'];
+	  $provider_npi = $res['npi'];
+	  $provider_title = $res['title'];
+  }
+  
 ?>
 <?php // do not show stuff from report.php in forms that is encaspulated
       // by div of navigateLink class. Specifically used for CAMOS, but
@@ -95,14 +118,22 @@ if ($printable) {
 	}
 	
 	#report_custom .section:after {
-		content: "Electronically Signed by: ";
+		content: "Electronically Signed by: <?php echo $provider_fname.' '.$proider_lname.', '.$provider_title.' '.$provider_npi ?>";
 	}
-}
-
-@page {
-    @bottom {
-		content: "Page " counter(page) " of " counter(pages)
-    }
+	
+	.encounter_form {
+		page-break-after: always;
+	}
+	
+	.billing.section {
+		page-break-after: always;
+	}
+	
+	@page {
+	    @bottom-right {
+			content: "Page " counter(page) " of " counter(pages)
+	    }
+	}
 }
 
 </style>
