@@ -85,7 +85,7 @@ if ($printable) {
   $provider_mname = '';
   $provider_npi = '';
   $provider_title = '';
-
+  $bill_date = '';	
   $sql = "SELECT e.pid, u.id, u.fname, u.lname, u.mname, u.title, u.npi, b.code_type, b.bill_date ".
   	"FROM users as u " . 
   	"JOIN billing AS b ON b.provider_id = u.id " .
@@ -99,6 +99,7 @@ if ($printable) {
 	  $provider_mname = $res['mname'];
 	  $provider_npi = $res['npi'];
 	  $provider_title = $res['title'];
+	  $bill_date = $res['bill_date'];
   }
   
 ?>
@@ -114,11 +115,11 @@ if ($printable) {
 	}
 	
 	#report_custom .section:before {
-		content: "<?php echo $titleres['lname'].', '.$titleres['fname'] . ' ' . $titleres['mname'] . ' DOB:'.$titleres['DOB_TS'].' ID:'.$titleres['pubpid']; ?>";
+		content: "<?php echo $titleres['lname'].', '.$titleres['fname'] . ' ' . $titleres['mname'] . ' DOB:'.$titleres['DOB_TS'].' ID:'.$titleres['pubpid'].' FACILITY:'.$facility['name']; ?>";
 	}
 	
 	#report_custom .section:after {
-		content: "Electronically Signed by: <?php echo $provider_fname.' '.$proider_lname.', '.$provider_title.' '.$provider_npi ?>";
+		content: "Electronically Signed by: <?php echo $provider_fname.' '.$proider_lname.', '.$provider_title.' '.$provider_npi.' on '.$bill_date ?>";
 	}
 	
 	.encounter_form {
