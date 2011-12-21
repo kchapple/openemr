@@ -101,41 +101,67 @@ if ($printable) {
 	  $provider_title = $res['title'];
 	  $bill_date = $res['bill_date'];
   }
-  
+
 ?>
 <?php // do not show stuff from report.php in forms that is encaspulated
       // by div of navigateLink class. Specifically used for CAMOS, but
       // can also be used by other forms that require output in the 
-      // encounter listings output, but not in the custom report. ?>
+      // encounter listings output, but not in the custom report. 
+  
+function printHeader()
+{
+	echo "<div class='header'>&nbsp;";
+	echo "</div>";
+}
+
+function printFooter()
+{
+	echo "<div class='footer'>&nbsp;";
+	echo "</div>";
+}
+function printPageBreak()
+{
+	echo "<div class='page-break'>";
+	echo "</div>";
+}
+?>
 <style> div.navigateLink {display:none;} 
 @media print
 {
-	#report_custom hr {
-		page-break-after: always;
+	.header {
+        width: 100%;
+        height: 20px;
+    }
+    
+    .header:before {
+    	content: "<?php echo $titleres['lname'].', '.$titleres['fname'] . ' ' . $titleres['mname'] . ' DOB:'.$titleres['DOB_TS'].' ID:'.$titleres['pubpid'].' FACILITY:'.$facility['name']; ?>";
+    }
+    
+    .page-break {
+		page-break-before: always;
 	}
-	
-	#report_custom .section:before {
-		content: "<?php echo $titleres['lname'].', '.$titleres['fname'] . ' ' . $titleres['mname'] . ' DOB:'.$titleres['DOB_TS'].' ID:'.$titleres['pubpid'].' FACILITY:'.$facility['name']; ?>";
-	}
-	
-	#report_custom .section:after {
-		content: "Electronically Signed by: <?php echo $provider_fname.' '.$proider_lname.', '.$provider_title.' '.$provider_npi.' on '.$bill_date ?>";
-	}
-	
-	.encounter_form {
-		page-break-after: always;
-	}
-	
-	.billing.section {
-		page-break-after: always;
-	}
-	
-	@page {
-	    @bottom-right {
-			content: "Page " counter(page) " of " counter(pages)
-	    }
-	}
+
+    .footer {
+		position: fixed;
+        width: 100%;
+        bottom: 0;
+    }
+    
+    .footer:before {
+    	content: "Electronically signed by <?php echo $provider_fname.' '.$proider_lname.', '.$provider_title.' '.$provider_npi.' on '.$bill_date; ?>";	
+    }
+    
 }
+
+@page {
+    @bottom-right {
+		content: "Page " counter(page) " of " counter(pages);
+    }
+}
+
+.section {
+    	margin-top: 40px;
+    }
 
 </style>
 </head>
@@ -192,8 +218,8 @@ foreach ($ar as $key => $val) {
     if (stristr($key,"include_")) {
 
         if ($val == "demographics") {
-            
-            echo "<hr />";
+            printPageBreak();
+            printHeader();
             echo "<div class='text demographics section' id='DEM'>\n";
             print "<h1>".xl('Patient Data').":</h1>";
             // printRecDataOne($patient_data_array, getRecPatientData ($pid), $N);
@@ -203,10 +229,12 @@ foreach ($ar as $key => $val) {
             display_layout_rows('DEM', $result1, $result2);
             echo "   </table>\n";
             echo "</div>\n";
+            printFooter();
+            printPageBreak();
 
         } elseif ($val == "history") {
 
-            echo "<hr />";
+        	printHeader();
             echo "<div class='text history section' id='HIS'>\n";
             if (acl_check('patients', 'med')) {
                 print "<h1>".xl('History Data').":</h1>";
@@ -217,14 +245,14 @@ foreach ($ar as $key => $val) {
                 echo "   </table>\n";
             }
             echo "</div>";
-
+			printFooter();
+			printPageBreak();
             // } elseif ($val == "employer") {
             //   print "<br><span class='bold'>".xl('Employer Data').":</span><br>";
             //   printRecDataOne($employer_data_array, getRecEmployerData ($pid), $N);
 
         } elseif ($val == "insurance") {
-
-            echo "<hr />";
+			printHeader();
             echo "<div class='text insurance section'>";
             echo "<h1>".xl('Insurance Data').":</h1>";
             print "<br><span class=bold>".xl('Primary Insurance Data').":</span><br>";
@@ -234,10 +262,11 @@ foreach ($ar as $key => $val) {
             print "<span class=bold>".xl('Tertiary Insurance Data').":</span><br>";
             printRecDataOne($insurance_data_array, getRecInsuranceData ($pid,"tertiary"), $N);
             echo "</div>";
-
+			printFooter();
+			printPageBreak();
         } elseif ($val == "billing") {
-
-            echo "<hr />";
+	
+        	printHeader();
             echo "<div class='text billing section'>";
             print "<h1>".xl('Billing Information').":</h1>";
             if (count($ar['newpatient']) > 0) {
@@ -277,6 +306,8 @@ foreach ($ar as $key => $val) {
                 printPatientBilling($pid);
             }
             echo "</div>\n"; // end of billing DIV
+            printFooter();
+            printPageBreak();
 
     /****
 
@@ -300,7 +331,7 @@ foreach ($ar as $key => $val) {
         } elseif ($val == "immunizations") {
 
             if (acl_check('patients', 'med')) {
-                echo "<hr />";
+            	printHeader();
                 echo "<div class='text immunizations section'>\n";
                 print "<h1>".xl('Patient Immunization').":</h1>";
                 $sql = "select i1.immunization_id, i1.administered_date, substring(i1.note,1,20) as immunization_note, c.code_text_short ".
@@ -332,12 +363,13 @@ foreach ($ar as $key => $val) {
                   echo "<br>\n";
                 }
                 echo "</div>\n";
+                printFooter();
+                printPageBreak();
             }
 
         // communication report
         } elseif ($val == "batchcom") {
-
-            echo "<hr />";
+			printHeader();
             echo "<div class='text transactions section'>\n";
             print "<h1>".xl('Patient Communication sent').":</h1>";
             $sql="SELECT concat( 'Messsage Type: ', batchcom.msg_type, ', Message Subject: ', batchcom.msg_subject, ', Sent on:', batchcom.msg_date_sent ) AS batchcom_data, batchcom.msg_text, concat( users.fname, users.lname ) AS user_name FROM `batchcom` JOIN `users` ON users.id = batchcom.sent_by WHERE batchcom.patient_id='$pid'";
@@ -347,18 +379,21 @@ foreach ($ar as $key => $val) {
                 echo $row{'batchcom_data'}.", By: ".$row{'user_name'}."<br>Text:<br> ".$row{'msg_txt'}."<br>\n";
             }
             echo "</div>\n";
+            printFooter();
+            printPageBreak();
 
         } elseif ($val == "notes") {
 
-            echo "<hr />";
+        	printHeader();
             echo "<div class='text notes section'>\n";
             print "<h1>".xl('Patient Notes').":</h1>";
             printPatientNotes($pid);
             echo "</div>";
+            printFooter();
+            printPageBreak();
 
         } elseif ($val == "transactions") {
 
-            echo "<hr />";
             echo "<div class='text transactions section'>\n";
             print "<h1>".xl('Patient Transactions').":</h1>";
             printPatientTransactions($pid);
@@ -372,7 +407,6 @@ foreach ($ar as $key => $val) {
         //
         if ($key == "documents") {
 
-            echo "<hr />";
             echo "<div class='text documents section'>";
             foreach($val as $valkey => $valvalue) {
                 $document_id = $valvalue;
@@ -483,6 +517,7 @@ foreach ($ar as $key => $val) {
                 $formres = getFormNameByFormdirAndFormid($res[1],$form_id);
                 $dateres = getEncounterDateByEncounter($form_encounter);
 
+                printHeader();
                 if ($res[1] == 'newpatient') {
                     echo "<div class='text encounter section'>\n";
                     echo "<h1>" . xl($formres["form_name"]) . "</h1>";
@@ -526,6 +561,8 @@ foreach ($ar as $key => $val) {
                 }
 
                 print "</div>";
+                printFooter();
+                printPageBreak();
             
             } // end auth-check for encounter forms
 
@@ -536,7 +573,7 @@ foreach ($ar as $key => $val) {
 } // end $ar loop
 
 if ($printable)
-  echo "</br></br>" . xl('Signature') . ": _______________________________</br>";
+  //echo "</br></br>" . xl('Signature') . ": _______________________________</br>";
 ?>
 
 </div> <!-- end of report_custom DIV -->
