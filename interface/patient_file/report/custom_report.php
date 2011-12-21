@@ -33,6 +33,23 @@ unset($_GET['printable']);
 $N = 6;
 $first_issue = 1;
 
+function printHeader()
+{
+	echo "<div class='header'>&nbsp;";
+	echo "</div>";
+}
+
+function printFooter()
+{
+	echo "<div class='footer'>&nbsp;";
+	echo "</div>";
+}
+function printPageBreak()
+{
+	echo "<div class='page-break'>";
+	echo "</div>";
+}
+
 function postToGet($arin) {
   $getstring="";
   foreach ($arin as $key => $val) {
@@ -107,23 +124,6 @@ if ($printable) {
       // by div of navigateLink class. Specifically used for CAMOS, but
       // can also be used by other forms that require output in the 
       // encounter listings output, but not in the custom report. 
-  
-function printHeader()
-{
-	echo "<div class='header'>&nbsp;";
-	echo "</div>";
-}
-
-function printFooter()
-{
-	echo "<div class='footer'>&nbsp;";
-	echo "</div>";
-}
-function printPageBreak()
-{
-	echo "<div class='page-break'>";
-	echo "</div>";
-}
 ?>
 <style> div.navigateLink {display:none;} 
 @media print
