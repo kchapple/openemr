@@ -131,6 +131,7 @@ if ($printable) {
 	.header {
         width: 100%;
         height: 20px;
+        text-align: left;
     }
     
     .header:before {
@@ -138,13 +139,20 @@ if ($printable) {
     }
     
     .page-break {
-		page-break-before: always;
+		page-break-after: always;
+	}
+	
+	body {
+		position: relative;
 	}
 
     .footer {
+    	display: block;
 		position: fixed;
         width: 100%;
         bottom: 0;
+        right: 0;
+        z-index: 5;
     }
     
     .footer:before {
