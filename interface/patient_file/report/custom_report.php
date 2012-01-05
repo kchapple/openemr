@@ -103,11 +103,11 @@ if ($printable) {
   $provider_npi = '';
   $provider_title = '';
   $bill_date = '';	
-  $sql = "SELECT e.pid, u.id, u.fname, u.lname, u.mname, u.title, u.npi, b.code_type, b.bill_date ".
+  $sql = "SELECT e.pid, u.id, u.fname, u.lname, u.mname, u.specialty, u.npi, b.code_type, b.bill_date ".
   	"FROM users as u " . 
   	"JOIN billing AS b ON b.provider_id = u.id " .
   	"JOIN form_encounter AS e ON b.provider_id = e.provider_id " . 
-  	"WHERE e.pid = '".$pid."' AND b.code_type = 'CPT4' ORDER BY e.date";
+  	"WHERE e.pid = '".$pid."' AND b.code_type = 'CPT4' ORDER BY e.date DESC";
   $stmt = sqlStatement( $sql );
   $res = sqlFetchArray( $stmt );
   if ( $res ) {
@@ -115,7 +115,7 @@ if ($printable) {
 	  $proider_lname = $res['lname'];
 	  $provider_mname = $res['mname'];
 	  $provider_npi = $res['npi'];
-	  $provider_title = $res['title'];
+	  $provider_title = $res['specialty'];
 	  $bill_date = $res['bill_date'];
   }
 
