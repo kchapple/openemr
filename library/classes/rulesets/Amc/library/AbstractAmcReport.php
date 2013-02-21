@@ -181,7 +181,8 @@ abstract class AbstractAmcReport implements RsReportIF
                 $sql = "SELECT * " .
                        "FROM `prescriptions` " .
                        "WHERE `patient_id` = ? " .
-                       "AND `date_added` >= ? AND `date_added` <= ?";
+                       "AND `date_added` >= ? AND `date_added` <= ? ".
+                       "AND `provider_id` IS NULL";
                 array_push($sqlBindArray, $patient->id, $begin, $end);
                 break;
             case "labs":

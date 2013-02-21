@@ -21,7 +21,7 @@ class AMC_304a_Denominator implements AmcFilterIF
         // Also need at least one medication on the med list.
         //  (basically needs an encounter within the report dates and medications
         //   entered by the endDate)
-        $check = sqlQuery("SELECT * FROM `lists` WHERE `activity`='1' AND `pid`=? AND `type`='medication' AND `date`<=?", array($patient->id,$endDate) );
+        $check = sqlQuery("SELECT * FROM `prescriptions` WHERE `patient_id`=? AND `date_added`<=?", array($patient->id,$endDate) );
         $options = array( Encounter::OPTION_ENCOUNTER_COUNT => 1 );
         if ( (Helper::checkAnyEncounter($patient, $beginDate, $endDate, $options)) &&
             !(empty($check)) ) {
