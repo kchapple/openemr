@@ -27,12 +27,19 @@ $table_name = "form_note";
 
 if ($encounter == "") $encounter = date("Ymd");
 
+$post = array();
+foreach ( $_POST as $key => $value ) {
+    $newkey = add_escape_custom( $key );
+    $newval = add_escape_custom( $value );
+    $post[$newkey] = $newval;
+}
+
 if ($_GET["mode"] == "new") {
-    $newid = formSubmit($table_name, $_POST, $_GET["id"], $userauthorized);
+    $newid = formSubmit($table_name, $post, $_GET["id"], $userauthorized);
     addForm($encounter, "Work/School Note", $newid, "note", $pid, $userauthorized);
 } 
 elseif ($_GET["mode"] == "update") {
-    $success = formUpdate($table_name, $_POST, $_GET["id"], $userauthorized);
+    $success = formUpdate($table_name, $post, $_GET["id"], $userauthorized);
 }
 $_SESSION["encounter"] = $encounter;
 formHeader("Redirecting....");
