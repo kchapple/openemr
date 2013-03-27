@@ -196,8 +196,8 @@ function create_NM1($row,$nm1Cast,$X12info,$segTer,$compEleSep) {
 		$NM1[5] = "";						// Data Element not required.
 		$NM1[6] = "";						// Data Element not required.
 		$NM1[7] = "";						// Data Element not required.
-		$NM1[8] = "46";						// 46 - Electronic Transmitter Identification Number (ETIN) 
-		$NM1[9] = $X12info[3];				// Application Sender’s ID 
+		$NM1[8] = "PI";						// Qualifier for payer ID
+		$NM1[9] = $row["payer_id"];			// Payer ID. cms_id from insurance_companies table 
 	}
 	else if($nm1Cast == '1P')
 	{
@@ -221,7 +221,7 @@ function create_NM1($row,$nm1Cast,$X12info,$segTer,$compEleSep) {
 		$NM1[6] = "";						// data element 
 		$NM1[7] = "";						// data element 
 		$NM1[8] = "MI";						// Identification Code Qualifier 
-		$NM1[9] = $row['subscriber_ss'];			// Identification Code 
+		$NM1[9] = $row['policy_number'];			// Identification Code 
 	}
 	
 	$NM1['Created'] = implode('*', $NM1);				// Data Element Separator 

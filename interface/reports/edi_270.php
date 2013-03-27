@@ -102,7 +102,8 @@
 								   f.federal_ein,
 								   f.facility_npi,
 								   f.name as facility_name,
-								   c.name as payer_name
+								   c.name as payer_name,
+	                               c.cms_id as payer_id
 							FROM openemr_postcalendar_events AS e
 							LEFT JOIN users AS d on (e.pc_aid is not null and e.pc_aid = d.id)
 							LEFT JOIN facility AS f on (f.id = e.pc_facility)
