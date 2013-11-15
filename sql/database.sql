@@ -5821,3 +5821,21 @@ CREATE TABLE `misc_address_book` (
 ) ENGINE=InnoDB;
 
 -- --------------------------------------------------------
+
+-- --------------------------------------------------------
+--
+-- Table structure for table `esign_signatures`
+--
+
+CREATE TABLE `esign_signatures` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `tid` int(11) NOT NULL COMMENT 'Table row ID for signature',
+  `table` varchar(255) NOT NULL COMMENT 'table name for the signature',
+  `uid` int(11) NOT NULL COMMENT 'user id for the signing user',
+  `datetime` datetime NOT NULL COMMENT 'datetime of the signature action',
+  `is_lock` tinyint(1) NOT NULL DEFAULT 0 COMMENT '1 if lock, 0 otherwise',
+  `amendment` text COMMENT 'amendment text, if any',
+  `hash` varchar(255) NOT NULL COMMENT 'hash of signed data', 
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 ;
+
