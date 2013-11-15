@@ -1,0 +1,80 @@
+<?php
+
+namespace ESign;
+
+/**
+ * Copyright (C) 2013 OEMR 501c3 www.oemr.org
+ *
+ * Implementation of the SignableIF interface for the Encounter
+ * module. 
+ *
+ * LICENSE: This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 3
+ * of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://opensource.org/licenses/gpl-license.php>;.
+ *
+ * @package OpenEMR
+ * @author  Ken Chapple <ken@mi-squared.com>
+ * @author  Medical Information Integration, LLC
+ * @link    http://www.mi-squared.com
+ **/
+
+require_once $GLOBALS['srcdir'].'/ESign/DbRow/Signable.php';
+require_once $GLOBALS['srcdir'].'/ESign/SignableIF.php';
+
+class Encounter_Signable extends DbRow_Signable implements SignableIF
+{    
+    private $_encounterId = null;
+    
+    public function __construct( $encounterId )
+    {
+        $this->_encounterId = $encounterId;
+        parent::__construct( $encounterId, 'form_encounter' );
+    }
+    
+    /**
+     * Implementatinon of getData() for encounters. 
+     * 
+     * We get all forms under the encounter, and then get all the data
+     * from the individual form tables.
+     * 
+     * @see \ESign\SignableIF::getData()
+     */
+    public function getData()
+    {
+        $encStatement = "SELECT F.id, F.date, F.encounter, F.form_name, F.form_id, F.pid, F.user, F.formdir FROM forms F ";
+        $encStatement .= "WHERE F.encounter = ? ";
+        $data = array();
+        $res = sqlStatement( $encStatement, array( $this->_encounterId ) );
+        while ( $encRow = sqlFetchArray( $res ) ) {
+            // We make an assumption here that the form table is == formdir and that
+            // the primary key is id. TODO change this a mapping using the list_options.
+            $formTable = $encRow['formdir'];
+            if ( $formTable == 'newpatient' ) {
+                $formTable = 'encounter';
+            }
+            $formTable = 'form_'.$formTable;
+            $formStatement = "SELECT * FROM `".$formTable."` F ";
+            $formStatement .= "WHERE F.id = ? ";
+            $row = sqlQuery( $formStatement, array( $encRow['form_id'] ) );
+            $data[]= $row;
+        }
+        return $data;
+    }
+    
+    public function isLocked()
+    {
+        $locked = false;
+        if ( $GLOBALS['lock_esign_all'] ) {
+            $locked = parent::isLocked();
+        }
+        
+        return $locked;
+    }
+}

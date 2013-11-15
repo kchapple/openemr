@@ -661,7 +661,38 @@ $GLOBALS_METADATA = array(
     ),
 
   ),
+    // E-Sign Tab
+    //
+    'E-Sign' => array(
+            
+    'esign_all' => array(
+      xl('Allows E-Sign on the entire encounter'),
+      'bool',                           // data type
+      '1',                              // default = true
+      xl('This will enable signing an entire encounter, rather than individual forms')
+    ),
 
+    'lock_esign_all' => array(
+      xl('Lock e-signed encounters and their forms'),
+      'bool',                           // data type
+      '1',                              // default = true
+      xl('This will disable the Edit button on all forms whose parent encounter is e-signed')
+    ),
+    'esign_individual' => array(
+      xl('Allows E-Signing Individual Forms'),
+      'bool',                           // data type
+      '0',                              // default = false
+      xl('This will enable signing individual forms separately')
+    ),
+
+    'lock_esign_individual' => array(
+      xl('Lock an e-signed form individually'),
+      'bool',                           // data type
+      '0',                              // default = false
+      xl('This will disable the Edit button on any form that is e-signed')
+    ),
+
+  ),
     //Documents Tab
     'Documents' => array(
         'document_storage_method' => array(
