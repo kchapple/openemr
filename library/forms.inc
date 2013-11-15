@@ -141,6 +141,11 @@ function getFormNameByFormdirAndFormid ($formdir,$form_id)
         return sqlQuery("select form_name from forms where formdir='$formdir' and form_id='$form_id'");
 }
 
+function getFormIdByFormdirAndFormid ($formdir,$form_id)
+{
+    return sqlQuery("select id from forms where formdir = ? and form_id =? ", array( $formdir, $form_id ) );
+}
+
 function getFormNameByFormdir ($formdir)
 {
 	return sqlQuery("select form_name from forms where formdir='$formdir'");
