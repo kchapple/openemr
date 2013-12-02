@@ -1,5 +1,5 @@
 <?php
-use ESign\Encounter_Signable;
+use ESign\Api;
 /* Copyright (C) 2006-2012 Rod Roark <rod@sunsetsystems.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -151,7 +151,7 @@ use ESign\Encounter_Signable;
   $primary_docs['cod'] = array(xl('Charges'), 2, 'patient_file/encounter/encounter_bottom.php');
  }
 
- $esignApi = new \Esign\Api();
+ $esignApi = new Api();
  // This section decides which navigation items will not appear.
 
  $disallowed = array();
@@ -435,7 +435,7 @@ function genFindBlock() {
    return false;
   }
   if (encounter_locked && usage > '1') {
-   alert('<?php xl('This encounter is locked. No new forms can be added.','e') ?>');
+   alert('<?php echo xls('This encounter is locked. No new forms can be added.') ?>');
    return false;
   }
   var f = document.forms[0];
@@ -485,7 +485,7 @@ function genFindBlock() {
    return false;
   }
   if (encounter_locked  && (topusage > '1' || botusage > '1')) {
-   alert('<?php xl('This encounter is locked. No new forms can be added.','e') ?>');
+   alert('<?php echo xls('This encounter is locked. No new forms can be added.') ?>');
    return false;
   }
   var f = document.forms[0];
@@ -525,6 +525,7 @@ function genFindBlock() {
  // depending on whether there is an active patient or encounter.
  function syncRadios() {
   var f = document.forms[0];
+  encounter_locked = isEncounterLocked(active_encounter);
 <?php if (($GLOBALS['concurrent_layout'] == 2)||($GLOBALS['concurrent_layout'] == 3)) { ?>
   var nlinks = document.links.length;
   for (var i = 0; i < nlinks; ++i) {

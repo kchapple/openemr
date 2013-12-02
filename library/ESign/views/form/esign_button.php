@@ -1,8 +1,8 @@
 <?php 
 /**
- * Copyright (C) 2013 OEMR 501c3 www.oemr.org
- *
  * ESign button view script for form module
+ * 
+ * Copyright (C) 2013 OEMR 501c3 www.oemr.org
  *
  * LICENSE: This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,11 +18,11 @@
  * @package OpenEMR
  * @author  Ken Chapple <ken@mi-squared.com>
  * @author  Medical Information Integration, LLC
- * @link    http://www.mi-squared.com
+ * @link    http://www.open-emr.org
  **/
 ?>
 <a target="<?php echo $this->target; ?>" href="#esign-mask-content"
 	class="esign-button-form css_button_small"
-	data-formdir="<?php echo $this->formDir; ?>"
-	data-formid="<?php echo $this->formId; ?>"
-	data-encounterid="<?php echo $this->encounterId; ?>"><span><?php echo xl('eSign'); ?></span></a>
+	data-formdir="<?php echo attr( $this->formDir ); ?>"
+	data-formid="<?php echo attr( $this->formId ); ?>"
+	data-encounterid="<?php echo attr( $this->encounterId ); ?>"><span><?php echo xlt('eSign'); ?></span></a>

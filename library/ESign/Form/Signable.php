@@ -3,10 +3,10 @@
 namespace ESign;
 
 /**
- * Copyright (C) 2013 OEMR 501c3 www.oemr.org
- *
  * Form implementation of SignableIF interface, which represents an
  * object that can be signed, locked and/or amended.
+ * 
+ * Copyright (C) 2013 OEMR 501c3 www.oemr.org
  *
  * LICENSE: This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,11 +22,12 @@ namespace ESign;
  * @package OpenEMR
  * @author  Ken Chapple <ken@mi-squared.com>
  * @author  Medical Information Integration, LLC
- * @link    http://www.mi-squared.com
+ * @link    http://www.open-emr.org
  **/
 
 require_once $GLOBALS['srcdir'].'/ESign/DbRow/Signable.php';
 require_once $GLOBALS['srcdir'].'/ESign/SignableIF.php';
+require_once $GLOBALS['srcdir'].'/formdata.inc.php';
 
 class Form_Signable extends DbRow_Signable implements SignableIF
 {
@@ -98,7 +99,7 @@ class Form_Signable extends DbRow_Signable implements SignableIF
         $row = sqlQuery( $statement, array( $this->_formId ) );
         
         // Get form-specific data
-        $statement = "SELECT * FROM ".$table." ";
+        $statement = "SELECT * FROM ".escape_table_name( $table )." ";
         $statement .= "WHERE id = ? LIMIT 1";
         $formRow = sqlQuery( $statement, array( $row['form_id']) );
         

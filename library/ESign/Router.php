@@ -2,10 +2,11 @@
 
 namespace ESign;
 
-/** Copyright (C) 2013 OEMR 501c3 www.oemr.org
-*
+/** 
 * Allows routing to the correct controller and method using the 
 * request string
+* 
+* Copyright (C) 2013 OEMR 501c3 www.oemr.org
 *
 * LICENSE: This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -21,7 +22,7 @@ namespace ESign;
 * @package OpenEMR
 * @author  Ken Chapple <ken@mi-squared.com>
 * @author  Medical Information Integration, LLC
-* @link    http://www.mi-squared.com
+* @link    http://www.open-emr.org
 **/
 
 require_once $GLOBALS['srcdir'].'/ESign/Abstract/Controller.php';

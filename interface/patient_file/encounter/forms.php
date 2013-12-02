@@ -1,6 +1,5 @@
 <?php
 use ESign\Api;
-use ESign\ESign;
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
@@ -44,8 +43,10 @@ $(document).ready( function() {
     	formConfig,
         { 	    
             afterFormSuccess : function( response ) {
-            	var editButtonId = "form-edit-button-"+response.formDir+"-"+response.formId;
-                $("#"+editButtonId).replaceWith( response.editButtonHtml );
+                if ( response.locked ) {
+                	var editButtonId = "form-edit-button-"+response.formDir+"-"+response.formId;
+                    $("#"+editButtonId).replaceWith( response.editButtonHtml );
+                }
                 
                 var logId = "esign-signature-log-"+response.formDir+"-"+response.formId;
                 $.post( formConfig.logViewAction, response, function( html ) {
@@ -60,6 +61,14 @@ $(document).ready( function() {
     	encounterConfig,
         { 	    
             afterFormSuccess : function( response ) {
+                // If the response indicates a locked encounter, replace all 
+                // form edit buttons with a "disabled" button, and "disable" left
+                // nav visit form links
+                if ( response.locked ) {
+                	$(".form-edit-button").replaceWith( response.editButtonHtml );
+                	top.window.parent.left_nav.syncRadios();
+                }
+                
                 var logId = "esign-signature-log-encounter-"+response.encounterId;
                 $.post( encounterConfig.logViewAction, response, function( html ) {
                     $("#"+logId).replaceWith( html );

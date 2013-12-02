@@ -1,8 +1,8 @@
 /**
- * Copyright (C) 2013 OEMR 501c3 www.oemr.org
- *
  * jQuery plugin to enable esign functionality on a DOM object.
  * Pass in a selector to enable esign on the objects that match    
+ * 
+ * Copyright (C) 2013 OEMR 501c3 www.oemr.org
  *
  * LICENSE: This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,7 +18,7 @@
  * @package OpenEMR
  * @author  Ken Chapple <ken@mi-squared.com>
  * @author  Medical Information Integration, LLC
- * @link    http://www.mi-squared.com
+ * @link    http://www.open-emr.org
  **/
 
 (function( $ ) {

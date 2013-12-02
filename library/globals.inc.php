@@ -668,14 +668,14 @@ $GLOBALS_METADATA = array(
     'esign_all' => array(
       xl('Allows E-Sign on the entire encounter'),
       'bool',                           // data type
-      '1',                              // default = true
+      '0',                              // default = false
       xl('This will enable signing an entire encounter, rather than individual forms')
     ),
 
     'lock_esign_all' => array(
       xl('Lock e-signed encounters and their forms'),
       'bool',                           // data type
-      '1',                              // default = true
+      '0',                              // default = false
       xl('This will disable the Edit button on all forms whose parent encounter is e-signed')
     ),
     'esign_individual' => array(

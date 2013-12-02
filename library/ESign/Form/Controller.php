@@ -3,9 +3,9 @@
 namespace ESign;
 
 /**
- * Copyright (C) 2013 OEMR 501c3 www.oemr.org
- *
  * Form controller implementation
+ * 
+ * Copyright (C) 2013 OEMR 501c3 www.oemr.org
  *
  * LICENSE: This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,7 +21,7 @@ namespace ESign;
  * @package OpenEMR
  * @author  Ken Chapple <ken@mi-squared.com>
  * @author  Medical Information Integration, LLC
- * @link    http://www.mi-squared.com
+ * @link    http://www.open-emr.org
  **/
 
 require_once $GLOBALS['srcdir'].'/ESign/Abstract/Controller.php';
@@ -43,7 +43,7 @@ class Form_Controller extends Abstract_Controller
         $form->encounterId = $this->getRequest()->getParam( 'encounterid', 0 );
         $form->userId = $GLOBALS['authUserID'];
         $form->action = '#';
-        $signable = new Form_Signable( $form->formId );
+        $signable = new Form_Signable( $form->formId, $form->formDir, $form->encounterId );
         $form->showLock = !$signable->isLocked() && $GLOBALS['lock_esign_individual'];
         $this->_view->form = $form;
         $this->setViewScript( 'form/esign_form.php' );
@@ -79,21 +79,25 @@ class Form_Controller extends Abstract_Controller
         if ( confirm_user_password( $_SESSION['authUser'], $password ) ) {
             $signable = new Form_Signable( $formId, $formDir, $encounterId );
             if ( $signable->sign( $_SESSION['authUserID'], $lock, $amendment ) ) {
-                $message = xl( "Form signed successfully" );
+                $message = xlt( "Form signed successfully" );
                 $status = self::STATUS_SUCCESS;
             } else {
-                $message = xl( "An error occured signing the form" );
+                $message = xlt( "An error occured signing the form" );
             }
             
         } else {
-            $message = xl( "The password you entered is invalid" );
+            $message = xlt( "The password you entered is invalid" );
         }
         $response = new Response( $status, $message );
         $response->formId = $formId;
         $response->formDir = $formDir;
         $response->encounterId = $encounterId;
         $response->locked = $lock;
-        $response->editButtonHtml = "<a href=# class='css_button_small form-edit-button-locked' id='form-edit-button-'".$formDir."-".$formId."><span>".xl('Locked')."</span></a>";
+        $response->editButtonHtml = "";
+        if ( $lock ) {
+            // If we're locking the form, replace the edit button with a "disabled" lock button
+            $response->editButtonHtml = "<a href=# class='css_button_small form-edit-button-locked' id='form-edit-button-'".$formDir."-".$formId."><span>".xlt('Locked')."</span></a>";
+        }
         echo json_encode( $response );
         exit;
     }

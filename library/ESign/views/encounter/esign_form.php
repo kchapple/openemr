@@ -1,8 +1,8 @@
 <?php 
 /**
- * Copyright (C) 2013 OEMR 501c3 www.oemr.org
- *
  * Signature form view script for encounter module
+ * 
+ * Copyright (C) 2013 OEMR 501c3 www.oemr.org
  *
  * LICENSE: This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,44 +18,44 @@
  * @package OpenEMR
  * @author  Ken Chapple <ken@mi-squared.com>
  * @author  Medical Information Integration, LLC
- * @link    http://www.mi-squared.com
+ * @link    http://www.open-emr.org
  **/
 ?>
 <div id='esign-form-container'>
-	<form id='esign-signature-form' method='post' action='<?php echo $this->form->action; ?>'>
+	<form id='esign-signature-form' method='post' action='<?php echo attr( $this->form->action ); ?>'>
 		
         <div class="esign-signature-form-element">
-		      <span id='esign-signature-form-prompt'><?php echo xl( "Your password is your signature" ); ?></span> 
+		      <span id='esign-signature-form-prompt'><?php echo xlt( "Your password is your signature" ); ?></span> 
 		</div>
 
 		<div class="esign-signature-form-element">
-		      <label for='password'><?php echo xl('Password');?></label> 
+		      <label for='password'><?php echo xlt('Password');?></label> 
 		      <input type='password' id='password' name='password' size='10' />
 		</div>
 		
 		<div class="esign-signature-form-element">
-		      <span id='esign-signature-form-prompt'><?php echo xl( "Checking the lock checkbox will prevent any futher edits on any forms in this encounter." ); ?></span> 
+		      <span id='esign-signature-form-prompt'><?php echo xlt( "Checking the lock checkbox will prevent any futher edits on any forms in this encounter." ); ?></span> 
 		</div>
 		
 		<?php if ( $this->form->showLock ) { ?>
 		<div class="esign-signature-form-element">
-		      <label for='lock'><?php echo xl('Lock?');?></label> 
+		      <label for='lock'><?php echo xlt('Lock?');?></label> 
 		      <input type="checkbox" id="lock" name="lock" />
 		</div>
 		<?php } ?>
 		
 		<div class="esign-signature-form-element">
-		      <textarea name='amendment' id='amendment' placeholder='<?php echo xl("Enter an ammendment..."); ?>'></textarea> 
+		      <textarea name='amendment' id='amendment' placeholder='<?php echo xla("Enter an ammendment..."); ?>'></textarea> 
 		</div>
 		
 		<div class="esign-signature-form-element">
-		      <input type='submit' value='Back' id='esign-back-button' /> 
-	          <input type='button' value='Sign' id='esign-sign-button-encounter' />
+		      <input type='submit' value='<?php echo xlt('Back'); ?>' id='esign-back-button' /> 
+	          <input type='button' value='<?php echo xlt('Sign'); ?>' id='esign-sign-button-encounter' />
 	    </div>
 	    
-		<input type='hidden' id='table' name='table' value='<?php echo $this->form->table; ?>' /> 
-		<input type='hidden' id='encounterId' name='encounterId' value='<?php echo $this->form->encounterId; ?>' />
-		<input type='hidden' id='userId' name='userId' value='<?php echo $this->form->userId; ?>' />
+		<input type='hidden' id='table' name='table' value='<?php echo attr( $this->form->table ); ?>' /> 
+		<input type='hidden' id='encounterId' name='encounterId' value='<?php echo attr( $this->form->encounterId ); ?>' />
+		<input type='hidden' id='userId' name='userId' value='<?php echo attr( $this->form->userId ); ?>' />
 	    
 	</form> 
 </div>

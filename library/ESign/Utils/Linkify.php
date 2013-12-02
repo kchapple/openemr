@@ -3,9 +3,9 @@
 use ESign\Signature;
 
 /**
- * Copyright (C) 2013 OEMR 501c3 www.oemr.org
- *
  * Utility to linkify
+ * 
+ * Copyright (C) 2013 OEMR 501c3 www.oemr.org
  *
  * LICENSE: This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,7 +21,7 @@ use ESign\Signature;
  * @package OpenEMR
  * @author  Ken Chapple <ken@mi-squared.com>
  * @author  Medical Information Integration, LLC
- * @link    http://www.mi-squared.com
+ * @link    http://www.open-emr.org
  **/
 
 require_once $GLOBALS['srcdir'].'/ESign/Signature.php';
@@ -32,7 +32,7 @@ class Utils_Linkify
     {
         $html = $type;
         if ( strpos( $type, Signature::TYPE_AMENDMENT ) !== false ) {
-            $link = xl(Signature::TYPE_AMENDMENT, 'r', "<a href='javascript;' class='esign-amendment-link'>", "</a>" );
+            $link = "<a href='javascript;' class='esign-amendment-link'>".xlt( Signature::TYPE_AMENDMENT )."</a>";
             $html = str_replace( Signature::TYPE_AMENDMENT, $link, $type );
         } 
         

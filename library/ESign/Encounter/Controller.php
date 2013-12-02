@@ -3,9 +3,10 @@
 namespace ESign;
 
 /**
+ * Encounter controller implementation
+ * 
  * Copyright (C) 2013 OEMR 501c3 www.oemr.org
  *
- * Encounter controller implementation
  *
  * LICENSE: This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,7 +22,7 @@ namespace ESign;
  * @package OpenEMR
  * @author  Ken Chapple <ken@mi-squared.com>
  * @author  Medical Information Integration, LLC
- * @link    http://www.mi-squared.com
+ * @link    http://www.open-emr.org
  **/
 
 require_once $GLOBALS['srcdir'].'/ESign/Abstract/Controller.php';
@@ -78,17 +79,20 @@ class Encounter_Controller extends Abstract_Controller
         if ( confirm_user_password( $_SESSION['authUser'], $password ) ) {
             $signable = new Encounter_Signable( $encounterId );
             if ( $signable->sign( $_SESSION['authUserID'], $lock, $amendment ) ) {
-                $message = xl( "Form signed successfully" );
+                $message = xlt( "Form signed successfully" );
                 $status = self::STATUS_SUCCESS;
             } else {
-                $message = xl( "An error occured signing the form" );
+                $message = xlt( "An error occured signing the form" );
             }
         } else {
-            $message = xl( "The password you entered is invalid" );
+            $message = xlt( "The password you entered is invalid" );
         }
         $response = new Response( $status, $message );
         $response->encounterId = $encounterId;
         $response->locked = $lock;
+        if ( $lock ) {
+            $response->editButtonHtml = "<a href=# class='css_button_small form-edit-button-locked'><span>".xlt('Locked')."</span></a>";
+        }
         echo json_encode( $response );
         exit;
     }

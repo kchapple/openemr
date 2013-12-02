@@ -3,10 +3,10 @@
 namespace ESign;
 
 /**
- * Copyright (C) 2013 OEMR 501c3 www.oemr.org
- *
  * Implementation of the SignableIF interface for the Encounter
  * module. 
+ *
+ * Copyright (C) 2013 OEMR 501c3 www.oemr.org
  *
  * LICENSE: This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,11 +22,12 @@ namespace ESign;
  * @package OpenEMR
  * @author  Ken Chapple <ken@mi-squared.com>
  * @author  Medical Information Integration, LLC
- * @link    http://www.mi-squared.com
+ * @link    http://www.open-emr.org
  **/
 
 require_once $GLOBALS['srcdir'].'/ESign/DbRow/Signable.php';
 require_once $GLOBALS['srcdir'].'/ESign/SignableIF.php';
+require_once $GLOBALS['srcdir'].'/formdata.inc.php';
 
 class Encounter_Signable extends DbRow_Signable implements SignableIF
 {    
@@ -60,7 +61,7 @@ class Encounter_Signable extends DbRow_Signable implements SignableIF
                 $formTable = 'encounter';
             }
             $formTable = 'form_'.$formTable;
-            $formStatement = "SELECT * FROM `".$formTable."` F ";
+            $formStatement = "SELECT * FROM `".escape_table_name( $formTable )."` F ";
             $formStatement .= "WHERE F.id = ? ";
             $row = sqlQuery( $formStatement, array( $encRow['form_id'] ) );
             $data[]= $row;

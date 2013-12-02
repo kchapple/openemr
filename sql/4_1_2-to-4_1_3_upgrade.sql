@@ -97,6 +97,6 @@ CREATE TABLE `esign_signatures` (
   `amendment` text COMMENT 'amendment text, if any',
   `hash` varchar(255) NOT NULL COMMENT 'hash of signed data', 
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB AUTO_INCREMENT=1 ;
 #EndIf
 

@@ -1,9 +1,9 @@
 <?php
 /**
- * Copyright (C) 2013 OEMR 501c3 www.oemr.org
- *
  * Instanciate a router and route the interface request to the appropriate
  * controller and method in the ESign/ library directory.
+ * 
+ * Copyright (C) 2013 OEMR 501c3 www.oemr.org
  *
  * LICENSE: This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,11 +19,10 @@
  * @package OpenEMR
  * @author  Ken Chapple <ken@mi-squared.com>
  * @author  Medical Information Integration, LLC
- * @link    http://www.mi-squared.com
+ * @link    http://www.open-emr.org
  **/
 
 use ESign\Router;
-use ESign\Form_Controller;
 //SANITIZE ALL ESCAPES
 $sanitize_all_escapes=true;
 //STOP FAKE REGISTER GLOBALS
