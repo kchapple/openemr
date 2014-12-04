@@ -1,4 +1,4 @@
-<?php
+    <?php
 // Copyright (C) 2011 Ken Chapple <ken@mi-squared.com>
 //
 // This program is free software; you can redistribute it and/or
@@ -53,6 +53,7 @@ class ReportTypes
         "provide_rec_pat_amc" => array( ReportTypes::AMC, "AMC_304f" ),
         "timely_access_amc" => array( ReportTypes::AMC, "AMC_304g" ),
     	"provide_sum_pat_amc" => array( ReportTypes::AMC, "AMC_304h" ),
-        "send_sum_amc" => array( ReportTypes::AMC, "AMC_304i" )
+        "send_sum_amc" => array( ReportTypes::AMC, "AMC_304i" ),
+        "electronic_notes_amc" => array( ReportTypes::AMC, "AMC_314g_1_2_22" ), // MU-2014-AMC 170.314(g)(1)/(2), Measure 22 
     );
 }
