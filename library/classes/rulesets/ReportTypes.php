@@ -54,6 +54,7 @@ class ReportTypes
         "timely_access_amc" => array( ReportTypes::AMC, "AMC_304g" ),
     	"provide_sum_pat_amc" => array( ReportTypes::AMC, "AMC_304h" ),
         "send_sum_amc" => array( ReportTypes::AMC, "AMC_304i" ),
+        "family_health_history_amc" => array( ReportTypes::AMC, "AMC_314g_1_2_21" ), // MU-2014-AMC 170.314(g)(1)/(2), Measure 21
         "electronic_notes_amc" => array( ReportTypes::AMC, "AMC_314g_1_2_22" ), // MU-2014-AMC 170.314(g)(1)/(2), Measure 22 
     );
 }
