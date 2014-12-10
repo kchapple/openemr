@@ -2951,6 +2951,13 @@ CREATE TABLE `report_itemized` (
 ) ENGINE=MyISAM;
 #EndIf
 
+#IfNotRow clinical_rules id imaging_amc
+INSERT INTO `clinical_rules` ( `id`, `pid`, `active_alert_flag`, `passive_alert_flag`, `cqm_flag`, `cqm_nqf_code`, `cqm_pqri_code`, `amc_flag`, `amc_code`, `patient_reminder_flag`, `amc_2011_flag`, `amc_2014_flag`, `amc_code_2014` ) VALUES ('imaging_amc', 0, 0, 0, 0, '', '', 1, '', 0, 0, 1, '170.314(g)(1)/(2) 20');
+#EndIf
+#IfNotRow2D list_options list_id clinical_rules option_id imaging_amc
+INSERT INTO `list_options` ( `list_id`, `option_id`, `title`, `seq`, `is_default` ) VALUES ('clinical_rules', 'imaging_amc', 'Imaging', 3020, 0);
+#EndIf
+
 #IfNotRow clinical_rules id family_health_history_amc
 INSERT INTO `clinical_rules` ( `id`, `pid`, `active_alert_flag`, `passive_alert_flag`, `cqm_flag`, `cqm_nqf_code`, `cqm_pqri_code`, `amc_flag`, `amc_code`, `patient_reminder_flag`, `amc_2011_flag`, `amc_2014_flag`, `amc_code_2014` ) VALUES ('family_health_history_amc', 0, 0, 0, 0, '', '', 1, '', 0, 0, 1, '170.314(g)(1)/(2) 21');
 #EndIf
