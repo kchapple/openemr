@@ -23,22 +23,50 @@
 
 class AMC_314g_1_2_20 extends AbstractAmcReport
 {
+    public function getObjectToCount()
+    {
+        return "imaging_labs";
+    }
+    
     public function execute()
     {
         if ($GLOBALS['report_itemizing_temp_flag_and_id']) {
             $GLOBALS['report_itemized_test_id_iterator']++;
         }
         
-        // Grab all imaging lab orders for the denominator
-        // TODO use LOINC code or similar to narrow query to just imaging lab orders
-        $sql = "SELECT * FROM " .
-            "procedure_order PO " .
-            "JOIN procedure_order_code PC ON PC.procedure_order_id = PO.procedure_order_id " .
-            "JOIN procedure_report PR ON PR.procedure_order_id = PO.procedure_order_id " .
-            "LEFT JOIN patient_data PD ON PD.pid = PO.patient_id " .
-            "WHERE PR.date_collected >= ? AND PR.date_collected <= ?";
+        // Collect patients in the population we're counting only
+        $patientString = "";
+        $count = 0;
+        foreach ( $this->_amcPopulation as $patient ) {
+            $patientString .= $patient->id;
+            if ( $count < count( $this->_amcPopulation ) - 1 ) {
+                $patientString .= ",";
+            }
+            $count++;
+        }
+        error_log($patientString);
         
-        $resource = sqlStatement( $statement, array( $this->_beginMeasurement, $this->_endMeasurement ) );
+        // Fix empty begin date
+        $tempBeginMeasurement = "";
+        if ( empty($this->_beginMeasurement) ) {
+            $tempBeginMeasurement = "1901-01-01";
+        }
+        else {
+            $tempBeginMeasurement = $this->_beginMeasurement;
+        }
+        
+        // Grab all imaging lab orders results for the demonator
+        // Use procedure type "units" to narrow query to just imaging lab order results
+        $sql = "SELECT RES.units, RES.document_id, PO.patient_id FROM " .
+            "procedure_result RES " .
+            "JOIN procedure_report REP ON REP.procedure_report_id = RES.procedure_report_id " .
+            "JOIN procedure_order PO ON PO.procedure_order_id = REP.procedure_order_id " .
+            "WHERE REP.date_collected >= ? AND REP.date_collected <= ? " .
+            "AND RES.units = ? " .
+            "AND PO.patient_id IN ( $patientString ) ";
+        
+        error_log( $sql );
+        $resource = sqlStatement( $sql, array( $tempBeginMeasurement, $this->_endMeasurement, "Image" ) );
         
         // For the numerator, count all imaging lab orders that have a linked document
         $numeratorObjects = 0;
@@ -46,6 +74,8 @@ class AMC_314g_1_2_20 extends AbstractAmcReport
         while ( $row = sqlFetchArray( $resource ) ) {
             
             if ( $this->hasImageResult( $row ) ) {
+                
+                // Has a linked image/document in the result, increment numerator
                 $numeratorObjects++;
             
                 // If itemization is turned on, then record the "passed" item
@@ -66,7 +96,7 @@ class AMC_314g_1_2_20 extends AbstractAmcReport
         }
         
         $percentage = calculate_percentage( $denominatorObjects, 0, $numeratorObjects );
-        $result = new AmcResult( $this->_rowRule, $totalPatients, $denominatorObjects, 0, $numeratorObjects, $percentage );
+        $result = new AmcResult( $this->_rowRule, count($this->_amcPopulation), $denominatorObjects, 0, $numeratorObjects, $percentage );
         $this->_resultsArray[]= $result;
     }
     
@@ -81,8 +111,12 @@ class AMC_314g_1_2_20 extends AbstractAmcReport
      */
     protected function hasImageResult( $row )
     {
-        // TODO Implement function
-        return true;
+        // See if there is a linked document by searching for a document in procedure results
+        if ( $row['document_id'] ) {
+            return true;
+        }
+        
+        return false;
     }
     
     public function getTitle()
