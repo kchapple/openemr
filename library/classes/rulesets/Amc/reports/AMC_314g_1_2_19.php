@@ -1,6 +1,6 @@
 <?php
 /**
- * Measure 20: Imaging
+ * Measure 19: Secure Messaging
  * 
  * Copyright (C) 2014 OEMR 501c3 www.oemr.org
  *
@@ -21,26 +21,25 @@
  * @link    http://www.open-emr.org
  **/
 
-class AMC_314g_1_2_20 extends AbstractAmcObjectReport
-{
+class AMC_314g_1_2_19 extends AbstractAmcObjectReport
+{   
     public function fetchPopulation()
     {
         // Collect patients in the population we're counting only
         $patientString = $this->commaDelimPatientPopString();
         
-        // Grab all imaging lab orders results for the demonator
-        // Use procedure type "units" to narrow query to just imaging lab order results
-        $sql = "SELECT P.DOB, P.pid, RES.units, RES.document_id FROM " .
-                "procedure_result RES " .
-                "JOIN procedure_report REP ON REP.procedure_report_id = RES.procedure_report_id " .
-                "JOIN procedure_order PO ON PO.procedure_order_id = REP.procedure_order_id " .
-                "JOIN patient_data P ON PO.patient_id = P.pid " .
-                "WHERE REP.date_collected >= ? AND REP.date_collected <= ? " .
-                "AND RES.units = ? " .
-                "AND P.pid IN ( $patientString ) ";
-        
-        error_log( $sql );
-        $resource = sqlStatement( $sql, array( $this->getBeginMeasurement(), $this->_endMeasurement, "Image" ) );
+        // Grab all UNIQUE patients seen in the range for the demonator
+        $sql = "SELECT P.DOB, P.pid, N.id AS note_id  FROM
+                ( SELECT P.DOB, P.pid
+                  FROM form_encounter FE
+                  JOIN patient_data P ON FE.pid = P.pid
+                  WHERE FE.date >= ? AND FE.date <= ?
+                  AND PO.patient_id IN ( $patientString )
+                  GROUP BY P.pid
+                ) P
+            LEFT OUTER JOIN pnotes N ON N.user = P.pid";
+                
+        $resource = sqlStatement( $sql, array( $tempBeginMeasurement, $this->_endMeasurement ) );
         
         // For the numerator, count all imaging lab orders that have a linked document
         $objects = array();
@@ -56,16 +55,11 @@ class AMC_314g_1_2_20 extends AbstractAmcObjectReport
     
     public function getTitle()
     {
-        return "AMC_314g_1_2_20";
+        return "AMC_314g_1_2_19";
     }
     
     public function createNumerator()
     {
-        return new AMC_314g_1_2_20_Numerator();
-    }
-    
-    public function createDenominator()
-    {
-        return new AMC_314g_1_2_20_Denominator();
+        return new AMC_314g_1_2_19_Numerator();
     }
 }

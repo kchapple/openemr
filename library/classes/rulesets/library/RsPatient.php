@@ -13,9 +13,12 @@ class RsPatient
     public $id;
     public $dob;
 
-    public function __construct( $id ) {
+    public function __construct( $id, $dob = null ) {
         $this->id = $id;
-        $this->dob = $this->get_DOB( $id );
+        $this->dob = $dob;
+        if ( $this->dob === null ) {
+            $this->dob = $this->get_DOB( $id );
+        }
     }
 
     /* Function to get patient dob

@@ -55,10 +55,46 @@ abstract class AbstractAmcReport implements RsReportIF
     public function getResults() {
         return $this->_resultsArray;
     }
-
-    public function execute()
+    
+    public function getBeginMeasurement( AmcPatient $patient = null )
     {
-
+        // Fix empty begin date
+        $tempBeginMeasurement = "";
+        if ( empty($this->_beginMeasurement) &&
+            $patient === null ) {
+            $tempBeginMeasurement = "1901-01-01";
+        } else if ( empty($this->_beginMeasurement) ) {
+            $tempBeginMeasurement = $patient->dob;
+        } else {
+            $tempBeginMeasurement = $this->_beginMeasurement;
+        }
+    
+        return $tempBeginMeasurement;
+    }
+    
+    public function getTotalPatients()
+    {
+        return count( $this->_amcPopulation );
+    }
+    
+    public function onNumeratorPass( AmcPatient $patient, array $args = null )
+    {
+        // If itemization is turned on, then record the "passed" item
+        if ($GLOBALS['report_itemizing_temp_flag_and_id']) {
+            insertItemReportTracker( $GLOBALS['report_itemizing_temp_flag_and_id'], $GLOBALS['report_itemized_test_id_iterator'], 1, $patient->id );
+        }
+    }
+    
+    public function onNumeratorFail( AmcPatient $patient, array $args = null )
+    {
+        // If itemization is turned on, then record the "failed" item
+        if ($GLOBALS['report_itemizing_temp_flag_and_id']) {
+            insertItemReportTracker( $GLOBALS['report_itemizing_temp_flag_and_id'], $GLOBALS['report_itemized_test_id_iterator'], 0, $patient->id );
+        }
+    }
+    
+    public function onBeginExecute()
+    {
         // If itemization is turned on, then iterate the rule id iterator
         //
         // Note that when AMC rules suports different patient populations and
@@ -67,6 +103,11 @@ abstract class AbstractAmcReport implements RsReportIF
         if ($GLOBALS['report_itemizing_temp_flag_and_id']) {
             $GLOBALS['report_itemized_test_id_iterator']++;
         }
+    }
+
+    public function execute()
+    {
+        $this->onBeginExecute();
 
         $numerator = $this->createNumerator();
         if ( !$numerator instanceof AmcFilterIF ) {
@@ -78,7 +119,7 @@ abstract class AbstractAmcReport implements RsReportIF
             throw new Exception( "Denominator must be an instance of AmcFilterIF" );
         }
 
-        $totalPatients = count( $this->_amcPopulation );
+        $totalPatients = $this->getTotalPatients();
 
         // Figure out object to be counted
         //   (patients, labs, transitions, visits, or prescriptions)
@@ -91,20 +132,11 @@ abstract class AbstractAmcReport implements RsReportIF
         $denominatorObjects = 0;
         foreach ( $this->_amcPopulation as $patient ) 
         {
-            // If begin measurement is empty, then make the begin
-            //  measurement the patient dob.
-            $tempBeginMeasurement = "";
-            if (empty($this->_beginMeasurement)) {
-                $tempBeginMeasurement = $patient->dob;
-            }
-            else {
-                $tempBeginMeasurement = $this->_beginMeasurement;
-            }
-
             // Count Denominators
             if ($object_to_count == "patients") {
                 // Counting patients
-                if ( !$denominator->test( $patient, $tempBeginMeasurement, $this->_endMeasurement ) ) {
+                if ( !$denominator->test( $patient, $this->getBeginMeasurement( $patient ), $this->_endMeasurement ) ) {
+                    $this->onDenominatorFail();
                     continue;
                 }
                 $denominatorObjects++;
@@ -112,13 +144,13 @@ abstract class AbstractAmcReport implements RsReportIF
             else {
                 // Counting objects other than patients
                 //   First, collect the pertinent objects
-                $objects = $this->collectObjects($patient,$object_to_count,$tempBeginMeasurement,$this->_endMeasurement);
+                $objects = $this->collectObjects($patient,$object_to_count,$this->getBeginMeasurement( $patient ),$this->_endMeasurement);
 
                 //   Second, test each object
                 $objects_pass=array();
                 foreach ($objects as $object) {
                     $patient->object=$object;
-                    if ( $denominator->test( $patient, $tempBeginMeasurement, $this->_endMeasurement ) ) {
+                    if ( $denominator->test( $patient, $this->getBeginMeasurement( $patient ), $this->_endMeasurement ) ) {
                         $denominatorObjects++;
                         array_push($objects_pass,$object);
                     }
@@ -128,24 +160,13 @@ abstract class AbstractAmcReport implements RsReportIF
             // Count Numerators
             if ($object_to_count == "patients") {
                 // Counting patients
-                if ( !$numerator->test( $patient, $tempBeginMeasurement, $this->_endMeasurement ) ) {
-
-
-                    // If itemization is turned on, then record the "failed" item
-                    if ($GLOBALS['report_itemizing_temp_flag_and_id']) {
-                        insertItemReportTracker($GLOBALS['report_itemizing_temp_flag_and_id'], $GLOBALS['report_itemized_test_id_iterator'], 0, $patient->id);
-                    }
-
+                if ( !$numerator->test( $patient, $this->getBeginMeasurement( $patient ), $this->_endMeasurement ) ) {
+                    $this->onNumeratorFail( $patient );
                     continue;
                 }
                 else {
                     $numeratorObjects++;
-
-                    // If itemization is turned on, then record the "passed" item
-                    if ($GLOBALS['report_itemizing_temp_flag_and_id']) {
-                        insertItemReportTracker($GLOBALS['report_itemizing_temp_flag_and_id'], $GLOBALS['report_itemized_test_id_iterator'], 1, $patient->id);
-                    }
-
+                    $this->onNumeratorPass( $patient );
                 }
             }
             else {
@@ -153,22 +174,12 @@ abstract class AbstractAmcReport implements RsReportIF
                 //   test each object that passed the above denominator testing
                 foreach ($objects_pass as $object) {
                     $patient->object=$object;
-                    if ( $numerator->test( $patient, $tempBeginMeasurement, $this->_endMeasurement ) ) {
+                    if ( $numerator->test( $patient, $this->getBeginMeasurement( $patient ), $this->_endMeasurement ) ) {
                         $numeratorObjects++;
-
-                        // If itemization is turned on, then record the "passed" item
-                        if ($GLOBALS['report_itemizing_temp_flag_and_id']) {
-                            insertItemReportTracker($GLOBALS['report_itemizing_temp_flag_and_id'], $GLOBALS['report_itemized_test_id_iterator'], 1, $patient->id);
-                        }
-
+                        $this->onNumeratorPass( $patient );
                     }
                     else {
-
-                        // If itemization is turned on, then record the "failed" item
-                        if ($GLOBALS['report_itemizing_temp_flag_and_id']) {
-                            insertItemReportTracker($GLOBALS['report_itemizing_temp_flag_and_id'], $GLOBALS['report_itemized_test_id_iterator'], 0, $patient->id);
-                        }
-
+                        $this->onNumeratorFail( $patient );
                     }
                 }
             }
@@ -181,7 +192,7 @@ abstract class AbstractAmcReport implements RsReportIF
         }
         
         $percentage = calculate_percentage( $denominatorObjects, 0, $numeratorObjects );
-        $result = new AmcResult( $this->_rowRule, $totalPatients, $denominatorObjects, 0, $numeratorObjects, $percentage );
+        $result = new AmcResult( $this->_rowRule, $this->getTotalPatients(), $denominatorObjects, 0, $numeratorObjects, $percentage );
         $this->_resultsArray[]= $result;
     }
 
