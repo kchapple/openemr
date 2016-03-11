@@ -1,6 +1,6 @@
 <?php
 
-namespace Library\Framework;
+namespace Framework;
 
 class View extends AbstractModel implements ViewableIF
 {

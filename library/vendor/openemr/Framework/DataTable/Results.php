@@ -1,7 +1,7 @@
 <?php
-namespace Library\Framework\DataTable;
+namespace Framework\DataTable;
 
-use Library\Framework\AbstractModel;
+use Framework\AbstractModel;
 
 class Results extends AbstractModel
 {
@@ -61,8 +61,8 @@ class Results extends AbstractModel
         }
 
         // KCC hack to always sort by last updated datetime after other sort parameters
-        $sortOrder = new SortOrder( 'last_updated_datetime', SortOrder::SORT_DESC );
-        $sql->addSortOrder( $sortOrder );
+//        $sortOrder = new SortOrder( 'last_updated_datetime', SortOrder::SORT_DESC );
+//        $sql->addSortOrder( $sortOrder );
 
         if ( !empty( $options['sSearch'] ) ) {
         

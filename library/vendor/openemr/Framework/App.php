@@ -1,6 +1,6 @@
 <?php
 
-namespace Library\Framework;
+namespace Framework;
 
 class App 
 {
@@ -28,7 +28,7 @@ class App
     {
         $actionParam = $this->request->getParam('action', null);
         if ( $actionParam === null ) {
-            throw new \Exception('No action parameter provided to app.');
+            throw new \Exception('No action parameter provided to bootstrap.');
         }
         
         $paramParts = explode('!', $actionParam);

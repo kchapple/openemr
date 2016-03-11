@@ -1,6 +1,6 @@
 <?php
 
-namespace Library\Framework;
+namespace Framework;
 
 /**
  * Enables echoing and stringifying objects that implement the

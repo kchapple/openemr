@@ -1,6 +1,6 @@
 <?php
 
-namespace Library\Framework;
+namespace Framework;
 
 /**
  * Interface parameter to the Viewer class.
@@ -18,7 +18,7 @@ namespace Library\Framework;
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://opensource.org/licenses/gpl-license.php>;.
  *
- * @package Library\Framework
+ * @package Framework
  * @author  Ken Chapple <ken@mi-squared.com>
  * @author  Medical Information Integration, LLC
  * @link    http://www.mi-squared.com

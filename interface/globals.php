@@ -428,5 +428,6 @@ if ($fake_register_globals) {
   extract($_POST,EXTR_SKIP);
 }
 
-include_once __DIR__ . '/plugins/bootstrap.php';
+
+include_once __DIR__ . '/../library/pluginsystem/bootstrap.php';
 ?>

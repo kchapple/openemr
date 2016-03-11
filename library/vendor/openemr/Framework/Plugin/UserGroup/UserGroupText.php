@@ -1,5 +1,5 @@
 <?php
-namespace Library\Framework\Plugin\UserGroup;
+namespace Framework\Plugin\UserGroup;
 
 class UserGroupText implements UserGroupFieldIF
 {

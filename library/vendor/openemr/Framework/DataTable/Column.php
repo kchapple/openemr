@@ -1,7 +1,7 @@
 <?php
-namespace Library\Framework\DataTable;
+namespace Framework\DataTable;
 
-use Library\Framework\AbstractModel;
+use Framework\AbstractModel;
 
 class Column extends AbstractModel
 {

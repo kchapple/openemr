@@ -1,5 +1,5 @@
 <?php
-namespace Library\Framework\Plugin\Globals;
+namespace Framework\Plugin\Globals;
 
 class Setting
 {

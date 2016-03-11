@@ -1,8 +1,8 @@
 <?php
-namespace Library\Framework\DataTable;
+namespace Framework\DataTable;
 
-use Library\Framework\AbstractModel;
-use Library\Framework\Request;
+use Framework\AbstractModel;
+use Framework\Request;
 
 /**
  * 

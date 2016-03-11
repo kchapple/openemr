@@ -1,5 +1,5 @@
 <?php
-namespace Library\Framework;
+namespace Framework;
 
 /**
  *   Abstract Controller

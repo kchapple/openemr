@@ -21,8 +21,8 @@ if ( !defined( 'VENDOR_DIR' ) ) {
 set_include_path( get_include_path() . PATH_SEPARATOR . SYSTEM_DIRECTORY );
 
 include_once SYSTEM_DIRECTORY . '/autoload.php';
-if ( method_exists( '\Library\Framework\Plugin\PS', 'init' ) ) {
-    \Library\Framework\Plugin\PS::init();
+if ( method_exists( '\Framework\Plugin\PS', 'init' ) ) {
+    \Framework\Plugin\PS::init();
 } else {
     error_log( "Could not initialize the plugin system" );
 }

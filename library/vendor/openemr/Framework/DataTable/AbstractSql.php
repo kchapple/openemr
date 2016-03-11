@@ -1,5 +1,5 @@
 <?php
-namespace Library\Framework\DataTable;
+namespace Framework\DataTable;
 
 abstract class AbstractSql
 {

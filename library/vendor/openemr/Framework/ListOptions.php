@@ -1,7 +1,7 @@
 <?php
-namespace Library\Framework;
+namespace Framework;
 
-use Library\Framework\AbstractModel;
+use Framework\AbstractModel;
 
 class ListOptions extends AbstractModel
 {   

@@ -1,5 +1,5 @@
 <?php
-namespace Library\Framework\Plugin\Migration;
+namespace Framework\Plugin\Migration;
 
 use Plugin;
 
