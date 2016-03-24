@@ -1,7 +1,6 @@
 <?php
 use Framework\AbstractController;
 use Framework\DataTable\DataTable;
-use Framework\DataTable\SearchFilter;
 use Framework\ListOptions;
 
 require_once(__DIR__."/../../../library/pid.inc");
@@ -17,7 +16,7 @@ class TagsController extends AbstractController
 
     public function getEntry()
     {
-        return new TagsEntry();
+        return new TagEntry();
     }
 
     public function buildDataTable()
@@ -32,11 +31,22 @@ class TagsController extends AbstractController
         return $dataTable;
     }
 
+    public function _action_create()
+    {
+        global $gacl;
+        // Created a tag
+
+        // Create it's associated ARO
+
+    }
+
     public function _action_index()
     {
         $this->view->dataTable = $this->buildDataTable();
         $this->view->title = $this->getTitle();
-        $this->setViewScript( 'list.php' );
+        $this->view->navbar = file_get_contents( __DIR__."/../views/navbars/tags.php" );
+        $this->view->modal = file_get_contents( __DIR__."/../views/modals/create_tag.php" );
+        $this->setViewScript( 'list.php', 'layouts/tags_layout.php' );
     }
 
     public function _action_results()
@@ -52,5 +62,10 @@ class TagsController extends AbstractController
         $this->view->encounter = $encounterId;
         $this->view->pid = $pid;
         $this->setViewScript('details.php');
+    }
+
+    public function _action_tag_colors()
+    {
+        return $this->getEntry()->getColorOptionsJson();
     }
 }

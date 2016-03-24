@@ -8,8 +8,16 @@
 
 class TagRepository
 {
-    public function fetchAll( $type = '' )
+    public function fetchAll()
     {
-
+        $sql = "SELECT * FROM tf_tags";
+        $result = sqlStatement( $sql );
+        $tags = array();
+        while ( $row = sqlFetchArray( $result ) ) {
+            $tags[]= new Tag( $row );
+        }
+        return $tags;
     }
+
+
 }

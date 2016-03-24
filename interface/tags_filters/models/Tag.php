@@ -5,8 +5,9 @@
  * Date: 3/3/16
  * Time: 1:34 PM
  */
+use \Framework\AbstractModel;
 
-class Tag
+class Tag extends AbstractModel
 {
 
 }

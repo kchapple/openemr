@@ -8,11 +8,17 @@ $baseDir = dirname($vendorDir);
 return array(
     'Entry' => $baseDir . '/models/Entry.php',
     'Filter' => $baseDir . '/models/Filter.php',
+    'FilterEntry' => $baseDir . '/models/FilterEntry.php',
     'FilterRepository' => $baseDir . '/models/FilterRepository.php',
+    'FiltersController' => $baseDir . '/controllers/FiltersController.php',
     'Form' => $baseDir . '/models/Form.php',
+    'InstallController' => $baseDir . '/controllers/InstallController.php',
     'Patient' => $baseDir . '/models/Patient.php',
+    'PatientTagEntry' => $baseDir . '/models/PatientTagEntry.php',
+    'PatientTagRepository' => $baseDir . '/models/PatientTagRepository.php',
+    'PatientsController' => $baseDir . '/controllers/PatientsController.php',
     'Tag' => $baseDir . '/models/Tag.php',
+    'TagEntry' => $baseDir . '/models/TagEntry.php',
     'TagRepository' => $baseDir . '/models/TagRepository.php',
     'TagsController' => $baseDir . '/controllers/TagsController.php',
-    'TagsEntry' => $baseDir . '/models/TagEntry.php',
 );

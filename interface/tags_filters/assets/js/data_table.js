@@ -1,4 +1,4 @@
-var data_table = function( options, onShowDetails, onHideDetails, onAfterDraw ) {
+function data_table( options, onShowDetails, onHideDetails, onAfterDraw ) {
 	
 	var tableId = options.tableId;
 	var resultsUrl = options.resultsUrl; // Url to fetch results
@@ -15,6 +15,7 @@ var data_table = function( options, onShowDetails, onHideDetails, onAfterDraw ) 
     var lastOpenRow = null;
     
     var oTable;
+    var oInnerTable;
 
     var getDatatable = function()
     {
@@ -140,18 +141,6 @@ var data_table = function( options, onShowDetails, onHideDetails, onAfterDraw ) 
              e.preventDefault();
       		 e.stopPropagation();
 
-             var pid = $(this).attr( 'data-pid' );             
-             var encounter = $(this).attr('data-encounter');
-
-             $.post( setPatientUrl, { pid: pid, encounter: encounter }, function(response) {
-                 // When call returns set the UI patient in the top navigation using code similar to line 397
-                 // of /interface/patient_file/demographics.php
-                parent.left_nav.setPatient( response['patientname'], response['pid'], response['pubpid'], response['frname'], response['str_dob'], response['encounter']);
-                parent.left_nav.setPatientEncounter(response['encounterIdArray'], response['encounterDateArray'], response['calendarCategoryArray']);
-
-             }, 
-             'json');
-             
             if (lastOpenRow != null && tr != lastOpenRow){
                 oTable.fnClose(lastOpenRow);
             }
@@ -180,7 +169,16 @@ var data_table = function( options, onShowDetails, onHideDetails, onAfterDraw ) 
 
                 var requestUrl = $(this).attr( "href" );
                 $.get( requestUrl, function( data ) {
+
                     oTable.fnOpen( tr, data, 'details' );
+
+                    oInnerTable = $("#exampleTable").dataTable({
+                        "aaData" : data,
+                        "bJQueryUI": true,
+                        "bPaginate": false
+                    });
+
+
                     $(lastOpenRow).find('a.column_behavior_details').text('Show');
                     lastOpenRow = tr;
                 });

@@ -39,5 +39,11 @@ function add_tags_filters_navigation()
 }
 add_action('left_nav_before_html_end', 'add_tags_filters_navigation');
 
+function add_tags_demographics()
+{
+    include __DIR__."/views/tags_demographics.php";
+}
+add_action( 'demographics_before_first_table_row', 'add_tags_demographics' );
+
 
 //}
