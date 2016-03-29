@@ -66,6 +66,14 @@ class TagsController extends AbstractController
 
     public function _action_tag_colors()
     {
-        return $this->getEntry()->getColorOptionsJson();
+        $repo = new TagRepository();
+        return $repo->getColorOptionsJson();
+    }
+
+    public function _action_tags_json()
+    {
+        $repo = new TagRepository();
+        echo json_encode( $repo->fetchAll() );
+        exit;
     }
 }

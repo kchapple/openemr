@@ -8,6 +8,7 @@ require_once(__DIR__."/../../../library/patient.inc");
 
 class PatientsController extends AbstractController
 {
+    protected $entry = null;
 
     public function getTitle()
     {
@@ -18,6 +19,7 @@ class PatientsController extends AbstractController
     public function buildDataTable()
     {
         $entry = new PatientTagEntry();
+        $this->entry = $entry;
         $dataTable = new DataTable(
             $entry,
             'patients-tags-table',
@@ -25,6 +27,22 @@ class PatientsController extends AbstractController
             null,
             $this->getBaseUrl()."/index.php?action=patients!setpid" );
         return $dataTable;
+    }
+
+    public function _action_view_tags()
+    {
+        $pid = $this->request->getParam('pid');
+        $repo = new PatientTagRepository();
+        $this->view->tags = $repo->fetchTagsForPatient( $pid );
+        $this->setViewScript( 'views/patients_tags.php' );
+    }
+
+    public function _action_save_tags()
+    {
+        $pid = $this->request->getParam('pid');
+        $repo = new PatientTagRepository();
+        $this->view->tags = $repo->fetchTagsForPatient( $pid );
+        $this->setViewScript( 'views/patients_tags.php' );
     }
 
     /*
@@ -35,6 +53,9 @@ class PatientsController extends AbstractController
         $pid = $this->request->getParam('pid');
         $repo = new PatientTagRepository();
         $this->view->tags = $repo->fetchTagsForPatient( $pid );
+        $tagRepo = new TagRepository();
+        $this->view->tagColors = $tagRepo->getColorOptions();
+        $this->view->tagsJson = json_encode( $tagRepo->fetchAll() );
         $this->setViewScript( 'forms/patients_tags_form.php' );
     }
 
