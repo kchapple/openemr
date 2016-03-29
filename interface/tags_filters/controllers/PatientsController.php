@@ -40,7 +40,25 @@ class PatientsController extends AbstractController
     public function _action_save_tags()
     {
         $pid = $this->request->getParam('pid');
+        $tagsToAdd = $this->request->getParam('tags');
         $repo = new PatientTagRepository();
+        $currentTags = $repo->fetchTagsForPatient( $pid );
+        $tagsToDelete = array();
+        if ( !is_array( $tagsToAdd ) ) {
+            $tagsToAdd = array();
+        }
+
+        foreach ( $currentTags as $ct ) {
+            if ( ( $key = array_search( $ct->tag_id, $tagsToAdd ) ) !== false ) {
+                // We already have this tag, so don't add
+                unset( $tagsToAdd[$key] );
+            } else if ( array_search( $ct->tag_id, $tagsToAdd ) === false ) {
+                // We had this tag, but it's not in our new list, so delete it
+                $tagsToDelete[]= $ct->tag_id;
+            }
+        }
+        $repo->deleteTagsForPatient( $tagsToDelete, $pid );
+        $repo->addTagsForPatient( $tagsToAdd, $pid );
         $this->view->tags = $repo->fetchTagsForPatient( $pid );
         $this->setViewScript( 'views/patients_tags.php' );
     }

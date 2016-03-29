@@ -8,6 +8,21 @@ $controllerUrl = $GLOBALS['webroot']."/interface/tags_filters/index.php?action="
     <style type="text/css">
         @import "<?php echo $GLOBALS['webroot'] ?>/library/js/datatables/media/css/demo_page.css";
         @import "<?php echo $GLOBALS['webroot'] ?>/library/js/datatables/media/css/demo_table.css";
+
+        p.tt-suggestion {
+            width: 400px;
+            border-color: grey;
+            border-style: solid;
+            border-width: 1px 2px 1px 2px;
+            background-color:rgba(255, 255, 255, 0.9);
+            margin: 0px;
+            padding: 4px;
+        }
+
+        .clear-date {
+            cursor: pointer;
+        }
+
     </style>
     <link href="<?php echo $GLOBALS['webroot'] ?>/interface/tags_filters/assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <script src="<?php echo $GLOBALS['webroot'] ?>/interface/tags_filters/assets/jquery/jquery.js"></script>
@@ -16,6 +31,9 @@ $controllerUrl = $GLOBALS['webroot']."/interface/tags_filters/index.php?action="
     <script src="<?php echo $GLOBALS['webroot'] ?>/interface/tags_filters/assets/bootstrap-editable/js/bootstrap-editable.js"></script>
     <script type="text/javascript" src="<?php echo $GLOBALS['webroot'] ?>/library/js/datatables/media/js/jquery.dataTables.js"></script>
     <script src="<?php echo $GLOBALS['webroot'] ?>/interface/tags_filters/assets/js/data_table.js"></script>
+    <script src="<?php echo $GLOBALS['webroot'] ?>/interface/tags_filters/assets/js/typeahead.bundle.min.js"></script>
+    <link href="<?php echo $GLOBALS['webroot'] ?>/interface/tags_filters/assets/js/jquery.datetimepicker.css" rel="stylesheet">
+    <script src="<?php echo $GLOBALS['webroot'] ?>/interface/tags_filters/assets/js/jquery.datetimepicker.js"></script>
 
     <script type="text/javascript">
 

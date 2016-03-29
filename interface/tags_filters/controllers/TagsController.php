@@ -44,8 +44,8 @@ class TagsController extends AbstractController
     {
         $this->view->dataTable = $this->buildDataTable();
         $this->view->title = $this->getTitle();
-        $this->view->navbar = file_get_contents( __DIR__."/../views/navbars/tags.php" );
-        $this->view->modal = file_get_contents( __DIR__."/../views/modals/create_tag.php" );
+        $this->view->navbar = __DIR__."/../views/navbars/tags.php";
+        $this->view->modal = __DIR__."/../views/modals/create_tag.php";
         $this->setViewScript( 'list.php', 'layouts/tags_layout.php' );
     }
 

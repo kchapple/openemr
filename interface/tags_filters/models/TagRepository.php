@@ -12,7 +12,7 @@ class TagRepository
 {
     public function fetchAll()
     {
-        $sql = "SELECT T.id, T.created_at, T.created_by, T.updated_at, T.updated_by, T.tag_name, T.tag_color
+        $sql = "SELECT T.id as tag_id, T.created_at, T.created_by, T.updated_at, T.updated_by, T.tag_name, T.tag_color
         FROM tf_tags T";
         $result = sqlStatement( $sql );
         $tags = array();

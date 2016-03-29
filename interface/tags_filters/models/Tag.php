@@ -9,5 +9,7 @@ use \Framework\AbstractModel;
 
 class Tag extends AbstractModel
 {
+    const STATUS_ACTIVE = 'active';
+    const STATUS_DISABLED = 'disabled';
 
 }

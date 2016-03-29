@@ -27,7 +27,7 @@
         background-clip: padding-box;
         border: 1px solid #ccc;
         border: 1px solid rgba(0, 0, 0, .15);
-        border-radius: 4px;
+        border-radius: 1px;
         -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
         box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
     }
@@ -52,16 +52,16 @@
     }
     .dropdown-menu > li > a:hover,
     .dropdown-menu > li > a:focus {
-        color: #262626;
+        color: black;
         text-decoration: none;
-        background-color: #f5f5f5;
+        background-color: #a7a7a7;
     }
     .dropdown-menu > .active > a,
     .dropdown-menu > .active > a:hover,
     .dropdown-menu > .active > a:focus {
         color: #fff;
         text-decoration: none;
-        background-color: #337ab7;
+        background-color: #a7a7a7;
         outline: 0;
     }
     .dropdown-menu > .disabled > a,
@@ -160,21 +160,23 @@
         var elt = $('#patient-tags');
         elt.tagsinput({
             allowDuplicates: false,
-            itemValue: 'id',
+            itemValue: 'tag_id',
             itemText: 'tag_name',
             tagClass: function ( item ) {
                 return item.tag_color;
             },
             typeahead: {
                 source: <?php echo $this->tagsJson; ?>,
-                afterSelect: function(val) { this.$element.val(""); },
+                afterSelect: function(val) {
+                    this.$element.val("");
+                }
             },
             freeInput: false
         });
 
         <?php foreach ( $this->tags as $tag ) { ?>
         elt.tagsinput('add', {
-            "id": '<?php echo $tag->id; ?>',
+            "tag_id": '<?php echo $tag->tag_id; ?>',
             "tag_name": '<?php echo $tag->tag_name; ?>',
             "tag_color": '<?php echo $tag->tag_color; ?>'
         });
@@ -189,7 +191,5 @@
 
 <form action="">
     <input id="patient-tags" size="8" type="text" placeholder="Add Tag" style="display: inline-block; width: 100%;" data-provide="typeahead" data-role="tagsinput"/>
-
-
 </form>
 

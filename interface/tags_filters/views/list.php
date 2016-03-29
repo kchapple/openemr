@@ -1,8 +1,8 @@
-<?php echo $this->modal; ?>
+<?php include( $this->modal ); ?>
 
 <div id="log-container">
 
-    <?php echo $this->navbar; ?>
+    <?php include( $this->navbar ); ?>
 
     <table class="display" cellspacing="0" width="100%" id="<?php echo $this->dataTable->getTableId() ?>">
         <thead>

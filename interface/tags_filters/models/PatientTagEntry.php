@@ -29,6 +29,7 @@ class PatientTagEntry extends Entry
             CONCAT(P.fname,' ',P.lname) AS patient_name,
             P.fname, P.lname, P.DOB, P.DOB AS DOB2,
             PT.status,
+            PT.tag_id,
             T.tag_name,
             T.tag_color
             FROM tf_patients_tags PT
