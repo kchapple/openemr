@@ -81,9 +81,9 @@ class PatientsController extends AbstractController
     {
         $this->view->dataTable = $this->buildDataTable();
         $this->view->title = $this->getTitle();
-        $this->view->navbar = "";
+        $this->view->navbar = __DIR__."/../views/navbars/patients_tags.php";
         $this->view->modal = "";
-        $this->setViewScript( 'lists/patients_tags_list.php' );
+        $this->setViewScript( 'list.php', 'layouts/patients_tags_layout.php' );
     }
 
     public function _action_results()
