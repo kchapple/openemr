@@ -10,7 +10,16 @@
                     <div id="filter-form">
                         <div class="form-group form-horizontal">
                             <label for="tag_name" class="control-label">Tag Name:</label>
-                            <input name="tag_name" type="text" class="form-control" id="tag_name">
+                            <input name="tag_name" type="text" class="form-control" id="tag-name">
+                        </div>
+
+                        <div class="form-group form-horizontal">
+                            <label for="tag_color" class="control-label">Tag Name:</label>
+                            <select name="tag_color" type="text" class="form-control" id="tag-color">
+                                <?php foreach ( $this->colorOptions as $option ) { ?>
+                                    <option style="background-color: <?php echo $option['color']; ?>;" value="<?php echo $option['value']; ?>"><?php echo ucfirst( $option['text'] ); ?></option>
+                                <?php } ?>
+                            </select>
                         </div>
                     </div>
                 </form>
@@ -33,9 +42,11 @@
 
             $.ajax({
                 type: 'POST',
-                url: '<?php echo $controllerUrl ?>!create_tag',
+                url: '<?php echo $GLOBALS['webroot']; ?>/interface/tags_filters/index.php?action=tags!create_tag',
                 data: data,
-                success: function (data) {
+                success: function ( data ) {
+                    var oTable = data_table.getDatatable();
+                    oTable.fnDraw();
                     $('#createModal').modal('hide');
                 }
             });

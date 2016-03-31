@@ -31,10 +31,12 @@ class TagsController extends AbstractController
         return $dataTable;
     }
 
-    public function _action_create()
+    public function _action_create_tag()
     {
-        global $gacl;
         // Created a tag
+        $repo = new TagRepository();
+        $repo->create( $this->request->getParams() );
+        exit;
 
         // Create it's associated ARO
 
@@ -42,10 +44,12 @@ class TagsController extends AbstractController
 
     public function _action_index()
     {
+        $repo = new TagRepository();
         $this->view->dataTable = $this->buildDataTable();
         $this->view->title = $this->getTitle();
         $this->view->navbar = __DIR__."/../views/navbars/tags.php";
         $this->view->modal = __DIR__."/../views/modals/create_tag.php";
+        $this->view->colorOptions = $repo->getColorOptions();
         $this->setViewScript( 'list.php', 'layouts/tags_layout.php' );
     }
 

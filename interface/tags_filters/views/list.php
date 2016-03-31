@@ -4,7 +4,7 @@
 
     <?php include( $this->navbar ); ?>
 
-    <table class="display" cellspacing="0" width="100%" id="<?php echo $this->dataTable->getTableId() ?>">
+    <table class="display formtable" cellspacing="0" width="100%" id="<?php echo $this->dataTable->getTableId() ?>">
         <thead>
         <tr>
             <?php foreach ( $this->dataTable->getColumns() as $column ) { ?>

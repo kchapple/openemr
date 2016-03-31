@@ -98,6 +98,13 @@ class FiltersController extends AbstractController
         echo $dataTable->getResults( $this->getRequest() );
     }
 
+    public function _action_create_filter()
+    {
+        $repo = new FilterRepository();
+        $repo->create( $this->request->getParams() );
+        exit;
+    }
+
     public function _action_details()
     {
         $encounterId = $this->request->getParam('id');
