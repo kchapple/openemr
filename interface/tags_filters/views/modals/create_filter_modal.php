@@ -53,8 +53,8 @@
 
                         <div class="form-group col-sm-2" id="object-patient-fg">
                             <div id="patient-container">
-                                <input required name="object_patient" type="text" style="display: block; width: 100%;" class="form-control typeahead" id="object-patient" placeholder="last, first">
-                                <span id="patient-last-encounter-date"></span>
+                                <input required type="text" style="display: block; width: 100%;" class="form-control typeahead" id="object-patient-tt" placeholder="last, first">
+                                <input type="hidden" id="object-patient" name="object_patient" />
                             </div>
                         </div>
 
@@ -162,7 +162,7 @@
                 }
             });
 
-            $('#object-patient').typeahead({
+            $('#object-patient-tt').typeahead({
                 hint: true,
                 highlight: true,
                 minLength: 2
@@ -177,6 +177,11 @@
                 },
                 limit: 20
             });
+
+            $('#object-patient-tt').bind('typeahead:selected', function( obj, datum, name ) {
+                $("#object-patient").val( datum.pid );
+            });
+
 
             $("#requesting-type").change( function() {
                 var requestingType = $(this).val()
