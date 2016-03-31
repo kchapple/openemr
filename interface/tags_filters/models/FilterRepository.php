@@ -217,9 +217,9 @@ class FilterRepository
         }
 
         if ( $binds['object_type'] == 'patient' ) {
-            $binds['object_entity'] = $args['requesting_patient'];
-        } else if ( $binds['requesting_type'] == 'tag' ) {
-            $binds['object_entity'] = $args['requesting_tag'];
+            $binds['object_entity'] = $args['object_patient'];
+        } else if ( $binds['object_type'] == 'tag' ) {
+            $binds['object_entity'] = $args['object_tag'];
         }
 
         $result = sqlInsert( $sql, array_values( $binds ) );
