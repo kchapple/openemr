@@ -36,7 +36,7 @@
                         <div id="requesting-group-fg" class="form-group col-sm-2" style="display: none;">
                             <select name="requesting_group" class="form-control" id="requesting-group">
                                 <option value="" selected> -- </option>
-                                <?php foreach ( $this->groups as $title => $title ) { ?>
+                                <?php foreach ( $this->groups as $key => $title ) { ?>
                                     <option value="<?php echo $title; ?>"><?php echo $title; ?></option>
                                 <?php } ?>
                             </select>
