@@ -14,7 +14,6 @@ class FilterRepository
     {
         // Create the initial query making sure that we're within our time limitations,
         // and grab any filters that specify the logged-in user's username
-        $now = date( 'Y-m-d H:i:s' );
         $sql = "SELECT
             F.id,
             F.created_at,
@@ -31,14 +30,9 @@ class FilterRepository
             F.updated_at,
             F.updated_by
             FROM tf_filters F
-            WHERE (
-                    ( F.effective_datetime = '0000-00-00 00:00:00' OR ( F.effective_datetime != '0000-00-00 00:00:00' AND F.effective_datetime >= ? ) ) AND
-                    ( F.expiration_datetime = '0000-00-00 00:00:00' OR ( F.expiration_datetime != '0000-00-00 00:00:00' AND F.expiration_datetime < ? ) )
-                  ) AND
-                  (
-                    ( F.requesting_type = ? AND F.requesting_entity = ? ) ";
+            WHERE ( ( F.requesting_type = ? AND F.requesting_entity = ? ) ";
 
-        $binds = array( $now, $now, 'user', $username );
+        $binds = array( 'user', $username );
 
         // Now get the logged-in user's groups and add them to the query
         $myGroups = acl_get_group_titles( $username );
@@ -56,7 +50,15 @@ class FilterRepository
             }
             $sql.= " ) ";
         }
-        $sql .= " ) ";
+        $sql .= " ) AND ";
+
+        // Now calculate the dates
+        $now = date( 'Y-m-d H:i:s' );
+        $sql .= "( F.effective_datetime = '0000-00-00 00:00:00' OR ( F.effective_datetime != '0000-00-00 00:00:00' AND F.effective_datetime <= ? ) ) AND
+                ( F.expiration_datetime = '0000-00-00 00:00:00' OR ( F.expiration_datetime != '0000-00-00 00:00:00' AND F.expiration_datetime >= ? ) )";
+        $binds[]= $now;
+        $binds[]= $now;
+
         $sql .= " ORDER BY F.priority DESC, F.requesting_type ASC ";
 
         // Execute the query that will give us all the filters for this user (and this users groups)
@@ -66,29 +68,37 @@ class FilterRepository
         $patientsToHide = array();
         while ( $row = sqlFetchArray( $result ) ) {
 
-            $binds = array();
             $filter = new Filter( $row );
 
-            $sql = "SELECT PT.pid
-                FROM tf_patients_tags PT
-                WHERE ";
-
             if ( $filter->object_type == 'tag' ) {
-                $sql .= "PT.tag_id = ?";
+
+                // If the filter object type is a tag, look up all patients with this tag
+                $binds = array();
+                $sql = "SELECT PT.pid
+                FROM tf_patients_tags PT
+                WHERE PT.tag_id = ?";
+                $binds[]= $filter->object_entity;
+
+                $ptResult = sqlStatement( $sql, $binds );
+                while ( $prow = sqlFetchArray( $ptResult ) ) {
+                    if ( $row['requesting_action'] == 'allow' ) {
+                        unset( $patientsToHide[$prow['pid']] );
+                    } else if ( $row['requesting_action'] == 'deny' ) {
+                        $patientsToHide[$prow['pid']] = $prow['pid'];
+                    }
+                }
+
             } else if ( $filter->object_type == 'patient' ) {
-                $sql .= "PT.pid = ?";
-            }
 
-            $binds[]= $filter->object_entity;
-
-            $ptResult = sqlStatement( $sql, $binds );
-            while ( $prow = sqlFetchArray( $ptResult ) ) {
+                // If the filter object is patient, hide or unhide patient accordingly
                 if ( $row['requesting_action'] == 'allow' ) {
-                    unset( $patientsToHide[$prow['pid']] );
+                    unset( $patientsToHide[$filter->object_entity] );
                 } else if ( $row['requesting_action'] == 'deny' ) {
-                    $patientsToHide[$prow['pid']] = $prow['pid'];
+                    $patientsToHide[$filter->object_entity] = $filter->object_entity;
                 }
             }
+
+
         }
 
         return $patientsToHide;
