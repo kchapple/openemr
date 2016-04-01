@@ -12,7 +12,8 @@ class FilterRepository
 {
     public function fetchPatientsToHideForUser( $username )
     {
-
+        // Create the initial query making sure that we're within our time limitations,
+        // and grab any filters that specify the logged-in user's username
         $now = date( 'Y-m-d H:i:s' );
         $sql = "SELECT
             F.id,
@@ -30,17 +31,23 @@ class FilterRepository
             F.updated_at,
             F.updated_by
             FROM tf_filters F
-            WHERE ( F.effective_datetime = '0000-00-00 00:00:00' OR ( F.effective_datetime != '0000-00-00 00:00:00' AND F.effective_datetime >= ? ) ) AND
-                ( F.expiration_datetime = '0000-00-00 00:00:00' OR ( F.expiration_datetime != '0000-00-00 00:00:00' AND F.expiration_datetime < ? ) ) AND
-                ( F.requesting_type = ? AND F.requesting_entity = ? ) ";
+            WHERE (
+                    ( F.effective_datetime = '0000-00-00 00:00:00' OR ( F.effective_datetime != '0000-00-00 00:00:00' AND F.effective_datetime >= ? ) ) AND
+                    ( F.expiration_datetime = '0000-00-00 00:00:00' OR ( F.expiration_datetime != '0000-00-00 00:00:00' AND F.expiration_datetime < ? ) )
+                  ) AND
+                  (
+                    ( F.requesting_type = ? AND F.requesting_entity = ? ) ";
 
         $binds = array( $now, $now, 'user', $username );
+
+        // Now get the logged-in user's groups and add them to the query
         $myGroups = acl_get_group_titles( $username );
         if ( is_array( $myGroups ) ) {
             $sql.= " OR ( ";
             $count = 0;
             foreach ( $myGroups as $group ) {
-                $sql.= "F.requesting_entity = ? ";
+                $sql.= " ( F.requesting_type = ? AND F.requesting_entity = ? ) ";
+                $binds[]= 'group';
                 $binds[]= $group;
                 if ( $count < count( $myGroups ) -1 ) {
                     $sql .= " OR ";
@@ -49,14 +56,17 @@ class FilterRepository
             }
             $sql.= " ) ";
         }
-
+        $sql .= " ) ";
         $sql .= " ORDER BY F.priority DESC, F.requesting_type ASC ";
 
+        // Execute the query that will give us all the filters for this user (and this users groups)
+        // We order by explicit priority first, then user level filters get priority
+        // We decide which patients to hide be going through the rules in order
         $result = sqlStatement( $sql, $binds );
         $patientsToHide = array();
-        $binds = array();
         while ( $row = sqlFetchArray( $result ) ) {
 
+            $binds = array();
             $filter = new Filter( $row );
 
             $sql = "SELECT PT.pid
@@ -71,8 +81,8 @@ class FilterRepository
 
             $binds[]= $filter->object_entity;
 
-            $result = sqlStatement( $sql, $binds );
-            while ( $prow = sqlFetchArray( $result ) ) {
+            $ptResult = sqlStatement( $sql, $binds );
+            while ( $prow = sqlFetchArray( $ptResult ) ) {
                 if ( $row['requesting_action'] == 'allow' ) {
                     unset( $patientsToHide[$prow['pid']] );
                 } else if ( $row['requesting_action'] == 'deny' ) {
