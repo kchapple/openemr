@@ -438,11 +438,12 @@ function getPatientLnames($term = "%", $given = "pid, id, lname, fname, mname, p
     //    error_log("last name search term :".$names['last']);
     //}
     // Debugging section above
- 
+
+    $where = " ( ";
     $sqlBindArray = array();
     if(array_key_exists('last',$names) && $names['last'] == '') {
         // Do not search last name
-        $where = "fname LIKE ? ";
+        $where .= "fname LIKE ? ";
         array_push($sqlBindArray, $names['first']);
         if ($names['middle'] != '') {        
             $where .= "AND mname LIKE ? ";  
@@ -450,20 +451,24 @@ function getPatientLnames($term = "%", $given = "pid, id, lname, fname, mname, p
         }
     } elseif(array_key_exists('first',$names) && $names['first'] == '') {
         // Do not search first name or middle name
-        $where = "lname LIKE ? ";
+        $where .= "lname LIKE ? ";
         array_push($sqlBindArray, $names['last']);
     } elseif($names['first'] == '' && $names['last'] != '') {
         // Search both first name and last name with same term
         $names['first'] = $names['last']; 
-        $where = "lname LIKE ? OR fname LIKE ? ";
+        $where .= "lname LIKE ? OR fname LIKE ? ";
         array_push($sqlBindArray, $names['last'], $names['first']);
     } elseif ($names['middle'] != '') {        
-        $where = "lname LIKE ? AND fname LIKE ? AND mname LIKE ? ";  
+        $where .= "lname LIKE ? AND fname LIKE ? AND mname LIKE ? ";
         array_push($sqlBindArray, $names['last'], $names['first'], $names['middle']);
     } else {
-        $where = "lname LIKE ? AND fname LIKE ? ";
+        $where .= "lname LIKE ? AND fname LIKE ? ";
         array_push($sqlBindArray, $names['last'], $names['first']);
     }
+
+    $where .= " ) ";
+
+
 
         if (!empty($GLOBALS['pt_restrict_field'])) {
                 if ( $_SESSION{"authUser"} != 'admin' || $GLOBALS['pt_restrict_admin'] ) {
@@ -473,6 +478,11 @@ function getPatientLnames($term = "%", $given = "pid, id, lname, fname, mname, p
 			array_push($sqlBindArray, $_SESSION{"authUser"});
                 }
         }
+
+    $patient_filter = do_action( 'filter_patient_select', $_SESSION['authUser'] );
+    if ( $patient_filter ) {
+        $where .= " AND ".$patient_filter;
+    }
 
     $sql="SELECT $given FROM patient_data WHERE $where ORDER BY $orderby";
     if ($limit != "all") $sql .= " LIMIT $start, $limit";
@@ -533,6 +543,10 @@ function getPatientId($pid = "%", $given = "pid, id, lname, fname, mname, provid
 
     $sqlBindArray = array();
     $where = "pubpid LIKE ? ";
+    $patient_filter = do_action( 'filter_patient_select', $_SESSION['authUser'] );
+    if ( $patient_filter ) {
+        $where .= " AND ".$patient_filter;
+    }
     array_push($sqlBindArray, $pid."%");
         if (!empty($GLOBALS['pt_restrict_field']) && $GLOBALS['pt_restrict_by_id'] ) {
                 if ( $_SESSION{"authUser"} != 'admin' || $GLOBALS['pt_restrict_admin'] ) {
@@ -558,13 +572,19 @@ function getByPatientDemographics($searchTerm = "%", $given = "pid, id, lname, f
   $layoutCols = sqlStatement( "SELECT field_id FROM layout_options WHERE form_id='DEM' AND group_name not like (? ) AND uor !=0", array("%".Employer."%") );
 
   $sqlBindArray = array();
-  $where = "";
+  $where = " ( ";
   for($iter=0; $row=sqlFetchArray($layoutCols); $iter++) {
     if ( $iter > 0 ) {
       $where .= " or ";
     }
     $where .= " ".add_escape_custom($row["field_id"])." like ? ";
     array_push($sqlBindArray, "%".$searchTerm."%");
+  }
+  $where .= " ) ";
+
+  $patient_filter = do_action( 'filter_patient_select', $_SESSION['authUser'] );
+  if ( $patient_filter ) {
+    $where .= " AND ".$patient_filter;
   }
 
   $sql = "SELECT $given FROM patient_data WHERE $where ORDER BY $orderby";
@@ -599,6 +619,11 @@ function getByPatientDemographicsFilter($searchFields, $searchTerm = "%",
     }
 		$i++;
 	}
+
+    $patient_filter = do_action( 'filter_patient_select', $_SESSION['authUser'] );
+    if ( $patient_filter ) {
+        $where .= " AND ".$patient_filter;
+    }
 
   // If no search terms, ensure valid syntax.
   if ($i == 0) $where = "1 = 1";
@@ -650,7 +675,13 @@ function getPatientPID($args)
 
     if (strstr($pid,"%")) $command = "like";
 
-    $sql="select $given from patient_data where pid $command '$pid' order by $orderby";
+    $filter = "";
+    $patient_filter = do_action( 'filter_patient_select', $_SESSION['authUser'] );
+    if ( $patient_filter ) {
+        $filter = " AND ".$patient_filter;
+    }
+
+    $sql="select $given from patient_data where pid $command '$pid' $filter order by $orderby";
     if ($limit != "all") $sql .= " limit $start, $limit";
 
     $rez = sqlStatement($sql);
@@ -685,6 +716,11 @@ function getPatientDOB($DOB = "%", $given = "pid, id, lname, fname, mname", $ord
                 }
         }
 
+    $patient_filter = do_action( 'filter_patient_select', $_SESSION['authUser'] );
+    if ( $patient_filter ) {
+        $where .= " AND ".$patient_filter;
+    }
+
     $sql="SELECT $given FROM patient_data WHERE $where ORDER BY $orderby";
 
     if ($limit != "all") $sql .= " LIMIT $start, $limit";
@@ -702,6 +738,10 @@ function getPatientSSN($ss = "%", $given = "pid, id, lname, fname, mname, provid
 {
     $sqlBindArray = array();
     $where = "ss LIKE ?";
+    $patient_filter = do_action( 'filter_patient_select', $_SESSION['authUser'] );
+    if ( $patient_filter ) {
+        $where .= " AND ".$patient_filter;
+    }
     array_push($sqlBindArray, $ss."%");
     $sql="SELECT $given FROM patient_data WHERE $where ORDER BY $orderby";
     if ($limit != "all") $sql .= " LIMIT $start, $limit";
@@ -720,6 +760,10 @@ function getPatientPhone($phone = "%", $given = "pid, id, lname, fname, mname, p
     $phone = preg_replace( "/[[:punct:]]/","", $phone );
     $sqlBindArray = array();
     $where = "REPLACE(REPLACE(phone_home, '-', ''), ' ', '') REGEXP ?";
+    $patient_filter = do_action( 'filter_patient_select', $_SESSION['authUser'] );
+    if ( $patient_filter ) {
+        $where .= " AND ".$patient_filter;
+    }
     array_push($sqlBindArray, $phone);
     $sql="SELECT $given FROM patient_data WHERE $where ORDER BY $orderby";
     if ($limit != "all") $sql .= " LIMIT $start, $limit";

@@ -57,9 +57,11 @@ if (isset($_GET['iSortCol_0'])) {
 
 // Global filtering.
 //
-$where = '';
-$args = array( 'where' => $where, 'username' => $_SESSION['authUser'] );
-$where = do_action( 'filter_patient_select', $args );
+$where = "";
+$patient_filter = do_action( 'filter_patient_select', $_SESSION['authUser'] );
+if ( $patient_filter ) {
+    $where .= " WHERE " . $patient_filter;
+}
 
 if (isset($_GET['sSearch']) && $_GET['sSearch'] !== "") {
   $sSearch = add_escape_custom($_GET['sSearch']);

@@ -5,24 +5,15 @@ require_once __DIR__ . '/vendor/autoload.php';
 //if ( $GLOBALS['tags_filters_enabled'] ) {
 
 
-function tf_filter_patient_select( $args )
+function tf_filter_patient_select( $username )
 {
-    $username = $args['username'];
-    $where = $args['where'];
-
-    $patientsToHide = array();
-
-    // Get all my ACL Groups
-
-
-    // Get all filters associated with this user
-
     // Fetch all the group filters
     $repo = new FilterRepository();
+    $where = "";
     $patientsToHide = $repo->fetchPatientsToHideForUser( $username );
     if ( count( $patientsToHide ) ) {
         $pidString = implode(",", $patientsToHide);
-        $where .= " WHERE patient_data.pid NOT IN ( $pidString ) ";
+        $where = " patient_data.pid NOT IN ( $pidString ) ";
     }
 
     return $where;
