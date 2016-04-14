@@ -23,6 +23,10 @@ $controllerUrl = $GLOBALS['webroot']."/interface/tags_filters/index.php?action="
             font-size: 14px;
         }
 
+        a.delete {
+            color: red;
+        }
+
         .btn {
             background-color: #95a5a6;
         }
@@ -274,7 +278,10 @@ $controllerUrl = $GLOBALS['webroot']."/interface/tags_filters/index.php?action="
                 $('#createModal textarea, #createModal input, #createModal select').val('');
             });
 
+
+
         });
+
 
     </script>
 </head>

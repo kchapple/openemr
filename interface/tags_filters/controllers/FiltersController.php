@@ -105,12 +105,21 @@ class FiltersController extends AbstractController
         exit;
     }
 
+    public function _action_delete_filter()
+    {
+        $filterId = $this->request->getParam( 'id' );
+        $repo = new FilterRepository();
+        $repo->delete( $filterId );
+        exit;
+    }
+
     public function _action_details()
     {
-        $encounterId = $this->request->getParam('id');
+        $filterId = $this->request->getParam('id');
+        $this->view->filterId = $filterId;
         $pid = $this->request->getParam('pid');
         $this->view->encounter = $encounterId;
         $this->view->pid = $pid;
-        $this->setViewScript('details.php');
+        $this->setViewScript('details/filters.php');
     }
 }

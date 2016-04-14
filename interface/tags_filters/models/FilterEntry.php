@@ -44,7 +44,7 @@ class FilterEntry extends Entry
             F.priority,
             F.note,
             CONCAT(F.updated_at,' by ',F.updated_by) AS last_updated
-            FROM tf_filters F";
+            FROM tf_filters F WHERE deleted = 0";
         return $statement;
     }
 }

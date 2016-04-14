@@ -28,9 +28,12 @@ class FilterRepository
             F.priority,
             F.note,
             F.updated_at,
-            F.updated_by
+            F.updated_by,
+            F.deleted
             FROM tf_filters F
-            WHERE ( ( F.requesting_type = ? AND F.requesting_entity = ? ) ";
+            WHERE F.deleted = 0 AND
+                (
+                    ( F.requesting_type = ? AND F.requesting_entity = ? ) ";
 
         $binds = array( 'user', $username );
 
@@ -126,7 +129,7 @@ class FilterRepository
         $binds = array();
         if ( count( $filters ) ) {
             $count = 0;
-            $sql.= " WHERE ( ";
+            $sql.= " WHERE deleted = 0 AND ( ";
             foreach ( $filters as $field => $value ) {
                 if ( is_array( $value ) ) {
                     $sql.= " ( ";
@@ -246,9 +249,11 @@ class FilterRepository
         return $result;
     }
 
-    public function delete()
+    public function delete( $id )
     {
         //acl_remove( $acl_title,  $acl_value );
+        $statement = "UPDATE tf_filters SET deleted = 1 WHERE id = ?";
+        return sqlQuery( $statement, array( $id ) );
     }
 
 }
