@@ -634,6 +634,25 @@ class eRxXMLBuilder
             $element->appendChild($this->createElementText('gender', substr($patient['sex'], 0, 1)));
         }
 
+        $vitals = $this->getStore()->getPatientVitalsByPatientId($patient['pid']);
+        $age = getPatientAgeYMD($patient['date_of_birth']);
+
+        if ($vitals['height'] &&
+            $vitals['height_units']) {
+            $element->appendChild($this->createElementText('height', $vitals['height']));
+            $element->appendChild($this->createElementText('heightUnits', $vitals['height_units']));
+        } else if ($age['age'] < 19){
+            $this->warningMessage('', xl('Patient Height'));
+        }
+
+        if ($vitals['weight'] &&
+            $vitals['weight_units']) {
+            $element->appendChild($this->createElementText('weight', $vitals['weight']));
+            $element->appendChild($this->createElementText('weightUnits', $vitals['weight_units']));
+        }else if ($age['age'] < 19){
+            $this->warningMessage('', xl('Patient Weight'));
+        }
+
         return $element;
     }
 
